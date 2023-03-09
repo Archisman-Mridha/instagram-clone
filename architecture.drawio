@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2023-03-09T16:02:49.218Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.63" etag="kOgSiQCiIMX6LloHo_Su" version="21.0.2" type="github" pages="3">
+<mxfile host="app.diagrams.net" modified="2023-03-09T16:04:01.147Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.63" etag="YuXjGbC0qqaNBA2qq7fH" version="21.0.2" type="github" pages="3">
   <diagram name="Registration" id="Mme6WzJ34gumwHIaURGJ">
     <mxGraphModel dx="1478" dy="1105" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
@@ -949,6 +949,12 @@
           <mxGeometry x="48" width="227" height="30" as="geometry">
             <mxRectangle width="227" height="30" as="alternateBounds" />
           </mxGeometry>
+        </mxCell>
+        <mxCell id="D7EG8Ohgndm8J4WG8Qzm-1" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FC9797;fontColor=#ffffff;strokeColor=#6F0000;opacity=75;" vertex="1" parent="1">
+          <mxGeometry x="840" y="180" width="230" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="D7EG8Ohgndm8J4WG8Qzm-2" value="&lt;font color=&quot;#ff6666&quot; style=&quot;font-size: 16px;&quot; data-font-src=&quot;https://fonts.googleapis.com/css?family=Poppins&quot; face=&quot;Poppins&quot;&gt;&lt;b&gt;remove point of failure&lt;/b&gt;&lt;/font&gt;" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="845" y="390" width="220" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
