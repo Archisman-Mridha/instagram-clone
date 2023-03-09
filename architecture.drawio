@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2023-03-09T15:12:42.742Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.63" etag="T41X6F6M3QLM3chukRVw" version="21.0.2" type="github">
+<mxfile host="app.diagrams.net" modified="2023-03-09T15:14:23.129Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.63" etag="7E85NXF_vln0E_p3FnJ3" version="21.0.2" type="github" pages="2">
   <diagram name="Registration" id="Mme6WzJ34gumwHIaURGJ">
     <mxGraphModel dx="1478" dy="1105" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
@@ -341,10 +341,10 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="8ash4r6o2Y1aVIrcYRPW-105" value="" style="sketch=0;aspect=fixed;html=1;points=[];align=center;image;fontSize=12;image=img/lib/mscae/Cache_Redis_Product.svg;" vertex="1" parent="1">
-          <mxGeometry x="850" y="1850" width="100" height="84" as="geometry" />
+          <mxGeometry x="850" y="2110" width="100" height="84" as="geometry" />
         </mxCell>
         <mxCell id="8ash4r6o2Y1aVIrcYRPW-106" value="Cache" style="text;align=center;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontFamily=Poppins;fontSize=16;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DPoppins;fontStyle=1;fontColor=#66B2FF;" vertex="1" parent="1">
-          <mxGeometry x="840" y="1940" width="120" height="30" as="geometry" />
+          <mxGeometry x="840" y="2200" width="120" height="30" as="geometry" />
         </mxCell>
         <mxCell id="8ash4r6o2Y1aVIrcYRPW-107" value="Request Details" style="shape=table;startSize=30;container=1;collapsible=0;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=0;fontSize=16;fontFamily=Poppins;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DPoppins;rounded=1;" vertex="1" parent="1">
           <mxGeometry x="195" y="1730" width="180" height="90" as="geometry" />
@@ -376,7 +376,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="8ash4r6o2Y1aVIrcYRPW-120" value="&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Poppins&quot; face=&quot;Poppins&quot; style=&quot;font-size: 16px;&quot;&gt;fetch record from cache&lt;/font&gt;" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="920" y="1950" width="210" height="30" as="geometry" />
+          <mxGeometry x="920" y="2210" width="210" height="30" as="geometry" />
         </mxCell>
         <mxCell id="8ash4r6o2Y1aVIrcYRPW-122" value="&lt;p style=&quot;line-height: 160%;&quot;&gt;&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Poppins&quot; face=&quot;Poppins&quot; style=&quot;font-size: 16px;&quot;&gt;create and send JWT to the client&lt;/font&gt;&lt;/p&gt;" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
           <mxGeometry x="1030" y="1660" width="155" height="40" as="geometry" />
@@ -488,6 +488,14 @@
         <mxCell id="8ash4r6o2Y1aVIrcYRPW-145" value="&lt;font color=&quot;#ff6666&quot; style=&quot;font-size: 16px;&quot; data-font-src=&quot;https://fonts.googleapis.com/css?family=Poppins&quot; face=&quot;Poppins&quot;&gt;&lt;b&gt;remove point of failure&lt;/b&gt;&lt;/font&gt;" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
           <mxGeometry x="970" y="1566.81" width="220" height="30" as="geometry" />
         </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="nXU2jskZ99u5ne01Wi8V" name="Login">
+    <mxGraphModel dx="1478" dy="705" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
       </root>
     </mxGraphModel>
   </diagram>
