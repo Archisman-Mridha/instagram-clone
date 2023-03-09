@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2023-03-09T17:27:22.728Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.63" etag="DMcPS9PvHA6ulfA3O8qQ" version="21.0.2" type="github" pages="4">
+<mxfile host="app.diagrams.net" modified="2023-03-09T18:54:53.109Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.63" etag="AXxp1cDDj_rt18VCofbM" version="21.0.2" type="github" pages="4">
   <diagram name="Registration" id="Mme6WzJ34gumwHIaURGJ">
     <mxGraphModel dx="1478" dy="1105" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
@@ -688,7 +688,7 @@
         <mxCell id="FhwXbj-5VgpS7eworEYI-2" value="Followship Primary DB" style="text;align=center;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontFamily=Poppins;fontSize=16;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DPoppins;fontStyle=1;fontColor=#66B2FF;" vertex="1" parent="1">
           <mxGeometry x="1410" y="-283.19" width="120" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="FhwXbj-5VgpS7eworEYI-3" value="&lt;font style=&quot;font-size: 16px;&quot; data-font-src=&quot;https://fonts.googleapis.com/css?family=Poppins&quot; face=&quot;Poppins&quot;&gt;Posts DB Schema&lt;/font&gt;" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;html=1;rounded=1;" vertex="1" parent="1">
+        <mxCell id="FhwXbj-5VgpS7eworEYI-3" value="&lt;font style=&quot;font-size: 16px;&quot; data-font-src=&quot;https://fonts.googleapis.com/css?family=Poppins&quot; face=&quot;Poppins&quot;&gt;Fellowship DB Schema&lt;/font&gt;" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;html=1;rounded=1;" vertex="1" parent="1">
           <mxGeometry x="1540" y="-393.19" width="200" height="150" as="geometry">
             <mxRectangle x="1000" y="-120" width="70" height="30" as="alternateBounds" />
           </mxGeometry>
@@ -915,7 +915,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="P0lJSp69fXkhGP8qLpT7" name="Create Post">
-    <mxGraphModel dx="1478" dy="1105" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="1232" dy="988" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
