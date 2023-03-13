@@ -1,3 +1,4 @@
+#[derive(Default)]
 pub struct UserEntity {
 
     pub email: String,

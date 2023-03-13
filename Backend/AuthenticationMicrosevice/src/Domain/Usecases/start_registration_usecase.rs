@@ -92,7 +92,7 @@ impl Usecases<'_> {
 
 #[cfg(test)]
 mod tests {
-    use crate::Domain::Ports::{MockUsersRepository, MockTemporaryUserRecordsRepository};
+    use crate::Domain::{Ports::{MockUsersRepository, MockTemporaryUserRecordsRepository}, Entities::UserEntity};
 
     use super::*;
     use fake::{faker::{internet::en::{FreeEmail, Username, Password, IP}, name::en::Name}, Fake};
@@ -135,6 +135,165 @@ mod tests {
 
         assert!(output.errors.len( ) == 0);
         assert!(output.otp == dummyOTP);
+    }
+
+    #[test]
+    fn DetectDuplicateEmailAndUsername( ) {
+
+        let mut mockUsersRepository= MockUsersRepository::new( );
+
+        let mut mockTemporaryUserRecordsRepository= MockTemporaryUserRecordsRepository::new( );
+
+        let parameters= StartRegistrationParameters {
+
+            name: Name( ).fake( ),
+            email: FreeEmail( ).fake( ),
+            username: Username( ).fake( ),
+            password: Password(6..10).fake( ),
+            deviceIP: IP( ).fake( )
+        };
+
+        let email= parameters.email.clone( );
+        let username= parameters.username.clone( );
+        mockUsersRepository.expect_getByEmailOrUsername( )
+            .returning(
+                move |_, _| Ok(Some(
+                    vec![
+
+                        UserEntity {
+                            email: email.clone( ),
+                            ..Default::default( )
+                        },
+                        UserEntity {
+                            username: username.clone( ),
+                            ..Default::default( )
+                        }
+                    ]
+                ))
+            );
+
+        mockTemporaryUserRecordsRepository.expect_getByEmail( )
+            .returning(|_| Ok(None));
+        mockTemporaryUserRecordsRepository.expect_getByUsername( )
+            .returning(|_| Ok(None));
+        mockTemporaryUserRecordsRepository.expect_save( )
+            .returning(|_| Ok(( )));
+
+        let usecases: Usecases= Usecases {
+
+            usersRepository: &mockUsersRepository,
+            temporaryUserRecordsRepository: &mockTemporaryUserRecordsRepository
+        };
+
+        let output= usecases.StartRegistration(parameters, | | "000000".to_string( ));
+
+        assert!(output.errors.len( ) == 2);
+            assert!(
+                output.errors.iter( ).any(|error| error == "Email is already in use")
+            );
+            assert!(
+                output.errors.iter( ).any(|error| error == "Username is already in use")
+            );
+    }
+
+    #[test]
+    fn DetectEmailBeingRegisteredBySomeoneElse( ) {
+
+        let mut mockUsersRepository= MockUsersRepository::new( );
+
+        let mut mockTemporaryUserRecordsRepository= MockTemporaryUserRecordsRepository::new( );
+
+        let parameters= StartRegistrationParameters {
+
+            name: Name( ).fake( ),
+            email: FreeEmail( ).fake( ),
+            username: Username( ).fake( ),
+            password: Password(6..10).fake( ),
+            deviceIP: IP( ).fake( )
+        };
+
+        mockUsersRepository.expect_getByEmailOrUsername( )
+            .returning(|_, _| Ok(None));
+
+        let email= parameters.email.clone( );
+        mockTemporaryUserRecordsRepository.expect_getByEmail( )
+            .returning(
+                move |_| Ok(
+                    Some(
+                        TemporaryUserRecord {
+                            email: email.clone( ),
+                            ..Default::default( )
+                        }
+                    )
+                )
+            );
+        mockTemporaryUserRecordsRepository.expect_getByUsername( )
+            .returning(|_| Ok(None));
+        mockTemporaryUserRecordsRepository.expect_save( )
+            .returning(|_| Ok(( )));
+
+        let usecases: Usecases= Usecases {
+
+            usersRepository: &mockUsersRepository,
+            temporaryUserRecordsRepository: &mockTemporaryUserRecordsRepository
+        };
+
+        let output= usecases.StartRegistration(parameters, | | "000000".to_string( ));
+
+        assert!(output.errors.len( ) == 1);
+            assert!(
+                output.errors.iter( ).any(|error| error == "Someone from a separate device is registering with this email. Retry after 2 minutes")
+            );
+    }
+
+    #[test]
+    fn DetectUsernameBeingRegisteredBySomeoneElse( ) {
+
+        let mut mockUsersRepository= MockUsersRepository::new( );
+
+        let mut mockTemporaryUserRecordsRepository= MockTemporaryUserRecordsRepository::new( );
+
+        let parameters= StartRegistrationParameters {
+
+            name: Name( ).fake( ),
+            email: FreeEmail( ).fake( ),
+            username: Username( ).fake( ),
+            password: Password(6..10).fake( ),
+            deviceIP: IP( ).fake( )
+        };
+
+        mockUsersRepository.expect_getByEmailOrUsername( )
+            .returning(|_, _| Ok(None));
+
+        let username= parameters.username.clone( );
+        mockTemporaryUserRecordsRepository.expect_getByUsername( )
+            .returning(
+                move |_| Ok(
+                    Some(
+                        TemporaryUserRecord {
+                            username: username.clone( ),
+                            ..Default::default( )
+                        }
+                    )
+                )
+            );
+        mockTemporaryUserRecordsRepository.expect_getByEmail( )
+            .returning(|_| Ok(None));
+        mockTemporaryUserRecordsRepository.expect_save( )
+            .returning(|_| Ok(( )));
+
+        let usecases: Usecases= Usecases {
+
+            usersRepository: &mockUsersRepository,
+            temporaryUserRecordsRepository: &mockTemporaryUserRecordsRepository
+        };
+
+        let output= usecases.StartRegistration(parameters, | | "000000".to_string( ));
+
+        assert!(output.errors.len( ) == 1);
+            assert!(
+                output.errors.iter( ).any(|error| error == "Someone is registering with this username. Retry after 2 minutes")
+            );
     }
 
 }

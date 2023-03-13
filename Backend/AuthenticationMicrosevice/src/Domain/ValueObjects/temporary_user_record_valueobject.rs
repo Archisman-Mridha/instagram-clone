@@ -1,3 +1,4 @@
+#[derive(Default)]
 pub struct TemporaryUserRecord {
 
     pub email: String,
