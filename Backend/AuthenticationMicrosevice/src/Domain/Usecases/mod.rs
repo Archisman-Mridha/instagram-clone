@@ -3,9 +3,9 @@ pub use start_registration_usecase::*;
 
 use super::Ports;
 
-pub struct Usecases<'lifetimeLinker> {
+pub struct Usecases<'a> {
 
-    usersRepository: &'lifetimeLinker dyn Ports::UsersRepositoryPort,
-    temporaryUserRecordsRepository: &'lifetimeLinker dyn Ports::TemporaryUserRecordsRepositoryPort
+    usersRepository: &'a dyn Ports::UsersRepositoryPort,
+    temporaryUserRecordsRepository: &'a dyn Ports::TemporaryUserRecordsRepositoryPort
 
 }

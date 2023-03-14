@@ -1,21 +1,21 @@
-use crate::Domain::ValueObjects::TemporaryUserRecord;
+use crate::{Domain::ValueObjects::TemporaryUserRecord, Utils::Errors};
 
 use super::Usecases;
 
 pub struct StartRegistrationParameters {
 
-    name: String,
-    email: String,
-    username: String,
-    password: String,
-    deviceIP: String
+    pub name: String,
+    pub email: String,
+    pub username: String,
+    pub password: String,
+    pub deviceIP: String
 }
 
 #[derive(Default)]
 pub struct StartRegistrationOutput {
-    otp: String,
+    pub otp: Option<String>,
 
-    errors: Vec<String>
+    pub errors: Vec<String>
 }
 
 impl Usecases<'_> {
@@ -31,10 +31,10 @@ impl Usecases<'_> {
                 for existingUser in existingUsers {
 
                     if existingUser.email == parameters.email {
-                        errors.push("Email is already in use".to_string( ));}
+                        errors.push(Errors::DuplicateEmail.to_string( ));}
 
                     if existingUser.username == parameters.username {
-                        errors.push("Username is already in use".to_string( ));}
+                        errors.push(Errors::DuplicateUsername.to_string( ));}
                 }
 
                 return StartRegistrationOutput { errors, ..Default::default( ) };
@@ -49,7 +49,7 @@ impl Usecases<'_> {
             Some(existingRecord) => {
 
                 if existingRecord.deviceIP != parameters.deviceIP {
-                    errors.push("Someone from a separate device is registering with this email. Retry after 2 minutes".to_string( ));
+                    errors.push(Errors::SomeoneElseRegisteringEmail.to_string( ));
 
                     return StartRegistrationOutput { errors, ..Default::default( ) };
                 }
@@ -62,7 +62,7 @@ impl Usecases<'_> {
         let searchResult= self.temporaryUserRecordsRepository.getByUsername(&parameters.email).unwrap( );
         match searchResult {
             Some(_) => {
-                errors.push("Someone is registering with this username. Retry after 2 minutes".to_string( ));
+                errors.push(Errors::SomeoneElseRegisteringUsername.to_string( ));
 
                 return StartRegistrationOutput { errors, ..Default::default( ) };
             },
@@ -86,7 +86,7 @@ impl Usecases<'_> {
             }
         ).unwrap( );
 
-        return StartRegistrationOutput { otp, errors };
+        return StartRegistrationOutput { otp: Some(otp), errors };
     }
 }
 
@@ -132,8 +132,12 @@ mod tests {
 
         let output= usecases.StartRegistration(&parameters, | | dummyOTP.clone( ));
 
-        assert!(output.errors.len( ) == 0);
-        assert!(output.otp == dummyOTP);
+        assert_eq!(output.errors.len( ), 0);
+        match output.otp {
+            Some(otp) => assert!(otp == dummyOTP),
+
+            None => assert!(false)
+        }
     }
 
     #[test]
@@ -185,12 +189,12 @@ mod tests {
 
         let output= usecases.StartRegistration(&parameters, | | "000000".to_string( ));
 
-        assert!(output.errors.len( ) == 2);
+        assert_eq!(output.errors.len( ), 2);
             assert!(
-                output.errors.iter( ).any(|error| error == "Email is already in use")
+                output.errors.iter( ).any(|error| error == Errors::DuplicateEmail)
             );
             assert!(
-                output.errors.iter( ).any(|error| error == "Username is already in use")
+                output.errors.iter( ).any(|error| error == Errors::DuplicateUsername)
             );
     }
 
@@ -217,8 +221,10 @@ mod tests {
             .returning(
                 move |_| Ok(
                     Some(
+
                         TemporaryUserRecord {
                             email: email.clone( ),
+                            deviceIP: IP( ).fake( ),
                             ..Default::default( )
                         }
                     )
@@ -237,9 +243,9 @@ mod tests {
 
         let output= usecases.StartRegistration(&parameters, | | "000000".to_string( ));
 
-        assert!(output.errors.len( ) == 1);
+        assert_eq!(output.errors.len( ), 1);
             assert!(
-                output.errors.iter( ).any(|error| error == "Someone from a separate device is registering with this email. Retry after 2 minutes")
+                output.errors.iter( ).any(|error| error == Errors::SomeoneElseRegisteringEmail)
             );
     }
 
@@ -286,9 +292,9 @@ mod tests {
 
         let output= usecases.StartRegistration(&parameters, | | "000000".to_string( ));
 
-        assert!(output.errors.len( ) == 1);
+        assert_eq!(output.errors.len( ), 1);
             assert!(
-                output.errors.iter( ).any(|error| error == "Someone is registering with this username. Retry after 2 minutes")
+                output.errors.iter( ).any(|error| error == Errors::SomeoneElseRegisteringUsername)
             );
     }
 

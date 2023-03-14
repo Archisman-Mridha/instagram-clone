@@ -3,5 +3,6 @@
 
 mod Domain;
 mod Utils;
+mod App;
 
 fn main( ) { }
