@@ -19,13 +19,13 @@ pub struct StartRegistrationOutput {
 }
 
 impl Usecases<'_> {
-    pub fn StartRegistration<OTPGenerator>(&self, parameters: StartRegistrationParameters, otpGenerator: OTPGenerator) -> StartRegistrationOutput
+    pub fn StartRegistration<OTPGenerator>(&self, parameters: &StartRegistrationParameters, otpGenerator: OTPGenerator) -> StartRegistrationOutput
         where OTPGenerator: Fn( ) -> String
     {
         let mut errors: Vec<String>= Vec::new( );
 
         // Check if email or username is duplicate
-        let searchResult= self.usersRepository.getByEmailOrUsername(parameters.email.clone( ), parameters.username.clone( )).unwrap( );
+        let searchResult= self.usersRepository.getByEmailOrUsername(&parameters.email, &parameters.username).unwrap( );
         match searchResult {
             Some(existingUsers) => {
                 for existingUser in existingUsers {
@@ -44,7 +44,7 @@ impl Usecases<'_> {
         }
 
         // Check if somebody else is currently registering with the same email
-        let searchResult= self.temporaryUserRecordsRepository.getByEmail(parameters.email.clone( )).unwrap( );
+        let searchResult= self.temporaryUserRecordsRepository.getByEmail(&parameters.email).unwrap( );
         match searchResult {
             Some(existingRecord) => {
 
@@ -59,7 +59,7 @@ impl Usecases<'_> {
         }
 
         // Check if somebody else is currently registering with the same username
-        let searchResult= self.temporaryUserRecordsRepository.getByUsername(parameters.email.clone( )).unwrap( );
+        let searchResult= self.temporaryUserRecordsRepository.getByUsername(&parameters.email).unwrap( );
         match searchResult {
             Some(_) => {
                 errors.push("Someone is registering with this username. Retry after 2 minutes".to_string( ));
@@ -74,14 +74,14 @@ impl Usecases<'_> {
 
         // save temporary user details in cache
         self.temporaryUserRecordsRepository.save(
-            TemporaryUserRecord {
+            &TemporaryUserRecord {
 
                 otp: otp.clone( ),
-                name: parameters.name,
-                email: parameters.email,
-                username: parameters.username,
-                password: parameters.password,
-                deviceIP: parameters.deviceIP
+                name: parameters.name.clone( ),
+                email: parameters.email.clone( ),
+                username: parameters.username.clone( ),
+                password: parameters.password.clone( ),
+                deviceIP: parameters.deviceIP.clone( )
 
             }
         ).unwrap( );
@@ -92,7 +92,7 @@ impl Usecases<'_> {
 
 #[cfg(test)]
 mod tests {
-    use crate::Domain::{Ports::{MockUsersRepository, MockTemporaryUserRecordsRepository}, Entities::UserEntity};
+    use crate::Domain::{Ports::{MockUsersRepositoryPort, MockTemporaryUserRecordsRepositoryPort}, Entities::UserEntity};
 
     use super::*;
     use fake::{faker::{internet::en::{FreeEmail, Username, Password, IP}, name::en::Name}, Fake};
@@ -100,9 +100,8 @@ mod tests {
     #[test]
     fn StartRegistrationSuccessfully( ) {
 
-        let mut mockUsersRepository= MockUsersRepository::new( );
-
-        let mut mockTemporaryUserRecordsRepository= MockTemporaryUserRecordsRepository::new( );
+        let mut mockUsersRepository= MockUsersRepositoryPort::new( );
+        let mut mockTemporaryUserRecordsRepository= MockTemporaryUserRecordsRepositoryPort::new( );
 
         let parameters= StartRegistrationParameters {
 
@@ -131,7 +130,7 @@ mod tests {
             temporaryUserRecordsRepository: &mockTemporaryUserRecordsRepository
         };
 
-        let output= usecases.StartRegistration(parameters, | | dummyOTP.clone( ));
+        let output= usecases.StartRegistration(&parameters, | | dummyOTP.clone( ));
 
         assert!(output.errors.len( ) == 0);
         assert!(output.otp == dummyOTP);
@@ -140,9 +139,8 @@ mod tests {
     #[test]
     fn DetectDuplicateEmailAndUsername( ) {
 
-        let mut mockUsersRepository= MockUsersRepository::new( );
-
-        let mut mockTemporaryUserRecordsRepository= MockTemporaryUserRecordsRepository::new( );
+        let mut mockUsersRepository= MockUsersRepositoryPort::new( );
+        let mut mockTemporaryUserRecordsRepository= MockTemporaryUserRecordsRepositoryPort::new( );
 
         let parameters= StartRegistrationParameters {
 
@@ -185,7 +183,7 @@ mod tests {
             temporaryUserRecordsRepository: &mockTemporaryUserRecordsRepository
         };
 
-        let output= usecases.StartRegistration(parameters, | | "000000".to_string( ));
+        let output= usecases.StartRegistration(&parameters, | | "000000".to_string( ));
 
         assert!(output.errors.len( ) == 2);
             assert!(
@@ -199,9 +197,8 @@ mod tests {
     #[test]
     fn DetectEmailBeingRegisteredBySomeoneElse( ) {
 
-        let mut mockUsersRepository= MockUsersRepository::new( );
-
-        let mut mockTemporaryUserRecordsRepository= MockTemporaryUserRecordsRepository::new( );
+        let mut mockUsersRepository= MockUsersRepositoryPort::new( );
+        let mut mockTemporaryUserRecordsRepository= MockTemporaryUserRecordsRepositoryPort::new( );
 
         let parameters= StartRegistrationParameters {
 
@@ -238,7 +235,7 @@ mod tests {
             temporaryUserRecordsRepository: &mockTemporaryUserRecordsRepository
         };
 
-        let output= usecases.StartRegistration(parameters, | | "000000".to_string( ));
+        let output= usecases.StartRegistration(&parameters, | | "000000".to_string( ));
 
         assert!(output.errors.len( ) == 1);
             assert!(
@@ -249,9 +246,8 @@ mod tests {
     #[test]
     fn DetectUsernameBeingRegisteredBySomeoneElse( ) {
 
-        let mut mockUsersRepository= MockUsersRepository::new( );
-
-        let mut mockTemporaryUserRecordsRepository= MockTemporaryUserRecordsRepository::new( );
+        let mut mockUsersRepository= MockUsersRepositoryPort::new( );
+        let mut mockTemporaryUserRecordsRepository= MockTemporaryUserRecordsRepositoryPort::new( );
 
         let parameters= StartRegistrationParameters {
 
@@ -288,7 +284,7 @@ mod tests {
             temporaryUserRecordsRepository: &mockTemporaryUserRecordsRepository
         };
 
-        let output= usecases.StartRegistration(parameters, | | "000000".to_string( ));
+        let output= usecases.StartRegistration(&parameters, | | "000000".to_string( ));
 
         assert!(output.errors.len( ) == 1);
             assert!(

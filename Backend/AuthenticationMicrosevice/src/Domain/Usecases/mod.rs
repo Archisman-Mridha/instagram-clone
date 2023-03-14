@@ -5,7 +5,7 @@ use super::Ports;
 
 pub struct Usecases<'lifetimeLinker> {
 
-    usersRepository: &'lifetimeLinker dyn Ports::UsersRepository,
-    temporaryUserRecordsRepository: &'lifetimeLinker dyn Ports::TemporaryUserRecordsRepository
+    usersRepository: &'lifetimeLinker dyn Ports::UsersRepositoryPort,
+    temporaryUserRecordsRepository: &'lifetimeLinker dyn Ports::TemporaryUserRecordsRepositoryPort
 
 }

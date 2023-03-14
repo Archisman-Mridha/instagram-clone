@@ -2,8 +2,8 @@ use mockall::automock;
 use crate::Domain::Entities::UserEntity;
 
 #[automock]
-pub trait UsersRepository {
+pub trait UsersRepositoryPort {
 
-    fn getByEmailOrUsername(&self, email: String, username: String) -> Result<Option<Vec<UserEntity>>, ( )>;
+    fn getByEmailOrUsername(&self, email: &String, username: &String) -> Result<Option<Vec<UserEntity>>, ( )>;
 
 }
