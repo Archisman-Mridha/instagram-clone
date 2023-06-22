@@ -1,0 +1,24 @@
+syntax= "proto3";
+
+package main;
+option go_package= "protoc_generated/";
+
+service Authentication {
+
+  // StartRegistration takes details of a new user, validates them and creates a record in the
+  // authentication database, with a flag representing that the user is not verified. It also
+  // generates and emails a magic link to the user, using which the user can get verified.
+  rpc StartRegistration(StartRegistrationRequest) returns(StartRegistrationResponse) { }
+
+}
+
+message StartRegistrationRequest {
+
+  string name= 1;
+  string email= 2;
+  string username= 3;
+  string password= 4;
+
+}
+
+message StartRegistrationResponse { }
