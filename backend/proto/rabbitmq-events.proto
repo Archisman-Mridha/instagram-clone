@@ -1,0 +1,22 @@
+syntax= "proto3";
+
+package main;
+option go_package= "protoc_generated/";
+
+// REGISTRATION PROCESS
+
+// Represents that the authentication microservice has created an unverified user in its primary
+// database.
+message UserRegistrationStartedEvent { string id= 1; }
+
+// Represents that authentication microservice has generated a uuid for the unverified user. This
+// uuid is used to construct the magic link, visiting which will verify the user.
+message UuidGeneratedForUnverifiedUserEvent { string uuid= 1; }
+
+// Represents that the user has visited the magic link and the authentication microservice has then
+// marked the user as verified in its primary database.
+message UserVerifiedEvent {
+
+  string id= 1;
+  string name= 2;
+}

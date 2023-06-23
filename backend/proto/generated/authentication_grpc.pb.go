@@ -22,10 +22,13 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthenticationClient interface {
-	// StartRegistration takes details of a new user, validates them and creates a record in the
-	// authentication database, with a flag representing that the user is not verified. It also
-	// generates and emails a magic link to the user, using which the user can get verified.
+	// StartRegistration takes in details of a user. If a verified user registered with that email
+	// already exists, then error is sent back. Otherwise, a record representing the unverified user
+	// is created in the authentication database.
 	StartRegistration(ctx context.Context, in *StartRegistrationRequest, opts ...grpc.CallOption) (*StartRegistrationResponse, error)
+	// This gets triggered when the user visits the emailed magic link. It marks the user as verified
+	// in the authentication database. Then it creates and sends back a JWT.
+	SetUserVerified(ctx context.Context, in *SetUserVerifiedRequest, opts ...grpc.CallOption) (*SetUserVerifiedResponse, error)
 }
 
 type authenticationClient struct {
@@ -45,14 +48,26 @@ func (c *authenticationClient) StartRegistration(ctx context.Context, in *StartR
 	return out, nil
 }
 
+func (c *authenticationClient) SetUserVerified(ctx context.Context, in *SetUserVerifiedRequest, opts ...grpc.CallOption) (*SetUserVerifiedResponse, error) {
+	out := new(SetUserVerifiedResponse)
+	err := c.cc.Invoke(ctx, "/main.Authentication/SetUserVerified", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthenticationServer is the server API for Authentication service.
 // All implementations must embed UnimplementedAuthenticationServer
 // for forward compatibility
 type AuthenticationServer interface {
-	// StartRegistration takes details of a new user, validates them and creates a record in the
-	// authentication database, with a flag representing that the user is not verified. It also
-	// generates and emails a magic link to the user, using which the user can get verified.
+	// StartRegistration takes in details of a user. If a verified user registered with that email
+	// already exists, then error is sent back. Otherwise, a record representing the unverified user
+	// is created in the authentication database.
 	StartRegistration(context.Context, *StartRegistrationRequest) (*StartRegistrationResponse, error)
+	// This gets triggered when the user visits the emailed magic link. It marks the user as verified
+	// in the authentication database. Then it creates and sends back a JWT.
+	SetUserVerified(context.Context, *SetUserVerifiedRequest) (*SetUserVerifiedResponse, error)
 	mustEmbedUnimplementedAuthenticationServer()
 }
 
@@ -62,6 +77,9 @@ type UnimplementedAuthenticationServer struct {
 
 func (UnimplementedAuthenticationServer) StartRegistration(context.Context, *StartRegistrationRequest) (*StartRegistrationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StartRegistration not implemented")
+}
+func (UnimplementedAuthenticationServer) SetUserVerified(context.Context, *SetUserVerifiedRequest) (*SetUserVerifiedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetUserVerified not implemented")
 }
 func (UnimplementedAuthenticationServer) mustEmbedUnimplementedAuthenticationServer() {}
 
@@ -94,6 +112,24 @@ func _Authentication_StartRegistration_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Authentication_SetUserVerified_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetUserVerifiedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthenticationServer).SetUserVerified(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/main.Authentication/SetUserVerified",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthenticationServer).SetUserVerified(ctx, req.(*SetUserVerifiedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Authentication_ServiceDesc is the grpc.ServiceDesc for Authentication service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -104,6 +140,10 @@ var Authentication_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "StartRegistration",
 			Handler:    _Authentication_StartRegistration_Handler,
+		},
+		{
+			MethodName: "SetUserVerified",
+			Handler:    _Authentication_SetUserVerified_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
