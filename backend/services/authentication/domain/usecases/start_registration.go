@@ -41,7 +41,8 @@ func(u *Usecases) StartRegistration(parameters *StartRegistrationParameters) (ou
 
 	// If a verified user with the given email already exists then send back error
 	isEmailPreRegisteredByVerifiedUser := try.To1[bool](
-		u.PrimaryDB.IsEmailPreRegisteredByVerifiedUser(parameters.Email))
+		u.PrimaryDB.IsEmailPreRegisteredByVerifiedUser(parameters.Email),
+	)
 	if isEmailPreRegisteredByVerifiedUser {
 		err= errors.New(utils.EmailPreRegisteredErrMsg)
 		return
