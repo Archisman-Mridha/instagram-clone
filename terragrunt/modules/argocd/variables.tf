@@ -1,0 +1,3 @@
+variable "workspace" {
+  type = string
+}

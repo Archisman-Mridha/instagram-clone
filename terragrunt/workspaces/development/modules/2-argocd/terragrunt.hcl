@@ -27,6 +27,10 @@ terraform {
   source = "${get_parent_terragrunt_dir("root")}/modules/argocd"
 }
 
+inputs= {
+  workspace= "development"
+}
+
 dependency "local_k3d_cluster" {
   config_path= "../1-local-k3d-cluster/"
   skip_outputs= true
