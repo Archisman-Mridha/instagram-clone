@@ -12,6 +12,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/Archisman-Mridha/instagram-clone/backend/services/authentication/domain/usecases"
+	"github.com/Archisman-Mridha/instagram-clone/backend/services/authentication/domain/utils"
 )
 
 const GRPC_PORT= 4000
@@ -32,7 +33,6 @@ func(g *GrpcAdapter) Start(usecasesLayer *usecases.Usecases) {
 	g.server= grpc.NewServer(grpc.EmptyServerOption{ })
 
 	protoc_generated.RegisterAuthenticationServer(g.server, &AuthenticationGrpcServiceImplementation{ usecasesLayer: usecasesLayer })
-	// Adding reflection capability to the gRPC server.
 	reflection.Register(g.server)
 
 	log.Println("🔥 Starting gRPC server")
@@ -51,15 +51,13 @@ func(a *AuthenticationGrpcServiceImplementation) StartRegistration(
 ) (response *protoc_generated.StartRegistrationResponse, err error) {
 
 	_, err= a.usecasesLayer.StartRegistration(
-		&usecases.StartRegistrationRequest{
+		&usecases.StartRegistrationParameters{
 			Name: request.GetName( ),
 			Email: request.GetEmail( ),
-			Username: request.GetUsername( ),
-			Password: request.GetPassword( ),
 		},
 	)
 	if err != nil {
-		err= status.Error(400, err.Error( ))
+		err= status.Error(400, utils.ServerErrorOccurredErrMsg)
 	}
 
 	return
