@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
 
 	protoc_generated "github.com/Archisman-Mridha/instagram-clone/backend/proto/generated"
 	"google.golang.org/grpc"
@@ -15,8 +16,6 @@ import (
 	"github.com/Archisman-Mridha/instagram-clone/backend/services/authentication/domain/utils"
 )
 
-const GRPC_PORT= 4000
-
 type GrpcAdapter struct {
 	tcpListener net.Listener
 	server *grpc.Server
@@ -24,10 +23,17 @@ type GrpcAdapter struct {
 
 func(g *GrpcAdapter) Start(usecasesLayer *usecases.Usecases) {
 
-	var err error
+	var (
+		err error
+		port string
+	)
 
-	if g.tcpListener, err= net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", GRPC_PORT)); err != nil {
-		log.Panicf("💀 Error binding to port %d: %v", GRPC_PORT, err)
+	if port= os.Getenv("GRPC_PORT"); port == "" {
+		port= "4000"
+	}
+
+	if g.tcpListener, err= net.Listen("tcp", fmt.Sprintf("0.0.0.0:%s", port)); err != nil {
+		log.Panicf("💀 Error binding to port %s: %v", port, err)
 	}
 
 	g.server= grpc.NewServer(grpc.EmptyServerOption{ })
@@ -35,7 +41,7 @@ func(g *GrpcAdapter) Start(usecasesLayer *usecases.Usecases) {
 	protoc_generated.RegisterAuthenticationServer(g.server, &AuthenticationGrpcServiceImplementation{ usecasesLayer: usecasesLayer })
 	reflection.Register(g.server)
 
-	log.Println("🔥 Starting gRPC server")
+	log.Printf("🔥 Starting gRPC server at port %s", port)
 	g.server.Serve(g.tcpListener)
 
 }
