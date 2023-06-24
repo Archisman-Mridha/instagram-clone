@@ -32,7 +32,7 @@ func TestStartRegistration(t *testing.T) {
 		}
 	)
 
-	t.Run("Should throw error if parameters are invalid", func(t *testing.T) {
+	t.Run("🧪 Should throw error if parameters are invalid", func(t *testing.T) {
 
 		output, err := usecasesLayer.StartRegistration(
 			&StartRegistrationParameters{
@@ -48,7 +48,7 @@ func TestStartRegistration(t *testing.T) {
 		assert.ErrorContains(t, err, "email: must be a valid email address")
 	})
 
-	t.Run("Should throw error if a user already registered with that email and got verified", func(t *testing.T) {
+	t.Run("🧪 Should throw error if a user already registered with that email and got verified", func(t *testing.T) {
 
 		primaryDB.EXPECT( ).IsEmailPreRegisteredByVerifiedUser(parameters.Email).
 			Return(true, nil)
@@ -59,7 +59,7 @@ func TestStartRegistration(t *testing.T) {
 		assert.ErrorContains(t, err, utils.EmailPreRegisteredErrMsg)
 	})
 
-	t.Run("Should run successfully", func(t *testing.T) {
+	t.Run("🧪 Should run successfully", func(t *testing.T) {
 
 		primaryDB.EXPECT( ).IsEmailPreRegisteredByVerifiedUser(parameters.Email).
 			Return(false, nil)

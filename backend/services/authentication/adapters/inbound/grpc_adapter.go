@@ -40,6 +40,12 @@ func(g *GrpcAdapter) Start(usecasesLayer *usecases.Usecases) {
 
 }
 
+func(g *GrpcAdapter) Stop( ) {
+
+	g.tcpListener.Close( )
+	g.server.GracefulStop( )
+}
+
 type AuthenticationGrpcServiceImplementation struct {
 	protoc_generated.UnimplementedAuthenticationServer
 

@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authentication-microservice
+  labels:
+    app: authentication-microservice
+
+spec:
+  selector:
+    matchLabels:
+      app: authentication-microservice
+  template:
+
+    metadata:
+      labels:
+        app: authentication-microservice
+    spec:
+      containers:
+        - name: authentication-microservice
+          image: archismanmridha/instagram-clone-authentication-microservice:0.0.1
+          resources:
+            limits:
+              memory: 128Mi
+              cpu: 200m
+          ports:
+            - containerPort: 4000

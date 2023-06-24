@@ -11,5 +11,6 @@ func main( ) {
 
 	grpcAdapter := &inbound_adapters.GrpcAdapter{ }
 	grpcAdapter.Start(usecasesLayer)
+	defer grpcAdapter.Stop( )
 
 }
