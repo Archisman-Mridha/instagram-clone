@@ -9,8 +9,8 @@ func main( ) {
 
 	usecasesLayer := &usecases.Usecases{ }
 
-	grpcAdapter := &inbound_adapters.GrpcAdapter{ }
-	grpcAdapter.Start(usecasesLayer)
-	defer grpcAdapter.Stop( )
+	grpcServer := &inbound_adapters.GrpcServer{ }
+	grpcServer.Start(usecasesLayer)
+	defer grpcServer.Stop( )
 
 }

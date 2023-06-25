@@ -16,12 +16,12 @@ import (
 	"github.com/Archisman-Mridha/instagram-clone/backend/services/authentication/domain/utils"
 )
 
-type GrpcAdapter struct {
+type GrpcServer struct {
 	tcpListener net.Listener
 	server *grpc.Server
 }
 
-func(g *GrpcAdapter) Start(usecasesLayer *usecases.Usecases) {
+func(g *GrpcServer) Start(usecasesLayer *usecases.Usecases) {
 
 	var (
 		err error
@@ -46,7 +46,7 @@ func(g *GrpcAdapter) Start(usecasesLayer *usecases.Usecases) {
 
 }
 
-func(g *GrpcAdapter) Stop( ) {
+func(g *GrpcServer) Stop( ) {
 
 	g.tcpListener.Close( )
 	g.server.GracefulStop( )
