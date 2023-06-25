@@ -4,6 +4,3 @@ vcluster:
     limits:
       memory: 2Gi
       cpu: 2
-
-multiNamespaceMode:
-  enabled: true

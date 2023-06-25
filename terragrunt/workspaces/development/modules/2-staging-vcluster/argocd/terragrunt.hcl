@@ -7,7 +7,7 @@ include "development_root" {
 }
 
 dependency "staging_cluster" {
-  config_path= "../1-staging-cluster/"
+  config_path= "../"
   skip_outputs= true
 }
 
@@ -21,7 +21,7 @@ inputs= {
   kubeconfig= {
 		path= "~/.kube/config"
 
-		context= "k3d-instagram-clone-dev"
-		username= "admin@k3d-instagram-clone-dev"
+		context= "vcluster_staging-vcluster_vcluster-staging-vcluster_k3d-instagram-clone-dev"
+		username= "vcluster_staging-vcluster_vcluster-staging-vcluster_k3d-instagram-clone-dev"
 	}
 }
