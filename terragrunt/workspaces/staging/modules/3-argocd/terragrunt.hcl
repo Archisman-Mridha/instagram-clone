@@ -6,8 +6,8 @@ include "development_root" {
   path= find_in_parent_folders("development.terragrunt.hcl")
 }
 
-dependency "local_k3d_cluster" {
-  config_path= "../1-local-k3d-cluster/"
+dependency "staging_cluster" {
+  config_path= "../1-staging-cluster/"
   skip_outputs= true
 }
 
@@ -17,5 +17,11 @@ terraform {
 
 inputs= {
   workspace= "staging"
-  kubeconfig= yamldecode(file(find_in_parent_folders("kubeconfig.yaml")))
+
+  kubeconfig= {
+		path= "~/.kube/config"
+
+		context= "k3d-instagram-clone-dev"
+		username= "admin@k3d-instagram-clone-dev"
+	}
 }

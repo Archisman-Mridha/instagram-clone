@@ -1,4 +1,4 @@
-resource "null_resource" "local_k3d_cluster" {
+resource "null_resource" "this" {
 
   provisioner "local-exec" {
     when = create

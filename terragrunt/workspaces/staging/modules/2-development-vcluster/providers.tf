@@ -11,9 +11,9 @@ terraform {
 
 provider "helm" {
   kubernetes {
-    config_path = var.kubeconfig.path
+    config_path = "~/.kube/config"
 
-    config_context = var.kubeconfig.context
-    username = var.kubeconfig.username
+    config_context = "k3d-instagram-clone-dev"
+    username = "admin@k3d-instagram-clone-dev"
   }
 }
