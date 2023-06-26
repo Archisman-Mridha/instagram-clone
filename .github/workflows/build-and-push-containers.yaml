@@ -7,7 +7,24 @@ on:
       - synchronize
 
 jobs:
+
+  check-code-changes:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    steps:
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'backend/**'
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+
   build-and-push-containers:
+    needs: check-code-changes
+    if: ${{ needs.changes.outputs.backend == 'true' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
