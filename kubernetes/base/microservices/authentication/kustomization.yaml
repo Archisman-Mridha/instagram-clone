@@ -1,5 +1,0 @@
-resources:
-
-  - ./db
-
-  - ./app.deployment.yaml
