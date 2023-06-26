@@ -20,18 +20,3 @@ spec:
       owner: users
       secret:
         name: authentication-db-owner-credentials
-
----
-
-apiVersion: v1
-kind: Secret
-type: kubernetes.io/basic-auth
-metadata:
-  name: authentication-db-owner-credentials
-  namespace: default
-  labels:
-    app.kubernetes.io/part-of: authentication-microservice
-
-data:
-  username: dXNlcnM=
-  password: cGFzcw==
