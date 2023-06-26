@@ -2,7 +2,7 @@ name: Build and push container images
 on:
   push:
     branches:
-      - main
+      - staging
 
 jobs:
   build-and-push-containers:
