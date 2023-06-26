@@ -1,8 +1,10 @@
 name: Build and push container images
 on:
-  push:
-    branches:
-      - staging
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
 
 jobs:
   build-and-push-containers:
