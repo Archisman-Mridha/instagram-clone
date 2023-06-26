@@ -7,11 +7,11 @@ service Authentication {
 
   // StartRegistration takes in details of a user. If a verified user registered with that email
   // already exists, then error is sent back. Otherwise, a record representing the unverified user
-  // is created in the authentication database.
+  // is created in the authentication db.
   rpc StartRegistration(StartRegistrationRequest) returns(StartRegistrationResponse) { }
 
   // This gets triggered when the user visits the emailed magic link. It marks the user as verified
-  // in the authentication database. Then it creates and sends back a JWT.
+  // in the authentication db. Then it creates and sends back a JWT.
   rpc SetUserVerified(SetUserVerifiedRequest) returns(SetUserVerifiedResponse) { }
 
 }

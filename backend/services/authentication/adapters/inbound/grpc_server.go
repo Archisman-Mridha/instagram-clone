@@ -48,7 +48,9 @@ func(g *GrpcServer) Start(usecasesLayer *usecases.Usecases) {
 
 func(g *GrpcServer) Stop( ) {
 
-	g.tcpListener.Close( )
+	if err := g.tcpListener.Close( ); err != nil {
+    log.Printf("Error closing underlying tcp connection of the gRPC server: %v", err)
+  }
 	g.server.GracefulStop( )
 }
 

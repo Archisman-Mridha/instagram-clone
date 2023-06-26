@@ -5,11 +5,11 @@ type (
 
 		// IsEmailPreRegisteredByVerifiedUser returns whether a verified user already exists with the
 		// given email address.
-		IsEmailPreRegisteredByVerifiedUser(email string) (result bool, err error)
+		IsEmailPreRegisteredByVerifiedUser(email string) (bool, error)
 
-		// SaveNewUser takes in details of the new user and creates a record in the authentication
-		// database. The user is marked as unverified.
-		SaveNewUser(details *UserDetails) (err error)
+		// SaveNewUser takes in details of the new user and creates a record in the authentication db.
+		// The user is marked as unverified.
+		SaveNewUser(details *UserDetails) error
 
 	}
 

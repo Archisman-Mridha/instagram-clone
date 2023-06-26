@@ -39,5 +39,5 @@ dev:
       - port: "4000"
     resources:
       limits:
-        memory: 374Mi
-        cpu: 240m
+        memory: 1Gi
+        cpu: 2000m

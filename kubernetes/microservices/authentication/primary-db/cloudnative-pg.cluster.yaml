@@ -7,7 +7,7 @@ metadata:
     app.kubernetes.io/part-of: authentication-microservice
 
 spec:
-  description: Primary database for authentication microservice
+  description: authentication db
 
   instances: 3
   primaryUpdateStrategy: unsupervised
@@ -19,4 +19,19 @@ spec:
       database: users
       owner: users
       secret:
-        name: authentication-db-app
+        name: authentication-db-owner-credentials
+
+---
+
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/basic-auth
+metadata:
+  name: authentication-db-owner-credentials
+  namespace: default
+  labels:
+    app.kubernetes.io/part-of: authentication-microservice
+
+data:
+  username: dXNlcnM=
+  password: cGFzcw==

@@ -48,7 +48,7 @@ func(u *Usecases) StartRegistration(parameters *StartRegistrationParameters) (ou
 		return
 	}
 
-	// Otherwise create a new record representing the new unverified user, in the primary database
+	// Otherwise create a new record representing the new unverified user, in the authentication db
 	try.To(
 		u.PrimaryDB.SaveNewUser(
 			&ports.UserDetails{
