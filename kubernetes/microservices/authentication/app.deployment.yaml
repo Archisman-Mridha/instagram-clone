@@ -2,15 +2,17 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: authentication-microservice
+  namespace: default
   labels:
-    app: authentication-microservice
+    app.kubernetes.io/part-of: authentication-microservice
 
 spec:
+
   selector:
     matchLabels:
       app: authentication-microservice
-  template:
 
+  template:
     metadata:
       labels:
         app: authentication-microservice

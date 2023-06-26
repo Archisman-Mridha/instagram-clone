@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  name: authentication-db-url
+  namespace: default
+  labels:
+    app.kubernetes.io/part-of: authentication-microservice
+
+stringData:
+  url: postgres://users:pass@authentication-db-rw.default.svc.cluster.local:5432/users?sslmode=disable
+
+---
+
+apiVersion: db.atlasgo.io/v1alpha1
+kind: AtlasSchema
+metadata:
+  name: authentication-db-schema
+  namespace: default
+  labels:
+    app.kubernetes.io/part-of: authentication-microservice
+
+spec:
+  urlFrom:
+    secretKeyRef:
+      key: url
+      name: authentication-db-url
+  schema:
+    sql: |
+      CREATE TABLE users (
+        id SERIAL PRIMARY KEY,
+
+        name VARCHAR(50) NOT NULL,
+        email VARCHAR(255) NOT NULL UNIQUE,
+        password VARCHAR(50) NOT NULL
+      );

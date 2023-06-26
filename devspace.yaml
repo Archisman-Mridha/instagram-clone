@@ -1,55 +1,40 @@
 version: v2beta1
 name: instagram-clone
 
-# This is a list of `pipelines` that DevSpace can execute (you can define your own)
 pipelines:
-  authentication-microservice-dev:
+  dev-authentication-microservice:
     run: |-
-      create_deployments --all
+      create_deployments authentication-microservice
       start_dev authentication-microservice
 
-# This is a list of `images` that DevSpace can build for this project
-# We recommend to skip image building during development (devspace dev) as much as possible
 images:
   authentication-microservice:
-    image: archismanmridha/instagram-clone-authentication-microservice:0.0.1
+    image: archismanmridha/instagram-clone-authentication-microservice
     dockerfile: ./backend/services/authentication/Dockerfile
     context: .
 
-# This is a list of `deployments` that DevSpace can create for this project
 deployments:
   authentication-microservice:
-    # This deployment uses `kubectl` but you can also define `helm` deployments
     kubectl:
       manifests:
-        - ./kubernetes/apps/authentication
+        - ./kubernetes/microservices/authentication
 
-# This is a list of `dev` containers that are based on the containers created by your deployments
 dev:
   authentication-microservice:
-    namespace: dev
+    namespace: default
     workingDir: /app
-    # Search for the container that runs this image
-    imageSelector: archismanmridha/instagram-clone-authentication-microservice:0.0.1
-    # Replace the container image with this dev-optimized image (allows to skip image building during development)
+    imageSelector: archismanmridha/instagram-clone-authentication-microservice
     devImage: ghcr.io/loft-sh/devspace-containers/go:1.20-alpine
-    # Sync files between the local filesystem and the development container
     sync:
       - path: ./backend/services/authentication/:/app/backend/services/authentication
       - path: ./backend/proto/generated/:/app/backend/proto/generated
-    # Open a terminal and use the following command to start it
     terminal:
       command: /app/backend/services/authentication/devspace_start.sh
-    # Inject a lightweight SSH server into the container (so your IDE can connect to the remote dev env)
     ssh:
       enabled: true
-    # Make the following commands from my local machine available inside the dev container
     proxyCommands:
-      - command: devspace
       - command: kubectl
-      - command: helm
       - gitCredentials: true
-    # Forward the following ports to be able access your application via localhost
     ports:
       - port: "4000"
     resources:

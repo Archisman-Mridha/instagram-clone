@@ -1,0 +1,22 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: authentication-db
+  namespace: default
+  labels:
+    app.kubernetes.io/part-of: authentication-microservice
+
+spec:
+  description: Primary database for authentication microservice
+
+  instances: 3
+  primaryUpdateStrategy: unsupervised
+  storage:
+    size: 100Mi
+
+  bootstrap:
+    initdb:
+      database: users
+      owner: users
+      secret:
+        name: authentication-db-app
