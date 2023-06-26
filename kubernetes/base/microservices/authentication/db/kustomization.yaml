@@ -1,0 +1,4 @@
+resources:
+
+  - ./cloudnative-pg.cluster.yaml
+  - ./migrations.yaml

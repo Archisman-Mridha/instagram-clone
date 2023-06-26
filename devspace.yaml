@@ -17,7 +17,7 @@ deployments:
   authentication-microservice:
     kubectl:
       manifests:
-        - ./kubernetes/microservices/authentication
+        - ./kubernetes/base/microservices/authentication/app.deployment.yaml
 
 dev:
   authentication-microservice:

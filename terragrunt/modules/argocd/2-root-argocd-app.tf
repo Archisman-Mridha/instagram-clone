@@ -1,8 +1,7 @@
 data "kubectl_file_documents" "root_argocd_app" {
   content = templatefile("./root.argocd-app.yaml",
     {
-      WORKSPACE: var.workspace,
-      BRANCH: var.workspace == "production" ? "production": "main"
+      WORKSPACE: var.workspace
     }
   )
 }

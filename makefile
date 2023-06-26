@@ -14,3 +14,6 @@ protoc-generate:
 
 act:
 	sudo act --secret-file act.secrets.env
+
+get-argocd-ui-password:
+	kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
