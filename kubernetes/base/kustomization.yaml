@@ -7,4 +7,4 @@ resources:
   - https://raw.githubusercontent.com/argoproj-labs/argocd-image-updater/stable/manifests/install.yaml
   - ./git-credentials.secret.yaml
 
-  - ./microservices/microservices.argocd-application.yaml
+  - ./microservices/kustomization.yaml
