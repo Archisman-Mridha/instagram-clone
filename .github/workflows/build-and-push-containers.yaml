@@ -5,8 +5,13 @@ on:
       - main
 
 jobs:
-  build-containers:
+  build-and-push-containers:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        container-image:
+          - dockerfile: backend/services/authentication/Dockerfile
+            tag: archismanmridha/instagram-clone-authentication-microservice
     steps:
 
       - name: Checkout code
@@ -25,6 +30,12 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          file: backend/services/authentication/Dockerfile
+          file: ${{ matrix.container-image.dockerfile }}
           push: true
-          tags: archismanmridha/instagram-clone-authentication-microservice:${{ github.sha }}
+          tags: ${{ matrix.container-image.tag }}:${{ github.sha }}
+
+          # experimental cache exporter for GitHub Actions provided by buildx and BuildKit.
+          # It uses the GitHub Cache API to fetch and load the Docker layer cache blobs across
+          # builds.
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
