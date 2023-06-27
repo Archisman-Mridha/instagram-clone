@@ -12,7 +12,7 @@ dependency "staging_cluster" {
 }
 
 terraform {
-  source = "${get_parent_terragrunt_dir("root")}/modules/argocd"
+  source = "${get_parent_terragrunt_dir("root")}/modules//setup-cluster"
 }
 
 inputs= {

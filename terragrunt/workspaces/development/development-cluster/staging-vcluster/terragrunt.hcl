@@ -7,7 +7,7 @@ include "development_root" {
 }
 
 dependency "development_cluster" {
-  config_path= "../1-development-cluster/"
+  config_path= "../"
   skip_outputs= true
 }
 
