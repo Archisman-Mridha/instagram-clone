@@ -6,8 +6,8 @@ metadata:
   finalizers:
     - resources-finalizer.argocd.argoproj.io
   annotations:
-    argocd-image-updater.argoproj.io/image-list: |
-      docker.io/archismanmridha/instagram-clone-authentication-microservice
+    argocd-image-updater.argoproj.io/image-list: authentication-microservice=archismanmridha/instagram-clone-authentication-microservice
+    argocd-image-updater.argoproj.io/authentication-microservice.update-strategy: latest
     argocd-image-updater.argoproj.io/write-back-method: git:secret:argocd/git-credentials
     argocd-image-updater.argoproj.io/git-branch: staging
 
@@ -15,7 +15,7 @@ spec:
   project: default
 
   source:
-    repoURL: https://github.com/Archisman-Mridha/instagram-clone
+    repoURL: https://github.com/Archisman-Mridha/kubernetes-cicd
     targetRevision: staging
     path: kubernetes/base/microservices/authentication
     directory:
