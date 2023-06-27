@@ -3,4 +3,4 @@
 # Ignore DevSpace cache and log folder
 .devspace/
 
-act.secrets.env
+kubernetes/**/*.secret.yaml
