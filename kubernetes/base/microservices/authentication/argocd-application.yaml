@@ -15,7 +15,7 @@ spec:
   project: default
 
   source:
-    repoURL: https://github.com/Archisman-Mridha/kubernetes-cicd
+    repoURL: https://github.com/Archisman-Mridha/instagram-clone
     targetRevision: staging
     path: kubernetes/base/microservices/authentication
     directory:
