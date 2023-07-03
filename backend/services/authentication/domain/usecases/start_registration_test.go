@@ -21,9 +21,11 @@ func TestStartRegistration(t *testing.T) {
 
 	var (
 		primaryDB= mock_ports.NewMockPrimaryDB(gomockController)
+    messageSender= mock_ports.NewMockMessageSender(gomockController)
 
 		usecasesLayer= Usecases{
 			PrimaryDB: primaryDB,
+      MessageSender: messageSender,
 		}
 
 		parameters= &StartRegistrationParameters{
@@ -64,7 +66,10 @@ func TestStartRegistration(t *testing.T) {
 		primaryDB.EXPECT( ).IsEmailPreRegisteredByVerifiedUser(parameters.Email).
 			Return(false, nil)
 		primaryDB.EXPECT( ).SaveNewUser(gomock.Any( )).
-			Return(nil)
+			Return(gomock.Any( ).String( ), nil)
+
+    messageSender.EXPECT( ).SendUserRegistrationStartedEvent(gomock.Any( )).
+      Return( )
 
 		output, errorMessage := usecasesLayer.StartRegistration(parameters)
 

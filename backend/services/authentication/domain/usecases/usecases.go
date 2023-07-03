@@ -5,5 +5,6 @@ import "github.com/Archisman-Mridha/instagram-clone/backend/services/authenticat
 type Usecases struct {
 
 	PrimaryDB ports.PrimaryDB
+  MessageSender ports.MessageSender
 
 }

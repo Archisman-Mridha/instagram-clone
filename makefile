@@ -28,5 +28,5 @@ gen-sealed-secrets-cert:
 		-subj "/CN=sealed-secret/O=sealed-secret"
 
 gen-sealed-secrets:
-	chmod +x ./scripts/generate-sealed-scripts.sh && \
-		./scripts/generate-sealed-scripts.sh
+	chmod +x ./scripts/generate-sealed-secrets.sh && \
+		./scripts/generate-sealed-secrets.sh

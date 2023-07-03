@@ -4,7 +4,7 @@ name: instagram-clone
 pipelines:
   dev-authentication-microservice:
     run: |-
-      create_deployments authentication-microservice
+      create_deployments authentication-db authentication-microservice
       start_dev authentication-microservice
 
 images:
@@ -14,10 +14,17 @@ images:
     context: .
 
 deployments:
+
+  authentication-db:
+    kubectl:
+      kustomize: true
+      manifests:
+        - ./kubernetes/base/microservices/authentication/db
   authentication-microservice:
     kubectl:
       manifests:
-        - ./kubernetes/base/microservices/authentication/app.deployment.yaml
+        - ./kubernetes/base/microservices/authentication/deployment.yaml
+        - ./kubernetes/base/microservices/authentication/sealed-secret.yaml
 
 dev:
   authentication-microservice:
@@ -28,6 +35,7 @@ dev:
     sync:
       - path: ./backend/services/authentication/:/app/backend/services/authentication
       - path: ./backend/proto/generated/:/app/backend/proto/generated
+      - path: ./backend/shared/:/app/backend/shared
     terminal:
       command: /app/backend/services/authentication/devspace_start.sh
     ssh:

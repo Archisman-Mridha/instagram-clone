@@ -1,0 +1,19 @@
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  name: main
+  namespace: rabbitmq
+  labels:
+    app.kubernetes.io/part-of: rabbitmq
+
+spec:
+  replicas: 1
+  persistence:
+    storage: 100Mi
+  resources:
+    limits:
+      cpu: 250m
+      memory: 500Mi
+  secretBackend:
+    externalSecret:
+      name: rabbitmq-cluster-secret-backend

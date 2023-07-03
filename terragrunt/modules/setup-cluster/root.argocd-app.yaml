@@ -9,7 +9,7 @@ spec:
 
   source:
     repoURL: https://github.com/Archisman-Mridha/instagram-clone
-    targetRevision: ${WORKSPACE}
+    targetRevision: ${BRANCH}
     path: kubernetes/workspaces/${WORKSPACE}
 
   destination:

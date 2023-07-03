@@ -7,28 +7,24 @@ metadata:
     app.kubernetes.io/part-of: authentication-microservice
 
 spec:
-
   selector:
     matchLabels:
       app: authentication-microservice
-
   template:
     metadata:
       labels:
         app: authentication-microservice
     spec:
+
       containers:
         - name: authentication-microservice
-          image: archismanmridha/instagram-clone-authentication-microservice:a2b071a81c1ceda6d2405115b901d0e9ed5a6aef
+          image: archismanmridha/instagram-clone-authentication-microservice:8c7ef7a6fb124a6f8f5485604d28f3eac316438e
           resources:
             limits:
               memory: 128Mi
               cpu: 200m
           ports:
             - containerPort: 4000
-          env:
-            - name: AUTHENTICATION_DB_URL
-              valueFrom:
-                secretKeyRef:
-                  name: authentication-db-url
-                  key: url
+          envFrom:
+            - secretRef:
+                name: authentication-microservice-envs

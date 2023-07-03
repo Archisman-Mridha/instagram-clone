@@ -11,8 +11,8 @@ import (
 
 const findVerifiedUserWithEmail = `-- name: FindVerifiedUserWithEmail :one
 SELECT id, is_verified, name, email, username, password FROM users
-    WHERE users.email= $1 AND is_verified= TRUE
-        LIMIT 1
+  WHERE users.email= $1 AND is_verified= TRUE
+    LIMIT 1
 `
 
 func (q *Queries) FindVerifiedUserWithEmail(ctx context.Context, email string) (User, error) {
@@ -29,10 +29,11 @@ func (q *Queries) FindVerifiedUserWithEmail(ctx context.Context, email string) (
 	return i, err
 }
 
-const saveUnverifiedUser = `-- name: SaveUnverifiedUser :exec
+const saveUnverifiedUser = `-- name: SaveUnverifiedUser :one
 INSERT INTO users
   (name, email)
     VALUES ($1, $2)
+      RETURNING id
 `
 
 type SaveUnverifiedUserParams struct {
@@ -40,7 +41,9 @@ type SaveUnverifiedUserParams struct {
 	Email string
 }
 
-func (q *Queries) SaveUnverifiedUser(ctx context.Context, arg SaveUnverifiedUserParams) error {
-	_, err := q.db.ExecContext(ctx, saveUnverifiedUser, arg.Name, arg.Email)
-	return err
+func (q *Queries) SaveUnverifiedUser(ctx context.Context, arg SaveUnverifiedUserParams) (int32, error) {
+	row := q.db.QueryRowContext(ctx, saveUnverifiedUser, arg.Name, arg.Email)
+	var id int32
+	err := row.Scan(&id)
+	return id, err
 }
