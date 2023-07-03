@@ -6,16 +6,18 @@ include "development_root" {
   path= find_in_parent_folders("development.terragrunt.hcl")
 }
 
-dependency "development_cluster" {
+dependency "staging_cluster" {
   config_path= "../"
   skip_outputs= true
 }
 
 terraform {
-  source = "${get_parent_terragrunt_dir("root")}/modules/setup-cluster/sealed-secrets"
+  source = "${get_parent_terragrunt_dir("root")}/modules//setup-cluster"
 }
 
 inputs= {
+  workspace= "development"
+
   kubeconfig= {
 		path= "~/.kube/config"
 

@@ -29,9 +29,3 @@ provider "kubectl" {
   config_context = var.kubeconfig.context
   username = var.kubeconfig.username
 }
-
-module "sealed_secrets" {
-  source = "./sealed-secrets/"
-
-  kubeconfig = var.kubeconfig
-}
