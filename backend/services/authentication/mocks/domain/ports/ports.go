@@ -86,38 +86,3 @@ func NewMockCache(ctrl *gomock.Controller) *MockCache {
 func (m *MockCache) EXPECT() *MockCacheMockRecorder {
 	return m.recorder
 }
-
-// MockMessageSender is a mock of MessageSender interface.
-type MockMessageSender struct {
-	ctrl     *gomock.Controller
-	recorder *MockMessageSenderMockRecorder
-}
-
-// MockMessageSenderMockRecorder is the mock recorder for MockMessageSender.
-type MockMessageSenderMockRecorder struct {
-	mock *MockMessageSender
-}
-
-// NewMockMessageSender creates a new mock instance.
-func NewMockMessageSender(ctrl *gomock.Controller) *MockMessageSender {
-	mock := &MockMessageSender{ctrl: ctrl}
-	mock.recorder = &MockMessageSenderMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockMessageSender) EXPECT() *MockMessageSenderMockRecorder {
-	return m.recorder
-}
-
-// SendUserRegistrationStartedEvent mocks base method.
-func (m *MockMessageSender) SendUserRegistrationStartedEvent(id string) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SendUserRegistrationStartedEvent", id)
-}
-
-// SendUserRegistrationStartedEvent indicates an expected call of SendUserRegistrationStartedEvent.
-func (mr *MockMessageSenderMockRecorder) SendUserRegistrationStartedEvent(id interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendUserRegistrationStartedEvent", reflect.TypeOf((*MockMessageSender)(nil).SendUserRegistrationStartedEvent), id)
-}

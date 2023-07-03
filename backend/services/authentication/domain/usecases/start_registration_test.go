@@ -13,20 +13,15 @@ import (
 )
 
 func TestStartRegistration(t *testing.T) {
-
 	t.Parallel()
 
 	gomockController := gomock.NewController(t)
 	defer gomockController.Finish()
 
 	var (
-		primaryDB     = mock_ports.NewMockPrimaryDB(gomockController)
-		messageSender = mock_ports.NewMockMessageSender(gomockController)
+		primaryDB = mock_ports.NewMockPrimaryDB(gomockController)
 
-		usecasesLayer = Usecases{
-			PrimaryDB:     primaryDB,
-			MessageSender: messageSender,
-		}
+		usecasesLayer = Usecases{PrimaryDB: primaryDB}
 
 		parameters = &StartRegistrationParameters{
 			Name:  fmt.Sprintf("%s %s", faker.FirstName(), faker.LastName()),
@@ -68,13 +63,9 @@ func TestStartRegistration(t *testing.T) {
 		primaryDB.EXPECT().SaveNewUser(gomock.Any()).
 			Return(gomock.Any().String(), nil)
 
-		messageSender.EXPECT().SendUserRegistrationStartedEvent(gomock.Any()).
-			Return()
-
 		output, errorMessage := usecasesLayer.StartRegistration(parameters)
 
 		assert.Nil(t, output)
 		assert.Nil(t, errorMessage)
 	})
-
 }

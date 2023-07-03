@@ -13,13 +13,6 @@ type (
 	}
 
 	Cache interface{}
-
-	MessageSender interface {
-
-		// SendUserRegistrationStartedEvent gets triggered when a new unverified user is created in the
-		// authentication db.
-		SendUserRegistrationStartedEvent(id string)
-	}
 )
 
 type UserDetails struct {

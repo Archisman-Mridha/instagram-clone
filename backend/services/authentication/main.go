@@ -17,14 +17,8 @@ func main() {
 	rabbitMQConnection := shared_utils.CreateRabbitMQConnection()
 	defer rabbitMQConnection.Close()
 
-	messageSender := &outbound_adapters.MessageSender{}
-	messageSender.Setup(rabbitMQConnection)
-	defer messageSender.Cleanup()
-
 	usecasesLayer := &usecases.Usecases{
-
-		PrimaryDB:     primaryDB,
-		MessageSender: messageSender,
+		PrimaryDB: primaryDB,
 	}
 
 	appServer := &inbound_adapters.GrpcServer{}

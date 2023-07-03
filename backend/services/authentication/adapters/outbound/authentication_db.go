@@ -29,7 +29,7 @@ func (a *AuthenticationDB) Connect() {
 		log.Fatalf("💀 Error pinging PostgreSQL cluster: %v", err)
 	}
 
-	log.Printf("🔥 Connected to PostgreSQL clusQL_CLUSTERter")
+	log.Printf("🔥 Connected to PostgreSQL cluster")
 
 	a.queries = sql_generated.New(a.connection)
 }
@@ -41,11 +41,9 @@ func (a *AuthenticationDB) Disconnect() {
 }
 
 func (a *AuthenticationDB) IsEmailPreRegisteredByVerifiedUser(email string) (bool, error) {
-
-	var result bool
-
 	_, err := a.queries.FindVerifiedUserWithEmail(context.Background(), email)
 	if err != nil {
+		var result bool
 
 		// If no rows are found, it indicates that no verified user exists with the given email.
 		if errors.Is(err, sql.ErrNoRows) {
@@ -57,11 +55,9 @@ func (a *AuthenticationDB) IsEmailPreRegisteredByVerifiedUser(email string) (boo
 	}
 
 	return true, nil
-
 }
 
 func (a *AuthenticationDB) SaveNewUser(details *ports.UserDetails) (string, error) {
-
 	id, err := a.queries.SaveUnverifiedUser(context.Background(),
 		sql_generated.SaveUnverifiedUserParams{
 			Name:  details.Name,
@@ -70,5 +66,4 @@ func (a *AuthenticationDB) SaveNewUser(details *ports.UserDetails) (string, erro
 	)
 
 	return string(id), err
-
 }

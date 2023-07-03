@@ -4,8 +4,6 @@ import (
 	"log"
 
 	"github.com/streadway/amqp"
-
-	rabbitmq_queues "github.com/Archisman-Mridha/instagram-clone/backend/shared/utils/rabbitmq-queues"
 )
 
 // CreateRabbitMQConnection creates a connection to the RabbitMQ cluster and returns it.
@@ -23,16 +21,15 @@ func CreateRabbitMQConnection() *amqp.Connection {
 
 // CreateChannelAndDeclareQueue creates a RabbitMQ channel and then declares the necessary RabbitMQ
 // queue.
-func CreateChannelAndDeclareQueue(connection *amqp.Connection) (*amqp.Channel, amqp.Queue, func()) {
+func CreateChannelAndDeclareQueue(connection *amqp.Connection, queueName string) (*amqp.Channel, amqp.Queue, func()) {
 	channel, err := connection.Channel()
 	if err != nil {
 		log.Fatalf("💀 Error creating RabbitMQ channel: %v", err)
 	}
 
-	queue, err := channel.QueueDeclare(
-		rabbitmq_queues.AuthenticationMicroservie, false, false, false, false, nil)
+	queue, err := channel.QueueDeclare(queueName, false, false, false, false, nil)
 	if err != nil {
-		log.Fatalf("💀 Error declaring queue %s in RabbitMQ: %v", rabbitmq_queues.AuthenticationMicroservie, err)
+		log.Fatalf("💀 Error declaring queue %s in RabbitMQ: %v", queueName, err)
 	}
 
 	cleanupFn := func() {

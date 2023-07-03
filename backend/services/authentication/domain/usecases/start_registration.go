@@ -45,7 +45,7 @@ func (u *Usecases) StartRegistration(parameters *StartRegistrationParameters) (o
 		return
 	}
 
-	id := try.To1[string](
+	try.To1[string](
 		u.PrimaryDB.SaveNewUser(
 			&ports.UserDetails{
 				Name:  parameters.Name,
@@ -53,8 +53,6 @@ func (u *Usecases) StartRegistration(parameters *StartRegistrationParameters) (o
 			},
 		),
 	)
-
-	u.MessageSender.SendUserRegistrationStartedEvent(id)
 
 	return
 }

@@ -71,5 +71,4 @@ func (a *AuthenticationGrpcServiceImplementation) StartRegistration(
 	}
 
 	return
-
 }
