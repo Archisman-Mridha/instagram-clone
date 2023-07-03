@@ -14,15 +14,14 @@ import (
 
 type (
 	StartRegistrationParameters struct {
-
-		Name string `json:"name"`
+		Name  string `json:"name"`
 		Email string `json:"email"`
 	}
 
-	StartRegistrationOutput struct { }
+	StartRegistrationOutput struct{}
 )
 
-func(u *Usecases) StartRegistration(parameters *StartRegistrationParameters) (output *StartRegistrationOutput, err error) {
+func (u *Usecases) StartRegistration(parameters *StartRegistrationParameters) (output *StartRegistrationOutput, err error) {
 	defer err2.Handle(&err)
 
 	try.To(
@@ -31,7 +30,7 @@ func(u *Usecases) StartRegistration(parameters *StartRegistrationParameters) (ou
 			validation.Field(&parameters.Name,
 				validation.Required, validation.Length(4, 50),
 			),
-	
+
 			validation.Field(&parameters.Email,
 				validation.Required, is.Email,
 			),
@@ -42,20 +41,20 @@ func(u *Usecases) StartRegistration(parameters *StartRegistrationParameters) (ou
 		u.PrimaryDB.IsEmailPreRegisteredByVerifiedUser(parameters.Email),
 	)
 	if isEmailPreRegisteredByVerifiedUser {
-		err= errors.New(utils.EmailPreRegisteredErrMsg)
+		err = errors.New(utils.EmailPreRegisteredErrMsg)
 		return
 	}
 
 	id := try.To1[string](
 		u.PrimaryDB.SaveNewUser(
 			&ports.UserDetails{
-				Name: parameters.Name,
+				Name:  parameters.Name,
 				Email: parameters.Email,
 			},
 		),
 	)
 
-  u.MessageSender.SendUserRegistrationStartedEvent(id)
+	u.MessageSender.SendUserRegistrationStartedEvent(id)
 
 	return
 }

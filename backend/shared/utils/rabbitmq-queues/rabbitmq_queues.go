@@ -1,5 +1,5 @@
 package rabbitmq_queues
 
 const (
-  AuthenticationMicroservie= "authentication-microservice"
+	AuthenticationMicroservie = "authentication-microservice"
 )

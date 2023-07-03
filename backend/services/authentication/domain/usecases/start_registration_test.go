@@ -14,23 +14,23 @@ import (
 
 func TestStartRegistration(t *testing.T) {
 
-	t.Parallel( )
+	t.Parallel()
 
 	gomockController := gomock.NewController(t)
-	defer gomockController.Finish( )
+	defer gomockController.Finish()
 
 	var (
-		primaryDB= mock_ports.NewMockPrimaryDB(gomockController)
-    messageSender= mock_ports.NewMockMessageSender(gomockController)
+		primaryDB     = mock_ports.NewMockPrimaryDB(gomockController)
+		messageSender = mock_ports.NewMockMessageSender(gomockController)
 
-		usecasesLayer= Usecases{
-			PrimaryDB: primaryDB,
-      MessageSender: messageSender,
+		usecasesLayer = Usecases{
+			PrimaryDB:     primaryDB,
+			MessageSender: messageSender,
 		}
 
-		parameters= &StartRegistrationParameters{
-			Name: fmt.Sprintf("%s %s", faker.FirstName( ), faker.LastName( )),
-			Email: faker.Email( ),
+		parameters = &StartRegistrationParameters{
+			Name:  fmt.Sprintf("%s %s", faker.FirstName(), faker.LastName()),
+			Email: faker.Email(),
 		}
 	)
 
@@ -44,7 +44,7 @@ func TestStartRegistration(t *testing.T) {
 
 		assert.Nil(t, output)
 
-		t.Log(err.Error( ))
+		t.Log(err.Error())
 
 		assert.ErrorContains(t, err, "name: cannot be blank")
 		assert.ErrorContains(t, err, "email: must be a valid email address")
@@ -52,7 +52,7 @@ func TestStartRegistration(t *testing.T) {
 
 	t.Run("🧪 Should throw error if a user already registered with that email and got verified", func(t *testing.T) {
 
-		primaryDB.EXPECT( ).IsEmailPreRegisteredByVerifiedUser(parameters.Email).
+		primaryDB.EXPECT().IsEmailPreRegisteredByVerifiedUser(parameters.Email).
 			Return(true, nil)
 
 		output, err := usecasesLayer.StartRegistration(parameters)
@@ -63,13 +63,13 @@ func TestStartRegistration(t *testing.T) {
 
 	t.Run("🧪 Should run successfully", func(t *testing.T) {
 
-		primaryDB.EXPECT( ).IsEmailPreRegisteredByVerifiedUser(parameters.Email).
+		primaryDB.EXPECT().IsEmailPreRegisteredByVerifiedUser(parameters.Email).
 			Return(false, nil)
-		primaryDB.EXPECT( ).SaveNewUser(gomock.Any( )).
-			Return(gomock.Any( ).String( ), nil)
+		primaryDB.EXPECT().SaveNewUser(gomock.Any()).
+			Return(gomock.Any().String(), nil)
 
-    messageSender.EXPECT( ).SendUserRegistrationStartedEvent(gomock.Any( )).
-      Return( )
+		messageSender.EXPECT().SendUserRegistrationStartedEvent(gomock.Any()).
+			Return()
 
 		output, errorMessage := usecasesLayer.StartRegistration(parameters)
 
