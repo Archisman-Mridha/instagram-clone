@@ -1,0 +1,6 @@
+resources:
+
+  # Cloudnative PG operator.
+  - https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg/release-1.20/releases/cnpg-1.20.1.yaml
+
+  - ../../base/rabbitmq
