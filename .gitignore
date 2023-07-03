@@ -4,3 +4,4 @@
 .devspace/
 
 kubernetes/**/*.secret.yaml
+kubernetes/**/secret.yaml
