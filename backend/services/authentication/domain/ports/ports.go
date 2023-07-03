@@ -9,11 +9,19 @@ type (
 
 		// SaveNewUser takes in details of the new user and creates a record in the authentication db.
 		// The user is marked as unverified.
-		SaveNewUser(details *UserDetails) error
+		SaveNewUser(details *UserDetails) (string, error)
 
 	}
 
 	Cache interface { }
+
+  MessageSender interface {
+
+    // SendUserRegistrationStartedEvent gets triggered when a new unverified user is created in the
+    // authentication db.
+    SendUserRegistrationStartedEvent(id string)
+
+  }
 )
 
 type UserDetails struct {

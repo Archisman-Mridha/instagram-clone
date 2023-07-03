@@ -1,8 +1,6 @@
 package main
 
 import (
-	"log"
-
 	inbound_adapters "github.com/Archisman-Mridha/instagram-clone/backend/services/authentication/adapters/inbound"
 	outbound_adapters "github.com/Archisman-Mridha/instagram-clone/backend/services/authentication/adapters/outbound"
 	"github.com/Archisman-Mridha/instagram-clone/backend/services/authentication/domain/usecases"
@@ -10,14 +8,19 @@ import (
 
 func main( ) {
 
-  log.Println("debug")
-
-  primaryDB := &outbound_adapters.Postgresql{ }
+  primaryDB := &outbound_adapters.AuthenticationDB{ }
   primaryDB.Connect( )
   defer primaryDB.Disconnect( )
 
+  messageSender := &outbound_adapters.MessageSender{ }
+  messageSender.Connect( )
+  defer messageSender.Disconnect( )
+
 	usecasesLayer := &usecases.Usecases{
+
     PrimaryDB: primaryDB,
+    MessageSender: messageSender,
+
   }
 
 	appServer := &inbound_adapters.GrpcServer{ }

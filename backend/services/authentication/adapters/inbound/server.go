@@ -31,7 +31,6 @@ func(g *GrpcServer) Start(usecasesLayer *usecases.Usecases) {
 	if port= os.Getenv("GRPC_PORT"); port == "" {
 		port= "4000"
 	}
-
 	if g.tcpListener, err= net.Listen("tcp", fmt.Sprintf("0.0.0.0:%s", port)); err != nil {
 		log.Panicf("💀 Error binding to port %s: %v", port, err)
 	}

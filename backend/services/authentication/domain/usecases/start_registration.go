@@ -25,7 +25,6 @@ type (
 func(u *Usecases) StartRegistration(parameters *StartRegistrationParameters) (output *StartRegistrationOutput, err error) {
 	defer err2.Handle(&err)
 
-	// Validate parameters
 	try.To(
 		validation.ValidateStruct(parameters,
 
@@ -39,7 +38,6 @@ func(u *Usecases) StartRegistration(parameters *StartRegistrationParameters) (ou
 		),
 	)
 
-	// If a verified user with the given email already exists then send back error
 	isEmailPreRegisteredByVerifiedUser := try.To1[bool](
 		u.PrimaryDB.IsEmailPreRegisteredByVerifiedUser(parameters.Email),
 	)
@@ -48,8 +46,7 @@ func(u *Usecases) StartRegistration(parameters *StartRegistrationParameters) (ou
 		return
 	}
 
-	// Otherwise create a new record representing the new unverified user, in the authentication db
-	try.To(
+	id := try.To1[string](
 		u.PrimaryDB.SaveNewUser(
 			&ports.UserDetails{
 				Name: parameters.Name,
@@ -57,6 +54,8 @@ func(u *Usecases) StartRegistration(parameters *StartRegistrationParameters) (ou
 			},
 		),
 	)
+
+  u.MessageSender.SendUserRegistrationStartedEvent(id)
 
 	return
 }
