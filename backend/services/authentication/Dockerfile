@@ -4,7 +4,7 @@ WORKDIR /app
 RUN go work init
 COPY go.work.sum .
 
-COPY ./backend/shared/go.mod ./backend/shared/go.sum \
+COPY ./backend/shared/go.mod \
   ./backend/shared/
 RUN go work use ./backend/shared && \
   cd ./backend/shared/ && go mod download
