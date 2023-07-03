@@ -1,6 +1,5 @@
 resources:
-
-  - ./cloudnative-pg.cluster.yaml
-  - ./migrations.yaml
   - ./owner-credentials.sealed-secret.yaml
+  - ./cloudnative-pg.cluster.yaml
   - ./url.sealed-secret.yaml
+  - ./migrations.yaml

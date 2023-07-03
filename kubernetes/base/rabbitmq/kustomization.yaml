@@ -5,5 +5,5 @@ resources:
   # RabbitMQ Cluster operator.
   - https://github.com/rabbitmq/cluster-operator/releases/latest/download/cluster-operator.yml
 
+  - ./backend.secret.yaml
   - ./cluster.yaml
-  - ./secret-backend.yaml
