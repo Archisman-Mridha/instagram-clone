@@ -9,12 +9,11 @@ import (
 	"github.com/lainio/err2/try"
 
 	"github.com/Archisman-Mridha/instagram-clone/backend/services/authentication/domain/ports"
-	"github.com/Archisman-Mridha/instagram-clone/backend/services/authentication/domain/utils"
+	error_messages "github.com/Archisman-Mridha/instagram-clone/backend/services/authentication/domain/utils/error-messages"
 )
 
 type (
 	StartRegistrationParameters struct {
-		Name  string `json:"name"`
 		Email string `json:"email"`
 	}
 
@@ -27,10 +26,6 @@ func (u *Usecases) StartRegistration(parameters *StartRegistrationParameters) (o
 	try.To(
 		validation.ValidateStruct(parameters,
 
-			validation.Field(&parameters.Name,
-				validation.Required, validation.Length(4, 50),
-			),
-
 			validation.Field(&parameters.Email,
 				validation.Required, is.Email,
 			),
@@ -41,16 +36,13 @@ func (u *Usecases) StartRegistration(parameters *StartRegistrationParameters) (o
 		u.PrimaryDB.IsEmailPreRegisteredByVerifiedUser(parameters.Email),
 	)
 	if isEmailPreRegisteredByVerifiedUser {
-		err = errors.New(utils.EmailPreRegisteredErrMsg)
+		err = errors.New(error_messages.EmailPreRegistered)
 		return
 	}
 
 	try.To1[string](
 		u.PrimaryDB.SaveNewUser(
-			&ports.UserDetails{
-				Name:  parameters.Name,
-				Email: parameters.Email,
-			},
+			&ports.UserDetails{Email: parameters.Email},
 		),
 	)
 

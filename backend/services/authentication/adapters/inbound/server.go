@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"os"
 
 	protoc_generated "github.com/Archisman-Mridha/instagram-clone/backend/proto/generated"
 	"google.golang.org/grpc"
@@ -13,7 +12,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/Archisman-Mridha/instagram-clone/backend/services/authentication/domain/usecases"
-	"github.com/Archisman-Mridha/instagram-clone/backend/services/authentication/domain/utils"
+	error_messages "github.com/Archisman-Mridha/instagram-clone/backend/services/authentication/domain/utils/error-messages"
 )
 
 type GrpcServer struct {
@@ -21,17 +20,11 @@ type GrpcServer struct {
 	server      *grpc.Server
 }
 
-func (g *GrpcServer) Start(usecasesLayer *usecases.Usecases) {
-	var (
-		err  error
-		port string
-	)
+func (g *GrpcServer) Start(port string, usecasesLayer *usecases.Usecases) {
+	var err error
 
-	if port = os.Getenv("GRPC_PORT"); port == "" {
-		port = "4000"
-	}
 	if g.tcpListener, err = net.Listen("tcp", fmt.Sprintf("0.0.0.0:%s", port)); err != nil {
-		log.Panicf("💀 Error binding to port %s: %v", port, err)
+		log.Panicf("Error binding to port %s: %v", port, err)
 	}
 
 	g.server = grpc.NewServer(grpc.EmptyServerOption{})
@@ -39,7 +32,7 @@ func (g *GrpcServer) Start(usecasesLayer *usecases.Usecases) {
 	protoc_generated.RegisterAuthenticationServer(g.server, &AuthenticationGrpcServiceImplementation{usecasesLayer: usecasesLayer})
 	reflection.Register(g.server)
 
-	log.Printf("🔥 Starting gRPC server at port %s", port)
+	log.Printf("Starting gRPC server at port %s", port)
 	g.server.Serve(g.tcpListener)
 }
 
@@ -61,13 +54,10 @@ func (a *AuthenticationGrpcServiceImplementation) StartRegistration(
 ) (response *protoc_generated.StartRegistrationResponse, err error) {
 
 	_, err = a.usecasesLayer.StartRegistration(
-		&usecases.StartRegistrationParameters{
-			Name:  request.GetName(),
-			Email: request.GetEmail(),
-		},
+		&usecases.StartRegistrationParameters{Email: request.GetEmail()},
 	)
 	if err != nil {
-		err = status.Error(400, utils.ServerErrorOccurredErrMsg)
+		err = status.Error(400, error_messages.ServerErrorOccurred)
 	}
 
 	return

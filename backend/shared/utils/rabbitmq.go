@@ -6,37 +6,29 @@ import (
 	"github.com/streadway/amqp"
 )
 
-// CreateRabbitMQConnection creates a connection to the RabbitMQ cluster and returns it.
-func CreateRabbitMQConnection() *amqp.Connection {
-	uri := GetEnv("RABBITMQ_URL")
+// ConnectRabbitMQ creates a connection to the RabbitMQ cluster present at the given uri.
+// It returns the connection, if successfully created.
+func ConnectRabbitMQ(uri string) *amqp.Connection {
 	connection, err := amqp.Dial(uri)
 	if err != nil {
-		log.Fatalf("💀 Error connecting to RabbitMQ: %v", err)
+		log.Fatalf("Error connecting to RabbitMQ: %v", err)
 	}
 	defer connection.Close()
 
-	log.Printf("🔥 Connected to RabbitMQ")
+	log.Printf("Connected to RabbitMQ")
 	return connection
 }
 
 // CreateChannelAndDeclareQueue creates a RabbitMQ channel and then declares the necessary RabbitMQ
-// queue.
-func CreateChannelAndDeclareQueue(connection *amqp.Connection, queueName string) (*amqp.Channel, amqp.Queue, func()) {
+// queue. It returns the RabbitMQ channel, if successfully created.
+func CreateChannelAndDeclareQueue(connection *amqp.Connection, queueName string) *amqp.Channel {
 	channel, err := connection.Channel()
 	if err != nil {
-		log.Fatalf("💀 Error creating RabbitMQ channel: %v", err)
+		log.Fatalf("Error creating RabbitMQ channel: %v", err)
+	}
+	if _, err := channel.QueueDeclare(queueName, false, false, false, false, nil); err != nil {
+		log.Fatalf("Error declaring queue %s in RabbitMQ: %v", queueName, err)
 	}
 
-	queue, err := channel.QueueDeclare(queueName, false, false, false, false, nil)
-	if err != nil {
-		log.Fatalf("💀 Error declaring queue %s in RabbitMQ: %v", queueName, err)
-	}
-
-	cleanupFn := func() {
-		if err := channel.Close(); err != nil {
-			log.Printf("💀 Error closing channel in RabbitMQ: %v", err)
-		}
-	}
-
-	return channel, queue, cleanupFn
+	return channel
 }

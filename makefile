@@ -1,4 +1,4 @@
-protoc-generate:
+protoc-gen:
 	rm -rf ./backend/proto/generated && \
 		mkdir ./backend/proto/generated
 	protoc \
@@ -30,3 +30,6 @@ gen-sealed-secrets-cert:
 gen-sealed-secrets:
 	chmod +x ./scripts/generate-sealed-secrets.sh && \
 		./scripts/generate-sealed-secrets.sh
+
+sqlc-gen:
+	sqlc generate

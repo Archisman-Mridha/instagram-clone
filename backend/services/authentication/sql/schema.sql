@@ -1,10 +1,21 @@
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
 
-  is_verified BOOLEAN DEFAULT FALSE,
-
-  name VARCHAR(50) NOT NULL,
   email VARCHAR(255) NOT NULL UNIQUE,
   username VARCHAR(50),
-  password VARCHAR(50)
+  password VARCHAR(50),
+
+  is_verified BOOLEAN DEFAULT FALSE,
+  is_username_set BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE outbox (
+  id SERIAL PRIMARY KEY,
+
+  message BYTEA NOT NULL,
+
+  locked BOOLEAN DEFAULT FALSE,
+  locked_on TIMESTAMP DEFAULT NULL,
+
+  published BOOLEAN DEFAULT FALSE
 );

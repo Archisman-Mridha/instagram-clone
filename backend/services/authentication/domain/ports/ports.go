@@ -16,6 +16,5 @@ type (
 )
 
 type UserDetails struct {
-	Name  string
 	Email string
 }

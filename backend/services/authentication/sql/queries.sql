@@ -5,6 +5,11 @@ SELECT * FROM users
 
 -- name: SaveUnverifiedUser :one
 INSERT INTO users
-  (name, email)
-    VALUES (@name, @email)
+  (email)
+    VALUES (@email)
       RETURNING id;
+
+-- name: InsertMessage :exec
+INSERT INTO outbox
+  (message)
+    VALUES (@message);

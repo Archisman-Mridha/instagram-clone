@@ -11,7 +11,7 @@ import (
 func GetEnv(envName string) string {
 	envValue, isEnvFound := os.LookupEnv(envName)
 	if !isEnvFound {
-		log.Fatalf(fmt.Sprintf("💀 Env %s not found", envName))
+		log.Fatalf(fmt.Sprintf("Env %s not found", envName))
 	}
 
 	return envValue
