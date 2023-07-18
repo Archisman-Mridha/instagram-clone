@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+
+  postgres:
+    container_name: postgres
+    image: postgres:14.4-alpine
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=default
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=authentication
+    volumes:
+      - ./adapters/dbs/sql/schema.sql:/docker-entrypoint-initdb.d/init.sql
+    hostname: postgres
+
+  rabbitmq:
+    container_name: rabbitmq
+    hostname: rabbitmq
+    image: rabbitmq:management-alpine
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=default
+      - RABBITMQ_DEFAULT_PASS=password
+
+  outboxer:
+    container_name: outbox-dispatcher
+    build:
+      context: .
+    environment:
+      - DB_TYPE=postgres
+      - DB_URI=postgresql://default:password@postgres:5432/authentication?sslmode=disable
+      - BATCH_SIZE=5
+      - MQ_URI=amqp://default:password@rabbitmq:5672
+      - MQ_QUEUE_NAME=events-for-authentication-microservice
+    depends_on:
+      - postgres
+      - rabbitmq
+    links:
+      - postgres
+      - rabbitmq
+    restart: on-failure

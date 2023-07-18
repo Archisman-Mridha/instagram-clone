@@ -2,3 +2,8 @@ Dockerfile
 .dockerignore
 
 .devspace/
+
+*_test.go
+
+# For backend/outboxer
+docker-compose.yaml

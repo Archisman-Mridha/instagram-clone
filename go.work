@@ -1,6 +1,7 @@
 go 1.20
 
 use (
+	./backend/outboxer
 	./backend/proto/generated
 	./backend/services/authentication
 	./backend/shared

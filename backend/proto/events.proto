@@ -3,12 +3,9 @@ syntax= "proto3";
 package main;
 option go_package= "protoc_generated/";
 
-message UserRegistrationStartedEvent { string id= 1; }
+message UserRegistrationStartedEvent {
+  string event_type= 1;
 
-message UuidGeneratedForUnverifiedUserEvent { string uuid= 1; }
-
-message UserVerifiedEvent {
-
-  string id= 1;
-  string name= 2;
+  string email= 2;
+  string username= 3;
 }

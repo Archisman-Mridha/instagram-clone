@@ -1,0 +1,23 @@
+version: "2"
+
+sql:
+
+  # outboxer
+  - engine: postgresql
+    queries: ./backend/outboxer/adapters/dbs/sql/queries.sql
+    schema: ./backend/outboxer/adapters/dbs/sql/schema.sql
+    gen:
+      go:
+        package: sql_generated
+        out: ./backend/outboxer/adapters/dbs/sql/generated
+        emit_interface: true
+
+  # authentication microservice
+  - engine: postgresql
+    queries: ./backend/services/authentication/sql/queries.sql
+    schema: ./backend/services/authentication/sql/schema.sql
+    gen:
+      go:
+        package: sqlc_generated
+        out: ./backend/services/authentication/sql/generated
+        emit_interface: true

@@ -4,73 +4,107 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"log"
 
-	"github.com/Archisman-Mridha/instagram-clone/backend/shared/utils"
-	_ "github.com/lib/pq"
+	protoc_generated "github.com/Archisman-Mridha/instagram-clone/backend/proto/generated"
+	shared_utils "github.com/Archisman-Mridha/instagram-clone/backend/shared/utils"
+	event_types "github.com/Archisman-Mridha/instagram-clone/backend/shared/utils/event-types"
+	"github.com/charmbracelet/log"
+	"github.com/golang/protobuf/proto"
+	"github.com/lainio/err2"
+	"github.com/lainio/err2/try"
 
 	"github.com/Archisman-Mridha/instagram-clone/backend/services/authentication/domain/ports"
-	sql_generated "github.com/Archisman-Mridha/instagram-clone/backend/services/authentication/sql/generated"
+	"github.com/Archisman-Mridha/instagram-clone/backend/services/authentication/domain/utils"
+	sqlc_generated "github.com/Archisman-Mridha/instagram-clone/backend/services/authentication/sql/generated"
 )
 
 type AuthenticationDB struct {
-  connection *sql.DB
-  queries *sql_generated.Queries
+	connection *sql.DB
+	queries    *sqlc_generated.Queries
 }
 
-func(a *AuthenticationDB) Connect( ) {
+func NewAuthenticationDB(uri string) *AuthenticationDB {
+	a := &AuthenticationDB{}
 
-  var err error
+	a.connection = shared_utils.ConnectPostgres(uri)
+	a.queries = sqlc_generated.New(a.connection)
 
-  uri := utils.GetEnv("POSTGRES_URL")
-  if a.connection, err= sql.Open("postgres", uri); err != nil {
-    log.Fatalf("💀 Error connecting to PostgreSQL cluster: %v", err)
-  }
-  if err= a.connection.Ping( ); err != nil {
-    log.Fatalf("💀 Error pinging PostgreSQL cluster: %v", err)
-  }
-
-  log.Printf("🔥 Connected to PostgreSQL clusQL_CLUSTERter")
-
-  a.queries= sql_generated.New(a.connection)
-
+	return a
 }
 
-func(a *AuthenticationDB) IsEmailPreRegisteredByVerifiedUser(email string) (bool, error) {
-
-  var result bool
-
-  _, err := a.queries.FindVerifiedUserWithEmail(context.Background( ), email)
-  if err != nil {
-
-    // If no rows are found, it indicates that no verified user exists with the given email.
-    if errors.Is(err, sql.ErrNoRows) {
-      result= false
-      err= nil
-    }
-    // Otherwise some database error has occured
-    return result, err
-  }
-
-  return true, nil
-
+func (a *AuthenticationDB) Disconnect() {
+	if err := a.connection.Close(); err != nil {
+		log.Errorf("Error closing connection to PostgreSQL cluster: %v", err)
+	}
 }
 
-func(a *AuthenticationDB) SaveNewUser(details *ports.UserDetails) (string, error) {
+func (a *AuthenticationDB) IsEmailPreRegisteredByVerifiedUser(email string) (bool, error) {
+	_, err := a.queries.FindVerifiedUserWithEmail(context.Background(), email)
+	if err != nil {
+		var result bool
 
-  id, err := a.queries.SaveUnverifiedUser(context.Background( ),
-    sql_generated.SaveUnverifiedUserParams{
-      Name: details.Name,
-      Email: details.Email,
-    },
-  )
+		// If no rows are found, it indicates that no verified user exists with the given email.
+		if errors.Is(err, sql.ErrNoRows) {
+			result = false
+			err = nil
+		}
+		// Otherwise some database error has occured
+		log.Errorf("Error while executing SQL query: %v", err)
+		return result, err
+	}
 
-  return string(id), err
-
+	return true, nil
 }
 
-func(a *AuthenticationDB) Disconnect( ) {
-  if err := a.connection.Close( ); err != nil {
-    log.Printf("💀 Error closing connection to PostgreSQL cluster: %v", err)
-  }
+func (a *AuthenticationDB) IsUsernameTaken(username string) (bool, error) {
+	_, err := a.queries.FindUserWithUsername(context.Background(), username)
+	if err != nil {
+		var result bool
+
+		// If no rows are found, it indicates that the username is not taken.
+		if errors.Is(err, sql.ErrNoRows) {
+			result = false
+			err = nil
+		}
+		// Otherwise some database error has occured
+		log.Errorf("Error while executing SQL query: %v", err)
+		return result, err
+	}
+
+	return true, nil
+}
+
+func (a *AuthenticationDB) SaveNewUser(details *ports.UserDetails) error {
+	type QueryExecutionOutput struct{}
+	executeQueries := func(transaction *sql.Tx) (output *QueryExecutionOutput, err error) {
+		defer err2.Handle(&err)
+
+		queries := sqlc_generated.New(transaction)
+
+		try.To(
+			queries.SaveUnverifiedUser(context.Background(),
+				sqlc_generated.SaveUnverifiedUserParams{
+					Email:    details.Email,
+					Username: details.Username,
+					Password: details.Password,
+				},
+			),
+		)
+
+		event := &protoc_generated.UserRegistrationStartedEvent{
+			EventType: event_types.UserRegistrationStarted,
+			Email:     details.Email,
+			Username:  details.Username,
+		}
+		message := try.To1[[]byte](proto.Marshal(event))
+
+		try.To(
+			queries.InsertMessage(context.Background(), message),
+		)
+
+		return
+	}
+
+	_, err := shared_utils.ExecuteSQLTransaction[*QueryExecutionOutput](a.connection, executeQueries, nil, utils.Logger)
+	return err
 }

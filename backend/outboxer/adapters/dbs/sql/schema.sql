@@ -1,0 +1,10 @@
+CREATE TABLE outbox (
+  id SERIAL PRIMARY KEY,
+
+  message BYTEA NOT NULL,
+
+  locked BOOLEAN DEFAULT FALSE,
+  locked_on TIMESTAMP DEFAULT NULL,
+
+  published BOOLEAN DEFAULT FALSE
+);

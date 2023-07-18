@@ -1,80 +1,79 @@
 package usecases
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/bxcodec/faker/v3"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/Archisman-Mridha/instagram-clone/backend/services/authentication/domain/utils"
+	error_messages "github.com/Archisman-Mridha/instagram-clone/backend/services/authentication/domain/utils/error-messages"
 	mock_ports "github.com/Archisman-Mridha/instagram-clone/backend/services/authentication/mocks/domain/ports"
 )
 
 func TestStartRegistration(t *testing.T) {
-
-	t.Parallel( )
+	t.Parallel()
 
 	gomockController := gomock.NewController(t)
-	defer gomockController.Finish( )
+	defer gomockController.Finish()
 
 	var (
-		primaryDB= mock_ports.NewMockPrimaryDB(gomockController)
-    messageSender= mock_ports.NewMockMessageSender(gomockController)
-
-		usecasesLayer= Usecases{
-			PrimaryDB: primaryDB,
-      MessageSender: messageSender,
-		}
-
-		parameters= &StartRegistrationParameters{
-			Name: fmt.Sprintf("%s %s", faker.FirstName( ), faker.LastName( )),
-			Email: faker.Email( ),
-		}
+		primaryDB     = mock_ports.NewMockPrimaryDB(gomockController)
+		usecasesLayer = Usecases{PrimaryDB: primaryDB}
 	)
 
-	t.Run("🧪 Should throw error if parameters are invalid", func(t *testing.T) {
+	parameters := &StartRegistrationParameters{
+		Email:    faker.Email(),
+		Username: faker.Username(),
+		Password: faker.Password(),
+	}
 
-		output, err := usecasesLayer.StartRegistration(
+	t.Run("🧪 Should throw error if parameters are invalid", func(t *testing.T) {
+		err := usecasesLayer.StartRegistration(
 			&StartRegistrationParameters{
 				Email: "archi.procoder",
 			},
 		)
 
-		assert.Nil(t, output)
+		t.Log(err.Error())
 
-		t.Log(err.Error( ))
-
-		assert.ErrorContains(t, err, "name: cannot be blank")
 		assert.ErrorContains(t, err, "email: must be a valid email address")
 	})
 
-	t.Run("🧪 Should throw error if a user already registered with that email and got verified", func(t *testing.T) {
+	t.Run("🧪 Should throw error if a verified user already registered with that email", func(t *testing.T) {
 
-		primaryDB.EXPECT( ).IsEmailPreRegisteredByVerifiedUser(parameters.Email).
+		primaryDB.EXPECT().IsEmailPreRegisteredByVerifiedUser(parameters.Email).
 			Return(true, nil)
 
-		output, err := usecasesLayer.StartRegistration(parameters)
-
-		assert.Nil(t, output)
-		assert.ErrorContains(t, err, utils.EmailPreRegisteredErrMsg)
+		err := usecasesLayer.StartRegistration(parameters)
+		assert.ErrorContains(t, err, error_messages.EmailPreRegistered)
 	})
 
+	t.Run("🧪 Should throw error if username is taken", func(t *testing.T) {
+
+		primaryDB.EXPECT().IsEmailPreRegisteredByVerifiedUser(parameters.Email).
+			Return(false, nil)
+		primaryDB.EXPECT().IsUsernameTaken(parameters.Username).
+			Return(true, nil)
+
+		err := usecasesLayer.StartRegistration(parameters)
+		assert.ErrorContains(t, err, error_messages.UsernameTaken)
+	})
+
+	// This testcase covers both the scenarios -
+	// 1. Previously a user registered with that email but didn't get verified (That corresponding
+	// existing record will get deleted first).
+	// 2. No user registered with that email previously.
 	t.Run("🧪 Should run successfully", func(t *testing.T) {
 
-		primaryDB.EXPECT( ).IsEmailPreRegisteredByVerifiedUser(parameters.Email).
+		primaryDB.EXPECT().IsEmailPreRegisteredByVerifiedUser(parameters.Email).
 			Return(false, nil)
-		primaryDB.EXPECT( ).SaveNewUser(gomock.Any( )).
-			Return(gomock.Any( ).String( ), nil)
+		primaryDB.EXPECT().IsUsernameTaken(parameters.Username).
+			Return(false, nil)
+		primaryDB.EXPECT().SaveNewUser(gomock.Any()).
+			Return(nil)
 
-    messageSender.EXPECT( ).SendUserRegistrationStartedEvent(gomock.Any( )).
-      Return( )
-
-		output, errorMessage := usecasesLayer.StartRegistration(parameters)
-
-		assert.Nil(t, output)
-		assert.Nil(t, errorMessage)
+		err := usecasesLayer.StartRegistration(parameters)
+		assert.Nil(t, err)
 	})
-
 }
