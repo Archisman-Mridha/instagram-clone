@@ -34,11 +34,13 @@ jobs:
         container-image:
           - dockerfile: backend/services/authentication/Dockerfile
             microservice: authentication-microservice
-            manifest: kubernetes/base/microservices/authentication/deployment.yaml
     steps:
 
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -49,16 +51,17 @@ jobs:
           username: archismanmridha
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push
+      - name: Build and push AMD64 and ARM64 based container image
         uses: docker/build-push-action@v4
         with:
           context: .
           file: ${{ matrix.container-image.dockerfile }}
+          platforms: linux/amd64,linux/arm64
           push: true
-          tags: archismanmridha/instagram-clone-${{ matrix.container-image.microservice }}:${{ github.sha }}
-          # experimental cache exporter for GitHub Actions provided by buildx and BuildKit.
-          # It uses the GitHub Cache API to fetch and load the Docker layer cache blobs across
-          # builds.
+          tags: |
+            archismanmridha/instagram-clone-${{ matrix.container-image.microservice }}:${{ github.sha }}
+          # Experimental cache exporter for GitHub Actions provided by buildx and BuildKit.
+          # It uses the GitHub Cache API to fetch and load the Docker layer cache blobs across builds.
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
