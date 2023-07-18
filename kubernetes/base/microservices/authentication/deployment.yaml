@@ -18,7 +18,7 @@ spec:
 
       containers:
         - name: authentication-microservice
-          image: archismanmridha/instagram-clone-authentication-microservice:0c32db230456aa5fd33a4412fd3078c8e488aaa8
+          image: archismanmridha/instagram-clone-authentication-microservice:545c06091bb72acbda5cf35bed27faf2d2e4e2e1
           resources:
             limits:
               memory: 128Mi
