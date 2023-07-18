@@ -4,9 +4,9 @@ go 1.20
 
 require (
 	github.com/Archisman-Mridha/instagram-clone/backend/proto/generated v0.0.0-20230623021228-89a7abf1ba03
-	github.com/Archisman-Mridha/instagram-clone/backend/shared v0.0.0-20230703123833-3f9589f9ba51
+	github.com/Archisman-Mridha/instagram-clone/backend/shared v0.0.0-20230718082635-731af3337331
 	github.com/bxcodec/faker/v3 v3.8.1
-	github.com/caarlos0/env v3.5.0+incompatible
+	github.com/caarlos0/env/v9 v9.0.0
 	github.com/charmbracelet/log v0.2.2
 	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible
 	github.com/golang/mock v1.6.0
@@ -23,6 +23,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-logfmt/logfmt v0.6.0 // indirect
 	github.com/kr/pretty v0.1.0 // indirect
+	github.com/lib/pq v1.10.9 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/mattn/go-runewidth v0.0.14 // indirect

@@ -2,7 +2,7 @@ package main
 
 import (
 	shared_utils "github.com/Archisman-Mridha/instagram-clone/backend/shared/utils"
-	"github.com/caarlos0/env"
+	"github.com/caarlos0/env/v9"
 	"github.com/charmbracelet/log"
 
 	inbound_adapters "github.com/Archisman-Mridha/instagram-clone/backend/services/authentication/adapters/inbound"
