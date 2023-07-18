@@ -9,8 +9,27 @@ import (
 	"context"
 )
 
+const findUserWithUsername = `-- name: FindUserWithUsername :one
+SELECT id, email, username, password, is_verified FROM users
+  WHERE users.username= $1
+    LIMIT 1
+`
+
+func (q *Queries) FindUserWithUsername(ctx context.Context, username string) (User, error) {
+	row := q.db.QueryRowContext(ctx, findUserWithUsername, username)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Username,
+		&i.Password,
+		&i.IsVerified,
+	)
+	return i, err
+}
+
 const findVerifiedUserWithEmail = `-- name: FindVerifiedUserWithEmail :one
-SELECT id, email, username, password, is_verified, is_username_set FROM users
+SELECT id, email, username, password, is_verified FROM users
   WHERE users.email= $1 AND is_verified= TRUE
     LIMIT 1
 `
@@ -24,7 +43,6 @@ func (q *Queries) FindVerifiedUserWithEmail(ctx context.Context, email string) (
 		&i.Username,
 		&i.Password,
 		&i.IsVerified,
-		&i.IsUsernameSet,
 	)
 	return i, err
 }
@@ -40,16 +58,23 @@ func (q *Queries) InsertMessage(ctx context.Context, message []byte) error {
 	return err
 }
 
-const saveUnverifiedUser = `-- name: SaveUnverifiedUser :one
-INSERT INTO users
-  (email)
-    VALUES ($1)
-      RETURNING id
+const saveUnverifiedUser = `-- name: SaveUnverifiedUser :exec
+WITH deleted_row AS (
+  DELETE FROM users
+    WHERE users.email= $1
+)
+  INSERT INTO users
+    (email, username, password)
+      VALUES ($1, $2, $3)
 `
 
-func (q *Queries) SaveUnverifiedUser(ctx context.Context, email string) (int32, error) {
-	row := q.db.QueryRowContext(ctx, saveUnverifiedUser, email)
-	var id int32
-	err := row.Scan(&id)
-	return id, err
+type SaveUnverifiedUserParams struct {
+	Email    string
+	Username string
+	Password string
+}
+
+func (q *Queries) SaveUnverifiedUser(ctx context.Context, arg SaveUnverifiedUserParams) error {
+	_, err := q.db.ExecContext(ctx, saveUnverifiedUser, arg.Email, arg.Username, arg.Password)
+	return err
 }

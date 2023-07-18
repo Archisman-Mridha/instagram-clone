@@ -2,8 +2,9 @@ package shared_utils
 
 import (
 	"fmt"
-	"log"
 	"os"
+
+	"github.com/charmbracelet/log"
 )
 
 // GetEnv looks up the given environment variable. It panics if the env is not found. If the env is
@@ -15,4 +16,13 @@ func GetEnv(envName string) string {
 	}
 
 	return envValue
+}
+
+// CreateLogger creates a new logger instance and returns it.
+func CreateLogger(prefix string) *log.Logger {
+	return log.NewWithOptions(os.Stdout, log.Options{
+		ReportCaller: true,
+		Prefix:       prefix,
+		Level:        log.DebugLevel,
+	})
 }

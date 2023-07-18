@@ -1,8 +1,7 @@
 package shared_utils
 
 import (
-	"log"
-
+	"github.com/charmbracelet/log"
 	"github.com/streadway/amqp"
 )
 
@@ -15,7 +14,7 @@ func ConnectRabbitMQ(uri string) *amqp.Connection {
 	}
 	defer connection.Close()
 
-	log.Printf("Connected to RabbitMQ")
+	log.Info("Connected to RabbitMQ")
 	return connection
 }
 

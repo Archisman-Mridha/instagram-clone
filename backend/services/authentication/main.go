@@ -1,13 +1,14 @@
 package main
 
 import (
-	"log"
-
+	shared_utils "github.com/Archisman-Mridha/instagram-clone/backend/shared/utils"
 	"github.com/caarlos0/env"
+	"github.com/charmbracelet/log"
 
 	inbound_adapters "github.com/Archisman-Mridha/instagram-clone/backend/services/authentication/adapters/inbound"
 	outbound_adapters "github.com/Archisman-Mridha/instagram-clone/backend/services/authentication/adapters/outbound"
 	"github.com/Archisman-Mridha/instagram-clone/backend/services/authentication/domain/usecases"
+	"github.com/Archisman-Mridha/instagram-clone/backend/services/authentication/domain/utils"
 )
 
 type Envs struct {
@@ -18,6 +19,8 @@ type Envs struct {
 var envs Envs
 
 func main() {
+	utils.Logger = shared_utils.CreateLogger("authentication-microservice")
+
 	if err := env.Parse(&envs); err != nil {
 		log.Fatalf("Error retrieving envs: %v", err)
 	}

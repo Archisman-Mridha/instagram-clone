@@ -49,13 +49,27 @@ func (mr *MockPrimaryDBMockRecorder) IsEmailPreRegisteredByVerifiedUser(email in
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsEmailPreRegisteredByVerifiedUser", reflect.TypeOf((*MockPrimaryDB)(nil).IsEmailPreRegisteredByVerifiedUser), email)
 }
 
-// SaveNewUser mocks base method.
-func (m *MockPrimaryDB) SaveNewUser(details *ports.UserDetails) (string, error) {
+// IsUsernameTaken mocks base method.
+func (m *MockPrimaryDB) IsUsernameTaken(username string) (bool, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SaveNewUser", details)
-	ret0, _ := ret[0].(string)
+	ret := m.ctrl.Call(m, "IsUsernameTaken", username)
+	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
+}
+
+// IsUsernameTaken indicates an expected call of IsUsernameTaken.
+func (mr *MockPrimaryDBMockRecorder) IsUsernameTaken(username interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsUsernameTaken", reflect.TypeOf((*MockPrimaryDB)(nil).IsUsernameTaken), username)
+}
+
+// SaveNewUser mocks base method.
+func (m *MockPrimaryDB) SaveNewUser(details *ports.UserDetails) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SaveNewUser", details)
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
 // SaveNewUser indicates an expected call of SaveNewUser.

@@ -23,8 +23,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthenticationClient interface {
 	// StartRegistration takes in details of a user. If a verified user registered with that email
-	// already exists, then error is sent back. Otherwise, a record representing the unverified user
-	// is created in the authentication db.
+	// already exists / username is taken, then error is sent back. Otherwise, a record representing
+	// the unverified user is created in the authentication db.
 	StartRegistration(ctx context.Context, in *StartRegistrationRequest, opts ...grpc.CallOption) (*StartRegistrationResponse, error)
 	// This gets triggered when the user visits the emailed magic link. It marks the user as verified
 	// in the authentication db. Then it creates and sends back a JWT.
@@ -62,8 +62,8 @@ func (c *authenticationClient) SetUserVerified(ctx context.Context, in *SetUserV
 // for forward compatibility
 type AuthenticationServer interface {
 	// StartRegistration takes in details of a user. If a verified user registered with that email
-	// already exists, then error is sent back. Otherwise, a record representing the unverified user
-	// is created in the authentication db.
+	// already exists / username is taken, then error is sent back. Otherwise, a record representing
+	// the unverified user is created in the authentication db.
 	StartRegistration(context.Context, *StartRegistrationRequest) (*StartRegistrationResponse, error)
 	// This gets triggered when the user visits the emailed magic link. It marks the user as verified
 	// in the authentication db. Then it creates and sends back a JWT.

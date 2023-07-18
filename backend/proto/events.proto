@@ -4,5 +4,8 @@ package main;
 option go_package= "protoc_generated/";
 
 message UserRegistrationStartedEvent {
-  string email= 1;
+  string event_type= 1;
+
+  string email= 2;
+  string username= 3;
 }

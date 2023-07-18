@@ -9,9 +9,10 @@ import (
 )
 
 type Querier interface {
+	FindUserWithUsername(ctx context.Context, username string) (User, error)
 	FindVerifiedUserWithEmail(ctx context.Context, email string) (User, error)
 	InsertMessage(ctx context.Context, message []byte) error
-	SaveUnverifiedUser(ctx context.Context, email string) (int32, error)
+	SaveUnverifiedUser(ctx context.Context, arg SaveUnverifiedUserParams) error
 }
 
 var _ Querier = (*Queries)(nil)

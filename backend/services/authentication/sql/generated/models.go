@@ -17,10 +17,9 @@ type Outbox struct {
 }
 
 type User struct {
-	ID            int32
-	Email         string
-	Username      sql.NullString
-	Password      sql.NullString
-	IsVerified    sql.NullBool
-	IsUsernameSet sql.NullBool
+	ID         int32
+	Email      string
+	Username   string
+	Password   string
+	IsVerified sql.NullBool
 }

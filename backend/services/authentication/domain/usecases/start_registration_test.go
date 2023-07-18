@@ -18,23 +18,22 @@ func TestStartRegistration(t *testing.T) {
 	defer gomockController.Finish()
 
 	var (
-		primaryDB = mock_ports.NewMockPrimaryDB(gomockController)
-
+		primaryDB     = mock_ports.NewMockPrimaryDB(gomockController)
 		usecasesLayer = Usecases{PrimaryDB: primaryDB}
-
-		parameters = &StartRegistrationParameters{
-			Email: faker.Email(),
-		}
 	)
 
+	parameters := &StartRegistrationParameters{
+		Email:    faker.Email(),
+		Username: faker.Username(),
+		Password: faker.Password(),
+	}
+
 	t.Run("🧪 Should throw error if parameters are invalid", func(t *testing.T) {
-		output, err := usecasesLayer.StartRegistration(
+		err := usecasesLayer.StartRegistration(
 			&StartRegistrationParameters{
 				Email: "archi.procoder",
 			},
 		)
-
-		assert.Nil(t, output)
 
 		t.Log(err.Error())
 
@@ -46,25 +45,35 @@ func TestStartRegistration(t *testing.T) {
 		primaryDB.EXPECT().IsEmailPreRegisteredByVerifiedUser(parameters.Email).
 			Return(true, nil)
 
-		output, err := usecasesLayer.StartRegistration(parameters)
-
-		assert.Nil(t, output)
+		err := usecasesLayer.StartRegistration(parameters)
 		assert.ErrorContains(t, err, error_messages.EmailPreRegistered)
 	})
 
-	// This covers both the scenarios -
-	// 1. Previously a user registered with that email but didn't get verified.
+	t.Run("🧪 Should throw error if username is taken", func(t *testing.T) {
+
+		primaryDB.EXPECT().IsEmailPreRegisteredByVerifiedUser(parameters.Email).
+			Return(false, nil)
+		primaryDB.EXPECT().IsUsernameTaken(parameters.Username).
+			Return(true, nil)
+
+		err := usecasesLayer.StartRegistration(parameters)
+		assert.ErrorContains(t, err, error_messages.UsernameTaken)
+	})
+
+	// This testcase covers both the scenarios -
+	// 1. Previously a user registered with that email but didn't get verified (That corresponding
+	// existing record will get deleted first).
 	// 2. No user registered with that email previously.
 	t.Run("🧪 Should run successfully", func(t *testing.T) {
 
 		primaryDB.EXPECT().IsEmailPreRegisteredByVerifiedUser(parameters.Email).
 			Return(false, nil)
+		primaryDB.EXPECT().IsUsernameTaken(parameters.Username).
+			Return(false, nil)
 		primaryDB.EXPECT().SaveNewUser(gomock.Any()).
-			Return(gomock.Any().String(), nil)
+			Return(nil)
 
-		output, errorMessage := usecasesLayer.StartRegistration(parameters)
-
-		assert.Nil(t, output)
-		assert.Nil(t, errorMessage)
+		err := usecasesLayer.StartRegistration(parameters)
+		assert.Nil(t, err)
 	})
 }

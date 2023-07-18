@@ -2,11 +2,11 @@ CREATE TABLE users (
   id SERIAL PRIMARY KEY,
 
   email VARCHAR(255) NOT NULL UNIQUE,
-  username VARCHAR(50),
-  password VARCHAR(50),
+  username VARCHAR(50) NOT NULL UNIQUE,
 
-  is_verified BOOLEAN DEFAULT FALSE,
-  is_username_set BOOLEAN DEFAULT FALSE
+  password VARCHAR(50) NOT NULL,
+
+  is_verified BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE outbox (
