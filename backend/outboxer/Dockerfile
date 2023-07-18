@@ -1,18 +1,29 @@
 FROM golang:1.20-alpine AS builder
 WORKDIR /app
 
-COPY go.mod go.sum ./
-RUN go mod download
+RUN go work init
+COPY go.work.sum .
 
-COPY . .
+COPY ./backend/shared/go.mod ./backend/shared/go.sum \
+  ./backend/shared/
+RUN go work use ./backend/shared && \
+  cd ./backend/shared/ && go mod download
 
-RUN go build -o build
+COPY ./backend/outboxer/go.mod ./backend/outboxer/go.sum \
+  ./backend/outboxer/
+RUN go work use ./backend/outboxer && \
+  cd ./backend/outboxer && go mod download
 
-#--
+COPY ./backend/shared ./backend/shared
+COPY ./backend/outboxer ./backend/outboxer
+
+RUN go build -o outboxer ./backend/outboxer/main.go
+
+#*--
 
 FROM scratch AS packager
 WORKDIR /
 
-COPY --from=builder /app/build .
+COPY --from=builder /app/outboxer .
 
-ENTRYPOINT [ "/build" ]
+ENTRYPOINT [ "/outboxer" ]
