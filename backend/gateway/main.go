@@ -20,7 +20,12 @@ import (
 	"github.com/Archisman-Mridha/instagram-clone/backend/gateway/utils"
 )
 
-var usersMicroserviceConnector *connectors.UsersMicroserviceConnector
+var (
+	usersMicroserviceConnector *connectors.UsersMicroserviceConnector
+	profilesMicroserviceConnector *connectors.ProfilesMicroserviceConnector
+	followshipsMicroserviceConnector *connectors.FollowshipsMicroserviceConnector
+	postsMicroserviceConnector *connectors.PostsMicroserviceConnector
+)
 
 func main( ) {
 	log.SetReportCaller(true)
@@ -51,11 +56,20 @@ func main( ) {
 	})
 
 	usersMicroserviceConnector= connectors.NewUsersMicroserviceConnector( )
+	profilesMicroserviceConnector= connectors.NewProfilesMicroserviceConnector( )
+	followshipsMicroserviceConnector= connectors.NewFollowshipsMicroserviceConnector( )
+	postsMicroserviceConnector= connectors.NewPostsMicroserviceConnector( )
 
 	waitGroup.Go(func( ) error {
 		graphqlServer := handler.NewDefaultServer(
 			graphql_generated.NewExecutableSchema(graphql_generated.Config {
-				Resolvers: &graphql_generated.Resolver { },
+				Resolvers: &graphql_generated.Resolver {
+
+					UsersMicroservice: usersMicroserviceConnector,
+					ProfilesMicroservice: profilesMicroserviceConnector,
+					FollowshipsMicroservice: followshipsMicroserviceConnector,
+					PostsMicroservice: postsMicroserviceConnector,
+				},
 			}),
 		)
 	
@@ -81,6 +95,15 @@ func main( ) {
 func cleanup( ) {
 	if usersMicroserviceConnector != nil {
 		usersMicroserviceConnector.Disconnect( )}
+
+	if profilesMicroserviceConnector != nil {
+		profilesMicroserviceConnector.Disconnect( )}
+
+	if followshipsMicroserviceConnector != nil {
+		followshipsMicroserviceConnector.Disconnect( )}
+
+	if postsMicroserviceConnector != nil {
+		postsMicroserviceConnector.Disconnect( )}
 }
 
 // authenticationMiddleware will verify the JWT (if present) in the 'Authorization' header, present
