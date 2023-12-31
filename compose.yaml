@@ -97,20 +97,19 @@ services:
   ## The PostgreSQL connector contains two main parts that work together to read and process
   ## database changes:
   ##
-  ## |-1. A logical decoding output plug-in. You might need to install the output plug-in that you
-  ## |    choose to use. You must configure a replication slot that uses your chosen output plug-in
-  ## |    before running the PostgreSQL server. The plug-in can be one of the following:
-  ## |    |
-  ## |    |-decoderbufs is based on Protobuf and maintained by the Debezium community.
-  ## |    |
-  ## |    |-pgoutput is the standard logical decoding output plug-in in PostgreSQL 10+. It is
-  ## |      maintained by the PostgreSQL community, and used by PostgreSQL itself for logical
-  ## |      replication. This plug-in is always present so no additional libraries need to be
-  ## |      installed.
-  ## |
-  ## |-2. Java code (the actual Kafka Connect connector) that reads the changes produced by the
-  ##      chosen logical decoding output plug-in. It uses PostgreSQL’s streaming replication
-  ##      protocol, by means of the PostgreSQL JDBC driver.
+  ## 1. A logical decoding output plug-in. You might need to install the output plug-in that you
+  ##    choose to use. You must configure a replication slot that uses your chosen output plug-in
+  ##    before running the PostgreSQL server. The plug-in can be one of the following:
+  ##
+  ##    DECODERBUFS - based on Protobuf and maintained by the Debezium community.
+  ##
+  ##    PGOUTPUT - the standard logical decoding output plug-in in PostgreSQL 10+. It is maintained
+  ##    by the PostgreSQL community, and used by PostgreSQL itself for logical replication. This
+  ##    plug-in is always present so no additional libraries need to be installed.
+  ##
+  ## 2. Java code (the actual Kafka Connect connector) that reads the changes produced by the
+  ##    chosen logical decoding output plug-in. It uses PostgreSQL’s streaming replication protocol
+  ##    by means of the PostgreSQL JDBC driver.
   debezium:
     container_name: debezium
     image: debezium/connect:latest

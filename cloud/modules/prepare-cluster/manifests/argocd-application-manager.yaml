@@ -9,7 +9,7 @@ spec:
   project: default
 
   source:
-    repoURL: https://github.com/Archisman-Mridha/whatsapp-clone
+    repoURL: https://github.com/Archisman-Mridha/instagram-clone
     targetRevision: ${BRANCH}
     path: kubernetes/workspaces/${WORKSPACE}
 
