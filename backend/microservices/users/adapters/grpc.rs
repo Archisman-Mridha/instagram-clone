@@ -1,4 +1,4 @@
-use crate::{proto::{users_service_server::*, *}, THREAD_CANCELLATION_TOKEN, SERVER_ERROR};
+use crate::{proto::{users_service_server::*, *}, THREAD_CANCELLATION_TOKEN, SERVER_ERROR, CONFIG};
 use tokio::spawn;
 use tonic::{codec::CompressionEncoding, transport::Server, Request, Response, Status, async_trait, Code};
 
@@ -8,7 +8,7 @@ pub struct GrpcAdapter { }
 
 impl GrpcAdapter {
   pub async fn startServer( ) {
-    let address= "[::]:4000";
+    let address= format!("[::]:{}", CONFIG.GRPC_SERVER_PORT);
     let address= address.parse( )
 												.expect(&format!("ERROR: Parsing binding address of the gRPC server : {}", address));
 
