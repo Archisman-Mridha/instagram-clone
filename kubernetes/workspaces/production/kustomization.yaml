@@ -3,3 +3,4 @@ resources:
   - metrics-server.yaml
   - kube-prometheus-stack.yaml
   - jaeger.yaml
+  - kubescape.yaml
