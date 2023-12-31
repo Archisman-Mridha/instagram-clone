@@ -917,6 +917,7 @@ dependencies = [
  "prost",
  "serde",
  "serde_json",
+ "time",
  "tokio",
  "tokio-postgres",
  "tokio-util",
@@ -1338,6 +1339,7 @@ dependencies = [
  "bytes",
  "fallible-iterator",
  "postgres-protocol",
+ "time",
 ]
 
 [[package]]
