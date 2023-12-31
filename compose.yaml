@@ -148,6 +148,38 @@ services:
       - debezium
       - postgres-migrate
 
+  ## flink-jobmanager:
+  ##   container_name: flink-jobmanager
+  ##   image: flink:latest
+  ##   ports:
+  ##     - "8081:8081"
+  ##   command: standalone-job --job-classname jobs.feeds_updater.Job
+  ##   environment:
+  ##     - |
+  ##       FLINK_PROPERTIES=
+  ##       jobmanager.rpc.address: flink-jobmanager
+  ##   volumes:
+  ##     - ./backend/flink/build/libs:/opt/flink/usrlib
+  ##   depends_on:
+  ##     - kafka-migrate
+  ##     - redis
+
+  ## flink-taskmanager:
+  ##   container_name: flink-taskmanager
+  ##   image: flink:latest
+  ##   depends_on:
+  ##     - flink-jobmanager
+  ##   command: taskmanager
+  ##   scale: 1
+  ##   environment:
+  ##     - |
+  ##       FLINK_PROPERTIES=
+  ##       jobmanager.rpc.address: flink-jobmanager
+  ##       taskmanager.numberOfTaskSlots: 2
+  ##       parallelism.default: 2
+  ##   volumes:
+  ##     - ./backend/flink/build/libs:/opt/flink/usrlib
+
   ## OBSERVABILITY TOOLS
 
   ## kafka-ui:
