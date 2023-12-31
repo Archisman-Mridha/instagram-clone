@@ -1,0 +1,6 @@
+query Signin($args: SigninArgs!) {
+	signin(args: $args) {
+
+		jwt
+	}
+}

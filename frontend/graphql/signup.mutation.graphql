@@ -1,0 +1,6 @@
+mutation Signup($args: SignupArgs!) {
+	signup(args: $args) {
+
+		jwt
+	}
+}
