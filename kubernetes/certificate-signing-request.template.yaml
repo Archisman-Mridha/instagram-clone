@@ -1,0 +1,32 @@
+apiVersion: "certificates.k8s.io/v1"
+
+## The CertificateSigningRequest resource type allows a physical user to ask for a certificate to
+## be issued, based on a Certificate Signing Request.
+kind: "CertificateSigningRequest"
+
+metadata:
+  name: "adam"
+
+spec:
+
+  ## Denotes the signer (the recipient that the request is being made to). Depending on the signer
+  ## selected, a CSR may be automatically approved by a controller. Otherwise, a CSR must be
+  ## manually approved.
+  ## For certificates that have been approved, the next step is signing. The relevant signing
+  ## controller first validates that the signing conditions are met and then creates a certificate.
+  ## The signing controller then updates the CSR, storing the new certificate into the
+  ## status.certificate field of the existing CSR object.
+  signerName: "kubernetes.io/kube-apiserver-client"
+
+  groups: ["database-engineers"]
+
+  ## Put the base 64 encoded CSR here.
+  request: ""
+
+  usages: [
+    "digital signature",
+    "key encipherment",
+    "client auth"
+  ]
+
+## Approved CSRs are automatically deleted after 1 hour.

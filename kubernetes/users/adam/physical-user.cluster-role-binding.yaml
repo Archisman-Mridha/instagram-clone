@@ -1,0 +1,14 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+
+metadata:
+  name: adam-physical-user
+
+subjects:
+  - kind: User
+    name: adam
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: physical-user
+  apiGroup: rbac.authorization.k8s.io
