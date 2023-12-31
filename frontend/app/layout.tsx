@@ -1,5 +1,6 @@
 import type { Metadata, ServerRuntime } from "next"
 import { FunctionComponent, PropsWithChildren } from "react"
+import { Providers } from "./providers.component"
 
 /*
 	NextJS Runtimes -
@@ -22,7 +23,7 @@ const RootLayout: FunctionComponent<PropsWithChildren> = ({ children }) => {
     <html lang="en">
       <body>
 
-				{ children }
+				<Providers>{ children }</Providers>
 
 			</body>
     </html>

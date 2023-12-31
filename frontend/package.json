@@ -14,7 +14,9 @@
 		"@apollo/experimental-nextjs-app-support": "^0.5.2",
     "next": "14.0.4",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+		"react-hot-toast": "^2.4.1",
+		"@nextui-org/react": "^2.2.9"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.0",
