@@ -10,6 +10,168 @@ pub mod types {}
 #[allow(unused_imports)]
 #[allow(dead_code)]
 pub mod queries {
+  pub mod profiles_microservice {
+    use cornucopia_async::GenericClient;
+    use futures;
+    use futures::{StreamExt, TryStreamExt};
+    #[derive(Debug)]
+    pub struct CreateParams<T1: cornucopia_async::StringSql, T2: cornucopia_async::StringSql> {
+      pub id: i32,
+      pub name: T1,
+      pub username: T2,
+    }
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct GetProfilePreviews {
+      pub name: String,
+      pub username: String,
+    }
+    pub struct GetProfilePreviewsBorrowed<'a> {
+      pub name: &'a str,
+      pub username: &'a str,
+    }
+    impl<'a> From<GetProfilePreviewsBorrowed<'a>> for GetProfilePreviews {
+      fn from(
+        GetProfilePreviewsBorrowed { name, username }: GetProfilePreviewsBorrowed<'a>,
+      ) -> Self {
+        Self {
+          name: name.into(),
+          username: username.into(),
+        }
+      }
+    }
+    pub struct GetProfilePreviewsQuery<'a, C: GenericClient, T, const N: usize> {
+      client: &'a C,
+      params: [&'a (dyn postgres_types::ToSql + Sync); N],
+      stmt: &'a mut cornucopia_async::private::Stmt,
+      extractor: fn(&tokio_postgres::Row) -> GetProfilePreviewsBorrowed,
+      mapper: fn(GetProfilePreviewsBorrowed) -> T,
+    }
+    impl<'a, C, T: 'a, const N: usize> GetProfilePreviewsQuery<'a, C, T, N>
+    where
+      C: GenericClient,
+    {
+      pub fn map<R>(
+        self,
+        mapper: fn(GetProfilePreviewsBorrowed) -> R,
+      ) -> GetProfilePreviewsQuery<'a, C, R, N> {
+        GetProfilePreviewsQuery {
+          client: self.client,
+          params: self.params,
+          stmt: self.stmt,
+          extractor: self.extractor,
+          mapper,
+        }
+      }
+      pub async fn one(self) -> Result<T, tokio_postgres::Error> {
+        let stmt = self.stmt.prepare(self.client).await?;
+        let row = self.client.query_one(stmt, &self.params).await?;
+        Ok((self.mapper)((self.extractor)(&row)))
+      }
+      pub async fn all(self) -> Result<Vec<T>, tokio_postgres::Error> {
+        self.iter().await?.try_collect().await
+      }
+      pub async fn opt(self) -> Result<Option<T>, tokio_postgres::Error> {
+        let stmt = self.stmt.prepare(self.client).await?;
+        Ok(
+          self
+            .client
+            .query_opt(stmt, &self.params)
+            .await?
+            .map(|row| (self.mapper)((self.extractor)(&row))),
+        )
+      }
+      pub async fn iter(
+        self,
+      ) -> Result<
+        impl futures::Stream<Item = Result<T, tokio_postgres::Error>> + 'a,
+        tokio_postgres::Error,
+      > {
+        let stmt = self.stmt.prepare(self.client).await?;
+        let it = self
+          .client
+          .query_raw(stmt, cornucopia_async::private::slice_iter(&self.params))
+          .await?
+          .map(move |res| res.map(|row| (self.mapper)((self.extractor)(&row))))
+          .into_stream();
+        Ok(it)
+      }
+    }
+    pub fn create() -> CreateStmt {
+      CreateStmt(cornucopia_async::private::Stmt::new(
+        "INSERT INTO profiles
+  (id, name, username)
+  VALUES ($1, $2, $3)",
+      ))
+    }
+    pub struct CreateStmt(cornucopia_async::private::Stmt);
+    impl CreateStmt {
+      pub async fn bind<
+        'a,
+        C: GenericClient,
+        T1: cornucopia_async::StringSql,
+        T2: cornucopia_async::StringSql,
+      >(
+        &'a mut self,
+        client: &'a C,
+        id: &'a i32,
+        name: &'a T1,
+        username: &'a T2,
+      ) -> Result<u64, tokio_postgres::Error> {
+        let stmt = self.0.prepare(client).await?;
+        client.execute(stmt, &[id, name, username]).await
+      }
+    }
+    impl<
+        'a,
+        C: GenericClient + Send + Sync,
+        T1: cornucopia_async::StringSql,
+        T2: cornucopia_async::StringSql,
+      >
+      cornucopia_async::Params<
+        'a,
+        CreateParams<T1, T2>,
+        std::pin::Pin<
+          Box<dyn futures::Future<Output = Result<u64, tokio_postgres::Error>> + Send + 'a>,
+        >,
+        C,
+      > for CreateStmt
+    {
+      fn params(
+        &'a mut self,
+        client: &'a C,
+        params: &'a CreateParams<T1, T2>,
+      ) -> std::pin::Pin<
+        Box<dyn futures::Future<Output = Result<u64, tokio_postgres::Error>> + Send + 'a>,
+      > {
+        Box::pin(self.bind(client, &params.id, &params.name, &params.username))
+      }
+    }
+    pub fn getProfilePreviews() -> GetProfilePreviewsStmt {
+      GetProfilePreviewsStmt(cornucopia_async::private::Stmt::new(
+        "SELECT name, username FROM profiles
+  WHERE id= ANY($1)",
+      ))
+    }
+    pub struct GetProfilePreviewsStmt(cornucopia_async::private::Stmt);
+    impl GetProfilePreviewsStmt {
+      pub fn bind<'a, C: GenericClient, T1: cornucopia_async::ArraySql<Item = i32>>(
+        &'a mut self,
+        client: &'a C,
+        ids: &'a T1,
+      ) -> GetProfilePreviewsQuery<'a, C, GetProfilePreviews, 1> {
+        GetProfilePreviewsQuery {
+          client,
+          params: [ids],
+          stmt: &mut self.0,
+          extractor: |row| GetProfilePreviewsBorrowed {
+            name: row.get(0),
+            username: row.get(1),
+          },
+          mapper: |it| <GetProfilePreviews>::from(it),
+        }
+      }
+    }
+  }
   pub mod users_microservice {
     use cornucopia_async::GenericClient;
     use futures;
