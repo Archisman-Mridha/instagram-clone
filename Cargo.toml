@@ -15,6 +15,10 @@ path= "backend/microservices/users/main.rs"
 name= "profiles-microservice"
 path= "backend/microservices/profiles/main.rs"
 
+[[bin]]
+name= "followships-microservice"
+path= "backend/microservices/followships/main.rs"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
