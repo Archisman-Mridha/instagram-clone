@@ -53,6 +53,22 @@ services:
       start_period: 15s
       interval: 10s
 
+  kafka-migrate:
+    container_name: kafka-migrate
+    image: bitnami/kafka
+    working_dir: /opt/bitnami/kafka/bin
+    entrypoint: [ "/bin/sh", "-c" ]
+    depends_on:
+      kafka:
+        condition: service_healthy
+    command: |
+      "
+      ## Wait until Kafka is reachable.
+      kafka-topics.sh --bootstrap-server kafka:9092 --list
+
+      kafka-topics.sh --bootstrap-server kafka:9092 --create --if-not-exists --topic db-events.public.users --replication-factor 1 --partitions 2
+      "
+
   ## Debezium is a set of distributed services to capture changes in your databases so that your
   ## applications can see those changes and respond to them. Debezium is built on top of Apache
   ## Kafka and provides a set of Kafka Connect compatible connectors. Connectors record the history
