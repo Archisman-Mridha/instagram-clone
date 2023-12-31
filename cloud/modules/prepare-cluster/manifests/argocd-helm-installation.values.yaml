@@ -1,0 +1,34 @@
+server:
+  autoscaling:
+    enabled: true
+    maxReplicas: 3
+
+repoServer:
+  autoscaling:
+    enabled: true
+    maxReplicas: 3
+
+  extraContainers:
+    - name: kustomize-enable-helm
+      command: [/var/run/argocd/argocd-cmp-server]
+      image: guillh/kustomize-helm
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+      volumeMounts:
+        - mountPath: /var/run/argocd
+          name: var-files
+        - mountPath: /home/argocd/cmp-server/plugins
+          name: plugins
+        - mountPath: /home/argocd/cmp-server/config/plugin.yaml
+          subPath: plugin.yaml
+          name: kustomize-enable-helm
+        - mountPath: /tmp
+          name: cmp-tmp
+
+  volumes:
+    - configMap:
+        name: kustomize-enable-helm
+      name: kustomize-enable-helm
+    - emptyDir: {}
+      name: cmp-tmp

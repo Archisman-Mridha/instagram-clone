@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kustomize-enable-helm
+  namespace: argocd
+
+data:
+  plugin.yaml: |
+    apiVersion: argoproj.io/v1alpha1
+    kind: ConfigManagementPlugin
+    metadata:
+      name: kustomize-enable-helm
+
+    spec:
+      ## Command to generate Kubernetes Objects in either YAML or JSON
+      generate:
+        command: [ "sh", "-c" ]
+        args: [ "kustomize build --enable-helm" ]

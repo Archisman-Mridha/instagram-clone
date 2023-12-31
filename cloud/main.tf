@@ -13,6 +13,11 @@ terraform {
       source = "hashicorp/kubernetes"
       version = "2.23.0"
     }
+
+		helm = {
+      source = "hashicorp/helm"
+      version = "2.11.0"
+    }
   }
 }
 
@@ -23,6 +28,13 @@ provider "digitalocean" {
 provider "kubernetes" {
   config_path = local.kubeconfig_path
   config_context = "do-fra1-main"
+}
+
+provider "helm" {
+  kubernetes {
+    config_path = local.kubeconfig_path
+    config_context = "do-fra1-main"
+  }
 }
 
 // A Virtual Private Cloud (VPC) is a private network interface for collections of DigitalOcean
