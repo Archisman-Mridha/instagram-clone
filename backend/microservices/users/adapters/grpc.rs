@@ -1,19 +1,20 @@
-use crate::{proto::{users_service_server::*, *}, THREAD_CANCELLATION_TOKEN, SERVER_ERROR, CONFIG};
+use crate::{proto::{users_service_server::*, *}, THREAD_CANCELLATION_TOKEN, CONFIG, domain::usecases::Usecases};
+use shared::utils::mapToGrpcError;
 use tokio::spawn;
-use tonic::{codec::CompressionEncoding, transport::Server, Request, Response, Status, async_trait, Code};
+use tonic::{codec::CompressionEncoding, transport::Server, Request, Response, Status, async_trait};
 
 const MAX_REQUEST_SIZE: usize= 512; // 512 Bytes
 
 pub struct GrpcAdapter { }
 
 impl GrpcAdapter {
-  pub async fn startServer( ) {
+  pub async fn startServer(usecases: Box<Usecases>) {
     let address= format!("[::]:{}", CONFIG.GRPC_SERVER_PORT);
     let address= address.parse( )
 												.expect(&format!("ERROR: Parsing binding address of the gRPC server : {}", address));
 
     let usersService=
-			UsersServiceServer::new(UsersServiceImpl { })
+			UsersServiceServer::new(UsersServiceImpl { usecases })
 				.max_decoding_message_size(MAX_REQUEST_SIZE)
 				.send_compressed(CompressionEncoding::Gzip)
 				.accept_compressed(CompressionEncoding::Gzip);
@@ -38,30 +39,34 @@ impl GrpcAdapter {
   }
 }
 
-struct UsersServiceImpl { }
+struct UsersServiceImpl {
+	usecases: Box<Usecases>
+}
 
 #[async_trait]
 impl UsersService for UsersServiceImpl {
 
   async fn signup(&self, request: Request<SignupRequest>) -> Result<Response<AuthenticationResponse>, Status> {
-		unimplemented!( )}
+    let request= request.into_inner( );
+
+    self.usecases.signup(&request).await
+								 .map(|value| Response::new(AuthenticationResponse { jwt: value.jwt }))
+								 .map_err(mapToGrpcError)
+  }
 
   async fn signin(&self, request: Request<SigninRequest>) -> Result<Response<AuthenticationResponse>, Status> {
-		unimplemented!( )}
+    let request= request.into_inner( );
+
+    self.usecases.signin(&request).await
+								 .map(|value| Response::new(AuthenticationResponse { jwt: value.jwt }))
+								 .map_err(mapToGrpcError)
+  }
 
   async fn verify_jwt(&self, request: Request<VerifyJwtRequest>) -> Result<Response<VerifyJwtResponse>, Status> {
-		unimplemented!( )}
-}
+    let request= request.into_inner( );
 
-// mapToGrpcError takes an anyhow error, analyses the actual underlying error and returns an
-// appropriate gRPC status code.
-fn mapToGrpcError(error: anyhow::Error) -> Status {
-	let errorAsString= error.to_string( );
-
-	let grpcErrorCode= {
-		if errorAsString.eq(SERVER_ERROR) { Code::Internal }
-		else { Code::InvalidArgument }
-	};
-
-	Status::new(grpcErrorCode, errorAsString)
+    self.usecases.verifyJwt(&request.jwt).await
+								 .map(|value| Response::new(VerifyJwtResponse { user_id: value }))
+								 .map_err(mapToGrpcError)
+  }
 }

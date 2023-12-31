@@ -1,6 +1,8 @@
 #![allow(non_snake_case)]
 
+mod domain;
 mod adapters;
+mod utils;
 mod proto {
   // Including code generated from the .proto files.
 
@@ -10,24 +12,26 @@ mod proto {
     tonic::include_file_descriptor_set!("users_microservice.descriptor");
 }
 
-use std::{process::exit, env};
-use adapters::GrpcAdapter;
+use std::process::exit;
+use adapters::{GrpcAdapter, PostgresAdapter};
+use domain::usecases::Usecases;
 use lazy_static::lazy_static;
+use shared::utils::getEnv;
 use tokio::signal;
 use tokio_util::sync::CancellationToken;
+use crate::domain::ports::UsersRepository;
 
 struct Config {
-  GRPC_SERVER_PORT: String,
+  JWT_SECRET: String,
+  GRPC_SERVER_PORT: String
 }
-
-fn getEnv(name: &str) -> String {
-	env::var(name).expect(&format!("ERROR: Getting env {}", name))}
 
 // Each value inside is initialized (in a thread safe manner) on the heap, when accessed for the
 // first time.
 // Read more about lazy_static here - https://blog.logrocket.com/rust-lazy-static-pattern/
 lazy_static! {
 	static ref CONFIG: Config= Config {
+		JWT_SECRET: getEnv("JWT_SECRET"),
     GRPC_SERVER_PORT: getEnv("GRPC_SERVER_PORT")
   };
 
@@ -35,8 +39,6 @@ lazy_static! {
   // trigger cleanup tasks in active Tokio threads.
   static ref THREAD_CANCELLATION_TOKEN: CancellationToken= CancellationToken::new( );
 }
-
-const SERVER_ERROR: &'static str= "Server error occurred";
 
 // Under the hood, Tokio creates a runtime which manages threads and IO resources. It submits the
 // future representing your main function to the tokio runtime executor. The tokio executor calls
@@ -46,7 +48,12 @@ async fn main( ) {
 	if let Err(error)= dotenv::from_filename("./backend/microservices/users/.env") {
     println!("WARNING: Couldn't load environment variables from .env file due to error : {}", error)}
 
-	GrpcAdapter::startServer( ).await;
+	let postgresAdapter=
+    Box::leak::<'static>(Box::new(PostgresAdapter::new( ).await)) as &'static PostgresAdapter;
+
+  let usecases= Box::new(Usecases::new(postgresAdapter));
+
+	GrpcAdapter::startServer(usecases).await;
 
 	/* Gracefully shutdown on receiving program shutdown signal. */ {
     let error= signal::ctrl_c( ).await.err( );
@@ -54,6 +61,7 @@ async fn main( ) {
 
     let _= &THREAD_CANCELLATION_TOKEN.cancel( ); // Do cleanup tasks in currently active Tokio
                                                  // threads.
+		postgresAdapter.cleanup( );
 
     match error {
       None => exit(0),
