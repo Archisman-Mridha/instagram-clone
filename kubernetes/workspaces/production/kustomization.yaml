@@ -5,3 +5,4 @@ resources:
   - jaeger.yaml
   - kubescape.yaml
   - istio.yaml
+  - falco.yaml

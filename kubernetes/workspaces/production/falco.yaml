@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+
+metadata:
+  name: falco
+  namespace: argocd
+
+spec:
+  project: default
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: falco
+
+  source:
+    repoURL: https://github.com/Archisman-Mridha/whatsapp-clone
+    targetRevision: HEAD
+    path: kubernetes/workspaces/production/falco
+    plugin:
+      name: kustomize-enable-helm
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
