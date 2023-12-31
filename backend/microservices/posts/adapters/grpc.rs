@@ -50,6 +50,8 @@ struct PostsServiceImpl {
 
 #[async_trait]
 impl PostsService for PostsServiceImpl {
+	async fn ping(&self, _: Request<( )>) -> Result<Response<( )>, Status> {
+		Ok(Response::new(( )))}
 
 	async fn create_post(&self, request: Request<CreatePostRequest>) -> Result<Response<CreatePostResponse>, Status> {
 		let request= request.into_inner( );

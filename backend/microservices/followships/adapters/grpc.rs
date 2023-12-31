@@ -51,6 +51,8 @@ struct FollowshipsServiceImpl {
 
 #[async_trait]
 impl FollowshipsService for FollowshipsServiceImpl {
+	async fn ping(&self, _: Request<( )>) -> Result<Response<( )>, Status> {
+		Ok(Response::new(( )))}
 
 	async fn follow(&self, request: Request<FollowshipOperationRequest>) -> Result<Response<( )>, Status> {
 		let request= request.into_inner( );

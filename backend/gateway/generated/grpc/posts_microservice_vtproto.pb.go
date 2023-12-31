@@ -12,6 +12,7 @@ import (
 	status "google.golang.org/grpc/status"
 	proto "google.golang.org/protobuf/proto"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	io "io"
 )
 
@@ -260,6 +261,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PostsServiceClient interface {
+	Ping(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	CreatePost(ctx context.Context, in *CreatePostRequest, opts ...grpc.CallOption) (*CreatePostResponse, error)
 	GetPostsOfUser(ctx context.Context, in *GetPostsOfUserRequest, opts ...grpc.CallOption) (*GetPostsResponse, error)
 }
@@ -270,6 +272,15 @@ type postsServiceClient struct {
 
 func NewPostsServiceClient(cc grpc.ClientConnInterface) PostsServiceClient {
 	return &postsServiceClient{cc}
+}
+
+func (c *postsServiceClient) Ping(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/posts_microservice.PostsService/Ping", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *postsServiceClient) CreatePost(ctx context.Context, in *CreatePostRequest, opts ...grpc.CallOption) (*CreatePostResponse, error) {
@@ -294,6 +305,7 @@ func (c *postsServiceClient) GetPostsOfUser(ctx context.Context, in *GetPostsOfU
 // All implementations must embed UnimplementedPostsServiceServer
 // for forward compatibility
 type PostsServiceServer interface {
+	Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	CreatePost(context.Context, *CreatePostRequest) (*CreatePostResponse, error)
 	GetPostsOfUser(context.Context, *GetPostsOfUserRequest) (*GetPostsResponse, error)
 	mustEmbedUnimplementedPostsServiceServer()
@@ -303,6 +315,9 @@ type PostsServiceServer interface {
 type UnimplementedPostsServiceServer struct {
 }
 
+func (UnimplementedPostsServiceServer) Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
+}
 func (UnimplementedPostsServiceServer) CreatePost(context.Context, *CreatePostRequest) (*CreatePostResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreatePost not implemented")
 }
@@ -320,6 +335,24 @@ type UnsafePostsServiceServer interface {
 
 func RegisterPostsServiceServer(s grpc.ServiceRegistrar, srv PostsServiceServer) {
 	s.RegisterService(&PostsService_ServiceDesc, srv)
+}
+
+func _PostsService_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostsServiceServer).Ping(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/posts_microservice.PostsService/Ping",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostsServiceServer).Ping(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _PostsService_CreatePost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -365,6 +398,10 @@ var PostsService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "posts_microservice.PostsService",
 	HandlerType: (*PostsServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Ping",
+			Handler:    _PostsService_Ping_Handler,
+		},
 		{
 			MethodName: "CreatePost",
 			Handler:    _PostsService_CreatePost_Handler,

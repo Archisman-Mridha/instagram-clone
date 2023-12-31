@@ -335,6 +335,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type FollowshipsServiceClient interface {
+	Ping(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Follow(ctx context.Context, in *FollowshipOperationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Unfollow(ctx context.Context, in *FollowshipOperationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetFollowers(ctx context.Context, in *GetFollowersRequest, opts ...grpc.CallOption) (*GetFollowersResponse, error)
@@ -348,6 +349,15 @@ type followshipsServiceClient struct {
 
 func NewFollowshipsServiceClient(cc grpc.ClientConnInterface) FollowshipsServiceClient {
 	return &followshipsServiceClient{cc}
+}
+
+func (c *followshipsServiceClient) Ping(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/followships_microservice.FollowshipsService/Ping", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *followshipsServiceClient) Follow(ctx context.Context, in *FollowshipOperationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
@@ -399,6 +409,7 @@ func (c *followshipsServiceClient) GetFollowshipCounts(ctx context.Context, in *
 // All implementations must embed UnimplementedFollowshipsServiceServer
 // for forward compatibility
 type FollowshipsServiceServer interface {
+	Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	Follow(context.Context, *FollowshipOperationRequest) (*emptypb.Empty, error)
 	Unfollow(context.Context, *FollowshipOperationRequest) (*emptypb.Empty, error)
 	GetFollowers(context.Context, *GetFollowersRequest) (*GetFollowersResponse, error)
@@ -411,6 +422,9 @@ type FollowshipsServiceServer interface {
 type UnimplementedFollowshipsServiceServer struct {
 }
 
+func (UnimplementedFollowshipsServiceServer) Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
+}
 func (UnimplementedFollowshipsServiceServer) Follow(context.Context, *FollowshipOperationRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Follow not implemented")
 }
@@ -437,6 +451,24 @@ type UnsafeFollowshipsServiceServer interface {
 
 func RegisterFollowshipsServiceServer(s grpc.ServiceRegistrar, srv FollowshipsServiceServer) {
 	s.RegisterService(&FollowshipsService_ServiceDesc, srv)
+}
+
+func _FollowshipsService_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FollowshipsServiceServer).Ping(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/followships_microservice.FollowshipsService/Ping",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FollowshipsServiceServer).Ping(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _FollowshipsService_Follow_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -536,6 +568,10 @@ var FollowshipsService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "followships_microservice.FollowshipsService",
 	HandlerType: (*FollowshipsServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Ping",
+			Handler:    _FollowshipsService_Ping_Handler,
+		},
 		{
 			MethodName: "Follow",
 			Handler:    _FollowshipsService_Follow_Handler,

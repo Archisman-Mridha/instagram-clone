@@ -10,6 +10,7 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	grpc_generated "github.com/Archisman-Mridha/instagram-clone/backend/gateway/generated/grpc"
+	"github.com/Archisman-Mridha/instagram-clone/backend/gateway/utils"
 )
 
 type PostsMicroserviceConnector struct {
@@ -24,7 +25,7 @@ type PostsMicroserviceConnector struct {
 func NewPostsMicroserviceConnector( ) *PostsMicroserviceConnector {
 	u := &PostsMicroserviceConnector {
 		serviceName: "posts microservice",
-		address: "localhost:4004",
+		address: utils.Envs.POSTS_MICROSERVICE_URL,
 	}
 
 	u.grpcConnection= createGrpcConnection(u.serviceName, u.address)

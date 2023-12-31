@@ -3,7 +3,11 @@ syntax= "proto3";
 package users_microservice;
 option go_package= "grpc_generated/";
 
+import "google/protobuf/empty.proto";
+
 service UsersService {
+	rpc Ping(google.protobuf.Empty) returns(google.protobuf.Empty);
+
 	rpc Signup(SignupRequest) returns(AuthenticationResponse);
   rpc Signin(SigninRequest) returns(AuthenticationResponse);
 

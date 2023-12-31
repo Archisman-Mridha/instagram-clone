@@ -6,6 +6,7 @@ option go_package= "grpc_generated/";
 import "google/protobuf/empty.proto";
 
 service FollowshipsService {
+	rpc Ping(google.protobuf.Empty) returns(google.protobuf.Empty);
 
 	rpc Follow(FollowshipOperationRequest) returns(google.protobuf.Empty);
 	rpc Unfollow(FollowshipOperationRequest) returns(google.protobuf.Empty);

@@ -3,6 +3,8 @@ syntax= "proto3";
 package profiles_microservice;
 option go_package= "grpc_generated/";
 
+import "google/protobuf/empty.proto";
+
 message ProfilePreview {
 	int32 id= 1;
 
@@ -11,6 +13,7 @@ message ProfilePreview {
 }
 
 service ProfilesService {
+	rpc Ping(google.protobuf.Empty) returns(google.protobuf.Empty);
 
 	rpc SearchProfiles(SearchProfilesRequest) returns(SearchProfilesResponse);
 

@@ -12,6 +12,7 @@ import (
 	status "google.golang.org/grpc/status"
 	proto "google.golang.org/protobuf/proto"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	io "io"
 )
 
@@ -233,6 +234,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UsersServiceClient interface {
+	Ping(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Signup(ctx context.Context, in *SignupRequest, opts ...grpc.CallOption) (*AuthenticationResponse, error)
 	Signin(ctx context.Context, in *SigninRequest, opts ...grpc.CallOption) (*AuthenticationResponse, error)
 	VerifyJwt(ctx context.Context, in *VerifyJwtRequest, opts ...grpc.CallOption) (*VerifyJwtResponse, error)
@@ -244,6 +246,15 @@ type usersServiceClient struct {
 
 func NewUsersServiceClient(cc grpc.ClientConnInterface) UsersServiceClient {
 	return &usersServiceClient{cc}
+}
+
+func (c *usersServiceClient) Ping(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/users_microservice.UsersService/Ping", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *usersServiceClient) Signup(ctx context.Context, in *SignupRequest, opts ...grpc.CallOption) (*AuthenticationResponse, error) {
@@ -277,6 +288,7 @@ func (c *usersServiceClient) VerifyJwt(ctx context.Context, in *VerifyJwtRequest
 // All implementations must embed UnimplementedUsersServiceServer
 // for forward compatibility
 type UsersServiceServer interface {
+	Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	Signup(context.Context, *SignupRequest) (*AuthenticationResponse, error)
 	Signin(context.Context, *SigninRequest) (*AuthenticationResponse, error)
 	VerifyJwt(context.Context, *VerifyJwtRequest) (*VerifyJwtResponse, error)
@@ -287,6 +299,9 @@ type UsersServiceServer interface {
 type UnimplementedUsersServiceServer struct {
 }
 
+func (UnimplementedUsersServiceServer) Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
+}
 func (UnimplementedUsersServiceServer) Signup(context.Context, *SignupRequest) (*AuthenticationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Signup not implemented")
 }
@@ -307,6 +322,24 @@ type UnsafeUsersServiceServer interface {
 
 func RegisterUsersServiceServer(s grpc.ServiceRegistrar, srv UsersServiceServer) {
 	s.RegisterService(&UsersService_ServiceDesc, srv)
+}
+
+func _UsersService_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsersServiceServer).Ping(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/users_microservice.UsersService/Ping",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsersServiceServer).Ping(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _UsersService_Signup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -370,6 +403,10 @@ var UsersService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "users_microservice.UsersService",
 	HandlerType: (*UsersServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Ping",
+			Handler:    _UsersService_Ping_Handler,
+		},
 		{
 			MethodName: "Signup",
 			Handler:    _UsersService_Signup_Handler,

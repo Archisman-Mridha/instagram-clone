@@ -12,6 +12,7 @@ import (
 	status "google.golang.org/grpc/status"
 	proto "google.golang.org/protobuf/proto"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	io "io"
 )
 
@@ -272,6 +273,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProfilesServiceClient interface {
+	Ping(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	SearchProfiles(ctx context.Context, in *SearchProfilesRequest, opts ...grpc.CallOption) (*SearchProfilesResponse, error)
 	GetProfilePreviews(ctx context.Context, in *GetProfilePreviewsRequest, opts ...grpc.CallOption) (*GetProfilePreviewsResponse, error)
 }
@@ -282,6 +284,15 @@ type profilesServiceClient struct {
 
 func NewProfilesServiceClient(cc grpc.ClientConnInterface) ProfilesServiceClient {
 	return &profilesServiceClient{cc}
+}
+
+func (c *profilesServiceClient) Ping(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/profiles_microservice.ProfilesService/Ping", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *profilesServiceClient) SearchProfiles(ctx context.Context, in *SearchProfilesRequest, opts ...grpc.CallOption) (*SearchProfilesResponse, error) {
@@ -306,6 +317,7 @@ func (c *profilesServiceClient) GetProfilePreviews(ctx context.Context, in *GetP
 // All implementations must embed UnimplementedProfilesServiceServer
 // for forward compatibility
 type ProfilesServiceServer interface {
+	Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	SearchProfiles(context.Context, *SearchProfilesRequest) (*SearchProfilesResponse, error)
 	GetProfilePreviews(context.Context, *GetProfilePreviewsRequest) (*GetProfilePreviewsResponse, error)
 	mustEmbedUnimplementedProfilesServiceServer()
@@ -315,6 +327,9 @@ type ProfilesServiceServer interface {
 type UnimplementedProfilesServiceServer struct {
 }
 
+func (UnimplementedProfilesServiceServer) Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
+}
 func (UnimplementedProfilesServiceServer) SearchProfiles(context.Context, *SearchProfilesRequest) (*SearchProfilesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SearchProfiles not implemented")
 }
@@ -332,6 +347,24 @@ type UnsafeProfilesServiceServer interface {
 
 func RegisterProfilesServiceServer(s grpc.ServiceRegistrar, srv ProfilesServiceServer) {
 	s.RegisterService(&ProfilesService_ServiceDesc, srv)
+}
+
+func _ProfilesService_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProfilesServiceServer).Ping(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/profiles_microservice.ProfilesService/Ping",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProfilesServiceServer).Ping(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _ProfilesService_SearchProfiles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -377,6 +410,10 @@ var ProfilesService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "profiles_microservice.ProfilesService",
 	HandlerType: (*ProfilesServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Ping",
+			Handler:    _ProfilesService_Ping_Handler,
+		},
 		{
 			MethodName: "SearchProfiles",
 			Handler:    _ProfilesService_SearchProfiles_Handler,

@@ -45,6 +45,8 @@ struct UsersServiceImpl {
 
 #[async_trait]
 impl UsersService for UsersServiceImpl {
+	async fn ping(&self, _: Request<( )>) -> Result<Response<( )>, Status> {
+		Ok(Response::new(( )))}
 
   async fn signup(&self, request: Request<SignupRequest>) -> Result<Response<AuthenticationResponse>, Status> {
     let request= request.into_inner( );

@@ -51,6 +51,8 @@ struct ProfilesServiceImpl {
 
 #[async_trait]
 impl ProfilesService for ProfilesServiceImpl {
+	async fn ping(&self, _: Request<( )>) -> Result<Response<( )>, Status> {
+		Ok(Response::new(( )))}
 
 	async fn search_profiles(&self, request: Request<SearchProfilesRequest>) -> Result<Response<SearchProfilesResponse>, Status> {
 		let request= request.into_inner( );
