@@ -1,0 +1,44 @@
+apiVersion: cert-manager.io/v1
+
+## ClusterIssuer represents a certificate authority (CA) able to sign certificates in response to
+## Certificate Signing Requests (CSRs).
+## The ClusterIssuer resource is cluster scoped. This means that when referencing a secret via the
+## secretName field, secrets will be looked for in the Cluster Resource Namespace. By default, this
+## namespace is CertManager.
+kind: ClusterIssuer
+
+metadata:
+  name: letsencrypt
+
+spec:
+  ## The ACME Issuer type represents a single account registered with the Automated Certificate
+  ## Management Environment (ACME) Certificate Authority server.
+  ## Certificates issued by public ACME servers are typically trusted by client's computers by
+  ## default.
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+
+    ## Let's Encrypt will use this to contact you about expiring certificates, and issues related
+    ## to your account.
+    email: archismanmridha12345@gmail.com
+
+    ## When you create a new ACME Issuer, CertManager will generate a private key which is used to
+    ## identify you with the ACME server.
+    privateKeySecretRef:
+      ## Name of the Kubernetes Secret that will be used to store the private key.
+      name: letsencrypt
+
+    ## In order for the ACME CA server to verify that a client owns the domain, or domains, a
+    ## certificate is being requested for, the client must complete challenges.
+    solvers:
+      ## DNS challenge solver will be used to create and manage DNS records. When a certificate is
+      ## requested, CertManager will create a DNS TXT record called _acme-challenge under the domain
+      ## you want a certificate for. The ACME CA (e.g. Let's Encrypt) will check for the existence
+      ## of that TXT record to verify that you control the domain. Once verified, the CA will issue
+      ## the TLS certificate. CertManager will then clean up the DNS records it created.
+      - dns01:
+          cloudflare:
+            email: archismanmridha12345@gmail.com
+            apiKeySecretRef:
+              name: cloudflare-api-key
+              key: api-key

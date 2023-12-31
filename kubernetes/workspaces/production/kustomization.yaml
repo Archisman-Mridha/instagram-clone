@@ -6,3 +6,4 @@ resources:
   - kubescape.yaml
   - istio.yaml
   - falco.yaml
+  - cert-manager.yaml
