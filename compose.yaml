@@ -185,3 +185,19 @@ services:
   ##     - ELASTICSEARCH_PASSWORD=pass
   ##   depends_on:
   ##     - elasticsearch
+
+  ## prometheus:
+  ##   container_name: prometheus
+  ##   image: prom/prometheus
+  ##   ports:
+  ##     - 9090:9090
+  ##   volumes:
+  ##     - ./prometheus.dev-config.yaml:/etc/prometheus/prometheus.yml:ro
+
+  ## autometrics:
+  ##   container_name: autometrics
+  ##   image: autometrics/am-proxy
+  ##   environment:
+  ##     - PROMETHEUS_URL=http://prometheus:9090
+  ##   ports:
+  ##     - 6789:6789

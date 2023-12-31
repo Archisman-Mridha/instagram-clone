@@ -6,5 +6,9 @@
 	},
 
 	"java.configuration.updateBuildConfiguration": "automatic",
-	"java.compile.nullAnalysis.mode": "automatic"
+	"java.compile.nullAnalysis.mode": "automatic",
+
+	"yaml.schemas": {
+		"https://www.graphql-code-generator.com/config.schema.json": "file:///Users/archismanmridha/Documents/instagram-clone/frontend/codegen.yaml"
+	}
 }
