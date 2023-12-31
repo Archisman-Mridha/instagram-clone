@@ -1,0 +1,110 @@
+type ProfilePreview {
+	id: Int!
+
+	name: String!
+	username: String!
+	profilePictureUri: String
+}
+
+type Post {
+	id: Int!
+	ownerId: Int!
+
+	description: String!
+	createdAt: String!
+}
+
+type Profile {
+	id: Int!
+
+	name: String!
+	username: String!
+	profilePictureUri: String
+
+	followerCount: Int!
+	followingCount: Int!
+
+	recentPosts: [Post]!
+}
+
+type Mutation {
+	signup(args: SignupArgs!): AuthenticationOutput!
+
+	## Id of the follower is extracted from the JWT.
+	follow(followeeId: Int!): Boolean
+	unfollow(followeeId: Int!): Boolean
+
+	## Id of the post owner is extracted from the JWT.
+	createPost(args: CreatePostArgs!): Int!
+}
+
+type Query {
+	signin(args: SigninArgs!): AuthenticationOutput!
+
+	searchProfiles(args: SearchProfilesArgs!): SearchProfilesOutput!
+
+	getFollowers(args: GetFollowersArgs!): [ProfilePreview]!
+	getFollowings(args: GetFollowingsArgs!): [ProfilePreview]!
+
+	getProfile(args: GetProfileArgs!): Profile
+	getPostsOfUser(args: GetPostsOfUserArgs!): [Post]!
+}
+
+input SignupArgs {
+	name: String!
+	email: String!
+	username: String!
+	password: String!
+}
+
+input SigninArgs {
+	identifier: String!
+	password: String!
+}
+
+type AuthenticationOutput {
+	jwt: String!
+}
+
+input SearchProfilesArgs {
+	query: String!
+}
+
+type SearchProfilesOutput {
+	profilePreviews: [ProfilePreview]!
+}
+
+input FollowshipOperationArgs {
+	followerId: Int!
+	followeeId: Int!
+}
+
+input CreatePostArgs {
+	description: String!
+}
+
+input GetProfileArgs {
+	userId: Int!
+	maxRecentPostCount: Int! = 10
+}
+
+input GetPostsOfUserArgs {
+	userId: Int!
+
+	pageSize: Int! = 20
+	offset: Int!
+}
+
+input GetFollowersArgs {
+	userId: Int!
+
+	pageSize: Int! = 25
+	offset: Int!
+}
+
+input GetFollowingsArgs {
+	userId: Int!
+
+	pageSize: Int! = 25
+	offset: Int!
+}
