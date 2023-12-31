@@ -1,1 +1,7 @@
 backend/debezium/example.source-connector.json
+sample.config.yaml
+sample.application.yaml
+
+Dockerfile
+
+hack
