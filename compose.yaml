@@ -29,3 +29,116 @@ services:
       postgres:
         condition: service_healthy
     restart: on-failure
+
+  kafka:
+    container_name: kafka
+    hostname: kafka
+    image: bitnami/kafka
+    ports:
+      - 9092:9092
+      - 29092:29092
+    environment:
+      ## KRaft
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      ## Listeners
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,PLAINTEXT_HOST://:29092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://:9092,PLAINTEXT_HOST://localhost:29092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+    healthcheck:
+      test: ["CMD", "kafka-topics.sh", "--bootstrap-server=localhost:9092", "--list"]
+      start_period: 15s
+      interval: 10s
+
+  ## Debezium is a set of distributed services to capture changes in your databases so that your
+  ## applications can see those changes and respond to them. Debezium is built on top of Apache
+  ## Kafka and provides a set of Kafka Connect compatible connectors. Connectors record the history
+  ## of data changes in the DBMS by detecting changes as they occur, and streaming a record of each
+  ## change event to a Kafka topic. Consuming applications can then read the resulting event records
+  ## from the Kafka topic.
+  ##
+  ## The first time it connects to a PostgreSQL server or cluster, the connector takes a consistent
+  ## snapshot of all schemas. After that snapshot is complete, the connector continuously captures
+  ## row-level changes that insert, update, and delete database content and that were committed to a
+  ## PostgreSQL database.
+  ##
+  ## The PostgreSQL connector contains two main parts that work together to read and process
+  ## database changes:
+  ##
+  ## |-1. A logical decoding output plug-in. You might need to install the output plug-in that you
+  ## |    choose to use. You must configure a replication slot that uses your chosen output plug-in
+  ## |    before running the PostgreSQL server. The plug-in can be one of the following:
+  ## |    |
+  ## |    |-decoderbufs is based on Protobuf and maintained by the Debezium community.
+  ## |    |
+  ## |    |-pgoutput is the standard logical decoding output plug-in in PostgreSQL 10+. It is
+  ## |      maintained by the PostgreSQL community, and used by PostgreSQL itself for logical
+  ## |      replication. This plug-in is always present so no additional libraries need to be
+  ## |      installed.
+  ## |
+  ## |-2. Java code (the actual Kafka Connect connector) that reads the changes produced by the
+  ##      chosen logical decoding output plug-in. It uses PostgreSQL’s streaming replication
+  ##      protocol, by means of the PostgreSQL JDBC driver.
+  debezium:
+    container_name: debezium
+    image: debezium/connect:latest
+    depends_on:
+      - postgres
+      - postgres-migrate
+      - kafka
+    ports:
+      - 8083:8083
+    environment:
+      BOOTSTRAP_SERVERS: kafka:9092
+      GROUP_ID: 1
+      CONFIG_STORAGE_TOPIC: connect_configs
+      STATUS_STORAGE_TOPIC: connect_statuses
+      OFFSET_STORAGE_TOPIC: connect_offsets
+      KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      ENABLE_DEBEZIUM_SCRIPTING: "true"
+    healthcheck:
+      test: ["CMD", "curl", "--silent", "--fail", "-X", "GET", "http://localhost:8083/connectors"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  debezium-migrate:
+    container_name: debezium-migrate
+    image: alpine:latest
+    volumes:
+      - ./scripts/create-debezium-connectors.sh:/create-connectors.sh
+      - ./backend/debezium:/debezium
+    command: /create-connectors.sh
+    restart: on-failure
+    depends_on:
+      - debezium
+      - postgres-migrate
+
+  ## OBSERVABILITY TOOLS
+
+  ## kafka-ui:
+  ##   container_name: kafka-ui
+  ##   image: provectuslabs/kafka-ui:latest
+  ##   ports:
+  ##     - 8080:8080
+  ##   depends_on:
+  ##     - kafka
+  ##   environment:
+  ##     KAFKA_CLUSTERS_0_NAME: default
+  ##     KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+
+  ## debezium-ui:
+  ##   container_name: debezium-ui
+  ##   image: debezium/debezium-ui:latest
+  ##   depends_on:
+  ##     debezium:
+  ##       condition: service_healthy
+  ##   ports:
+  ##     - 7080:8080
+  ##   environment:
+  ##     KAFKA_CONNECT_URIS: http://debezium:8083
