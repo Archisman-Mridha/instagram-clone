@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+
+metadata:
+  name: istio
+  namespace: istio-system
+
+spec:
+  project: default
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: istio-system
+
+  source:
+    repoURL: https://github.com/Archisman-Mridha/whatsapp-clone
+    targetRevision: HEAD
+    path: kubernetes/workspaces/dev/istio
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

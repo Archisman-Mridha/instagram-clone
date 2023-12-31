@@ -1,3 +1,5 @@
 resources:
   - ../../base
   - kubernetes-dashboard.yaml
+  - istio.yaml
+  - jaeger.yaml
