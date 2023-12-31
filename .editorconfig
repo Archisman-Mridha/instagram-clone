@@ -1,0 +1,11 @@
+root = true
+
+tab_width = 2
+indent_size = 2
+insert_final_newline = false
+
+[*]
+indent_style = tab
+
+[*.yaml]
+indent_style = space
