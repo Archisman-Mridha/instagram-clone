@@ -13,7 +13,7 @@ spec:
     namespace: istio-system
 
   source:
-    repoURL: https://github.com/Archisman-Mridha/whatsapp-clone
+    repoURL: https://github.com/Archisman-Mridha/instagram-clone
     targetRevision: HEAD
     path: kubernetes/workspaces/production/istio
     plugin:

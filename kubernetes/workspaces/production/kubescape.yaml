@@ -20,7 +20,7 @@ spec:
       releaseName: kubescape-operator
       valuesObject:
 
-        clusterName: whatsapp-clone
+        clusterName: instagram-clone
 
         server: api.armosec.io
         account: 16af738b-23c4-43ec-8ae4-5ca9324173a
