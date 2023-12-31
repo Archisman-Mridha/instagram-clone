@@ -1,0 +1,24 @@
+namespace: external-dns
+
+resources:
+  - namespace.yaml
+  - cloudflare-dns-api-key.sealed-secret.yaml
+
+helmCharts:
+  - repo: https://charts.bitnami.com/bitnami
+    name: external-dns
+    version: 6.28.4
+    releaseName: external-dns
+    namespace: external-dns
+    valuesInline:
+
+      ## K8s resources type to be observed for new DNS entries by ExternalDNS.
+      sources:
+        - istio-gateway
+
+      ## DNS provider where the DNS records will be created.
+      provider: cloudflare
+
+      cloudflare:
+        secretName: cloudflare-dns-api-key
+        email: archismanmridha12345@gmail.com
