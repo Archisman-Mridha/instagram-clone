@@ -1,0 +1,34 @@
+syntax= "proto3";
+
+package users_microservice;
+
+service UsersService {
+	rpc Signup(SignupRequest) returns(AuthenticationResponse);
+  rpc Signin(SigninRequest) returns(AuthenticationResponse);
+
+	rpc VerifyJwt(VerifyJwtRequest) returns(VerifyJwtResponse);
+}
+
+message SignupRequest {
+  string name= 1;
+  string email= 2;
+  string username= 3;
+  string password= 4;
+}
+
+message SigninRequest {
+  string identifier= 1;
+  string password= 2;
+}
+
+message AuthenticationResponse {
+  string jwt= 1;
+}
+
+message VerifyJwtRequest {
+	string jwt= 1;
+}
+
+message VerifyJwtResponse {
+	int32 user_id= 1;
+}
