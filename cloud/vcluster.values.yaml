@@ -1,0 +1,36 @@
+## Node selectors used to schedule the VCluster pods on the host cluster.
+nodeSelector:
+  env: dev
+
+## Tolerations to apply to the VCluster StatefulSet.
+tolerations:
+  - env=dev
+
+syncer:
+  extraArgs:
+    ## Making sure that synced resources will only be scheduled on nodes dedicated for the dev
+    ## environment.
+    - --node-selector=env=dev
+    - --enfore-toleration=env=dev:NoExecute
+
+## By default, VCluster will create fake nodes for every pod spec.nodeName it encounters within the
+## virtual cluster. Those fake nodes are created because vCluster has no RBAC permissions by default
+## to view the real nodes in the host cluster, as this would need a cluster role and cluster role
+## binding. It will also create a fake kubelet endpoint for each node that will forward requests to
+## the actual node or rewrite them to preserve virtual cluster names.
+
+securityContext:
+  ## Run containers with non-root user.
+  runAsNonRoot: true
+
+## This feature imposes a couple of restrictions on vCluster workloads to make sure they do not
+## break out of their virtual environment.
+isolation:
+  enabled: true
+
+  ## For example pods that try to run as a privileged container or mount a host path will not be
+  ## synced to the host cluster.
+  podSecurityStandard: restricted
+
+  ## vCluster deploys a network policy alongside itself that will restrict access of vCluster
+  ## workloads as well as the vCluster control plane to other pods in the host cluster.
