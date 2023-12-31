@@ -30,6 +30,19 @@ services:
         condition: service_healthy
     restart: on-failure
 
+  elasticsearch:
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.1
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+      - cluster.name=main
+      - node.name=default
+      - ELASTIC_PASSWORD=pass
+
   kafka:
     container_name: kafka
     hostname: kafka
@@ -158,3 +171,17 @@ services:
   ##     - 7080:8080
   ##   environment:
   ##     KAFKA_CONNECT_URIS: http://debezium:8083
+
+  ## kibana:
+  ##   container_name: kibana
+  ##   image: docker.elastic.co/kibana/kibana:8.11.1
+  ##   ports:
+  ##     - 5601:5601
+  ##   environment:
+  ##     - node.name=kibanna
+  ##     - cluster.name=main
+  ##     - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+  ##     - ELASTICSEARCH_USERNAME=kibana_system
+  ##     - ELASTICSEARCH_PASSWORD=pass
+  ##   depends_on:
+  ##     - elasticsearch
