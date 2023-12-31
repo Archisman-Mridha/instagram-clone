@@ -10,6 +10,326 @@ pub mod types {}
 #[allow(unused_imports)]
 #[allow(dead_code)]
 pub mod queries {
+  pub mod followships_microservice {
+    use cornucopia_async::GenericClient;
+    use futures;
+    use futures::{StreamExt, TryStreamExt};
+    #[derive(Clone, Copy, Debug)]
+    pub struct CreateParams {
+      pub followerId: i32,
+      pub followeeId: i32,
+    }
+    #[derive(Clone, Copy, Debug)]
+    pub struct DeleteParams {
+      pub followerId: i32,
+      pub followeeId: i32,
+    }
+    #[derive(Clone, Copy, Debug)]
+    pub struct GetFollowersParams {
+      pub userId: i32,
+      pub pageSize: i64,
+      pub offset: i64,
+    }
+    #[derive(Clone, Copy, Debug)]
+    pub struct GetFollowingsParams {
+      pub userId: i32,
+      pub pageSize: i64,
+      pub offset: i64,
+    }
+    pub struct I32Query<'a, C: GenericClient, T, const N: usize> {
+      client: &'a C,
+      params: [&'a (dyn postgres_types::ToSql + Sync); N],
+      stmt: &'a mut cornucopia_async::private::Stmt,
+      extractor: fn(&tokio_postgres::Row) -> i32,
+      mapper: fn(i32) -> T,
+    }
+    impl<'a, C, T: 'a, const N: usize> I32Query<'a, C, T, N>
+    where
+      C: GenericClient,
+    {
+      pub fn map<R>(self, mapper: fn(i32) -> R) -> I32Query<'a, C, R, N> {
+        I32Query {
+          client: self.client,
+          params: self.params,
+          stmt: self.stmt,
+          extractor: self.extractor,
+          mapper,
+        }
+      }
+      pub async fn one(self) -> Result<T, tokio_postgres::Error> {
+        let stmt = self.stmt.prepare(self.client).await?;
+        let row = self.client.query_one(stmt, &self.params).await?;
+        Ok((self.mapper)((self.extractor)(&row)))
+      }
+      pub async fn all(self) -> Result<Vec<T>, tokio_postgres::Error> {
+        self.iter().await?.try_collect().await
+      }
+      pub async fn opt(self) -> Result<Option<T>, tokio_postgres::Error> {
+        let stmt = self.stmt.prepare(self.client).await?;
+        Ok(
+          self
+            .client
+            .query_opt(stmt, &self.params)
+            .await?
+            .map(|row| (self.mapper)((self.extractor)(&row))),
+        )
+      }
+      pub async fn iter(
+        self,
+      ) -> Result<
+        impl futures::Stream<Item = Result<T, tokio_postgres::Error>> + 'a,
+        tokio_postgres::Error,
+      > {
+        let stmt = self.stmt.prepare(self.client).await?;
+        let it = self
+          .client
+          .query_raw(stmt, cornucopia_async::private::slice_iter(&self.params))
+          .await?
+          .map(move |res| res.map(|row| (self.mapper)((self.extractor)(&row))))
+          .into_stream();
+        Ok(it)
+      }
+    }
+    #[derive(Debug, Clone, PartialEq, Copy)]
+    pub struct GetFollowshipCounts {
+      pub follower_count: i64,
+      pub following_count: i64,
+    }
+    pub struct GetFollowshipCountsQuery<'a, C: GenericClient, T, const N: usize> {
+      client: &'a C,
+      params: [&'a (dyn postgres_types::ToSql + Sync); N],
+      stmt: &'a mut cornucopia_async::private::Stmt,
+      extractor: fn(&tokio_postgres::Row) -> GetFollowshipCounts,
+      mapper: fn(GetFollowshipCounts) -> T,
+    }
+    impl<'a, C, T: 'a, const N: usize> GetFollowshipCountsQuery<'a, C, T, N>
+    where
+      C: GenericClient,
+    {
+      pub fn map<R>(
+        self,
+        mapper: fn(GetFollowshipCounts) -> R,
+      ) -> GetFollowshipCountsQuery<'a, C, R, N> {
+        GetFollowshipCountsQuery {
+          client: self.client,
+          params: self.params,
+          stmt: self.stmt,
+          extractor: self.extractor,
+          mapper,
+        }
+      }
+      pub async fn one(self) -> Result<T, tokio_postgres::Error> {
+        let stmt = self.stmt.prepare(self.client).await?;
+        let row = self.client.query_one(stmt, &self.params).await?;
+        Ok((self.mapper)((self.extractor)(&row)))
+      }
+      pub async fn all(self) -> Result<Vec<T>, tokio_postgres::Error> {
+        self.iter().await?.try_collect().await
+      }
+      pub async fn opt(self) -> Result<Option<T>, tokio_postgres::Error> {
+        let stmt = self.stmt.prepare(self.client).await?;
+        Ok(
+          self
+            .client
+            .query_opt(stmt, &self.params)
+            .await?
+            .map(|row| (self.mapper)((self.extractor)(&row))),
+        )
+      }
+      pub async fn iter(
+        self,
+      ) -> Result<
+        impl futures::Stream<Item = Result<T, tokio_postgres::Error>> + 'a,
+        tokio_postgres::Error,
+      > {
+        let stmt = self.stmt.prepare(self.client).await?;
+        let it = self
+          .client
+          .query_raw(stmt, cornucopia_async::private::slice_iter(&self.params))
+          .await?
+          .map(move |res| res.map(|row| (self.mapper)((self.extractor)(&row))))
+          .into_stream();
+        Ok(it)
+      }
+    }
+    pub fn create() -> CreateStmt {
+      CreateStmt(cornucopia_async::private::Stmt::new(
+        "INSERT INTO followships
+	(follower_id, followee_id)
+	VALUES ($1, $2)",
+      ))
+    }
+    pub struct CreateStmt(cornucopia_async::private::Stmt);
+    impl CreateStmt {
+      pub async fn bind<'a, C: GenericClient>(
+        &'a mut self,
+        client: &'a C,
+        followerId: &'a i32,
+        followeeId: &'a i32,
+      ) -> Result<u64, tokio_postgres::Error> {
+        let stmt = self.0.prepare(client).await?;
+        client.execute(stmt, &[followerId, followeeId]).await
+      }
+    }
+    impl<'a, C: GenericClient + Send + Sync>
+      cornucopia_async::Params<
+        'a,
+        CreateParams,
+        std::pin::Pin<
+          Box<dyn futures::Future<Output = Result<u64, tokio_postgres::Error>> + Send + 'a>,
+        >,
+        C,
+      > for CreateStmt
+    {
+      fn params(
+        &'a mut self,
+        client: &'a C,
+        params: &'a CreateParams,
+      ) -> std::pin::Pin<
+        Box<dyn futures::Future<Output = Result<u64, tokio_postgres::Error>> + Send + 'a>,
+      > {
+        Box::pin(self.bind(client, &params.followerId, &params.followeeId))
+      }
+    }
+    pub fn delete() -> DeleteStmt {
+      DeleteStmt(cornucopia_async::private::Stmt::new(
+        "DELETE FROM followships
+	WHERE follower_id= $1 AND followee_id= $2",
+      ))
+    }
+    pub struct DeleteStmt(cornucopia_async::private::Stmt);
+    impl DeleteStmt {
+      pub async fn bind<'a, C: GenericClient>(
+        &'a mut self,
+        client: &'a C,
+        followerId: &'a i32,
+        followeeId: &'a i32,
+      ) -> Result<u64, tokio_postgres::Error> {
+        let stmt = self.0.prepare(client).await?;
+        client.execute(stmt, &[followerId, followeeId]).await
+      }
+    }
+    impl<'a, C: GenericClient + Send + Sync>
+      cornucopia_async::Params<
+        'a,
+        DeleteParams,
+        std::pin::Pin<
+          Box<dyn futures::Future<Output = Result<u64, tokio_postgres::Error>> + Send + 'a>,
+        >,
+        C,
+      > for DeleteStmt
+    {
+      fn params(
+        &'a mut self,
+        client: &'a C,
+        params: &'a DeleteParams,
+      ) -> std::pin::Pin<
+        Box<dyn futures::Future<Output = Result<u64, tokio_postgres::Error>> + Send + 'a>,
+      > {
+        Box::pin(self.bind(client, &params.followerId, &params.followeeId))
+      }
+    }
+    pub fn getFollowers() -> GetFollowersStmt {
+      GetFollowersStmt(cornucopia_async::private::Stmt::new(
+        "SELECT follower_id FROM followships
+	WHERE followee_id= $1
+	LIMIT $2 OFFSET $3",
+      ))
+    }
+    pub struct GetFollowersStmt(cornucopia_async::private::Stmt);
+    impl GetFollowersStmt {
+      pub fn bind<'a, C: GenericClient>(
+        &'a mut self,
+        client: &'a C,
+        userId: &'a i32,
+        pageSize: &'a i64,
+        offset: &'a i64,
+      ) -> I32Query<'a, C, i32, 3> {
+        I32Query {
+          client,
+          params: [userId, pageSize, offset],
+          stmt: &mut self.0,
+          extractor: |row| row.get(0),
+          mapper: |it| it,
+        }
+      }
+    }
+    impl<'a, C: GenericClient>
+      cornucopia_async::Params<'a, GetFollowersParams, I32Query<'a, C, i32, 3>, C>
+      for GetFollowersStmt
+    {
+      fn params(
+        &'a mut self,
+        client: &'a C,
+        params: &'a GetFollowersParams,
+      ) -> I32Query<'a, C, i32, 3> {
+        self.bind(client, &params.userId, &params.pageSize, &params.offset)
+      }
+    }
+    pub fn getFollowings() -> GetFollowingsStmt {
+      GetFollowingsStmt(cornucopia_async::private::Stmt::new(
+        "SELECT followee_id FROM followships
+	WHERE follower_id= $1
+	LIMIT $2 OFFSET $3",
+      ))
+    }
+    pub struct GetFollowingsStmt(cornucopia_async::private::Stmt);
+    impl GetFollowingsStmt {
+      pub fn bind<'a, C: GenericClient>(
+        &'a mut self,
+        client: &'a C,
+        userId: &'a i32,
+        pageSize: &'a i64,
+        offset: &'a i64,
+      ) -> I32Query<'a, C, i32, 3> {
+        I32Query {
+          client,
+          params: [userId, pageSize, offset],
+          stmt: &mut self.0,
+          extractor: |row| row.get(0),
+          mapper: |it| it,
+        }
+      }
+    }
+    impl<'a, C: GenericClient>
+      cornucopia_async::Params<'a, GetFollowingsParams, I32Query<'a, C, i32, 3>, C>
+      for GetFollowingsStmt
+    {
+      fn params(
+        &'a mut self,
+        client: &'a C,
+        params: &'a GetFollowingsParams,
+      ) -> I32Query<'a, C, i32, 3> {
+        self.bind(client, &params.userId, &params.pageSize, &params.offset)
+      }
+    }
+    pub fn getFollowshipCounts() -> GetFollowshipCountsStmt {
+      GetFollowshipCountsStmt(cornucopia_async::private::Stmt::new(
+        "SELECT
+	(SELECT COUNT(*) FROM followships WHERE followee_id = $1) AS follower_count,
+	(SELECT COUNT(*) FROM followships WHERE follower_id = $1) AS following_count",
+      ))
+    }
+    pub struct GetFollowshipCountsStmt(cornucopia_async::private::Stmt);
+    impl GetFollowshipCountsStmt {
+      pub fn bind<'a, C: GenericClient>(
+        &'a mut self,
+        client: &'a C,
+        userId: &'a i32,
+      ) -> GetFollowshipCountsQuery<'a, C, GetFollowshipCounts, 1> {
+        GetFollowshipCountsQuery {
+          client,
+          params: [userId],
+          stmt: &mut self.0,
+          extractor: |row| GetFollowshipCounts {
+            follower_count: row.get(0),
+            following_count: row.get(1),
+          },
+          mapper: |it| <GetFollowshipCounts>::from(it),
+        }
+      }
+    }
+  }
   pub mod profiles_microservice {
     use cornucopia_async::GenericClient;
     use futures;
