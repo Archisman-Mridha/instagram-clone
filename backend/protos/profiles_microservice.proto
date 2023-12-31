@@ -1,0 +1,34 @@
+syntax= "proto3";
+
+package profiles_microservice;
+option go_package= "grpc_generated/";
+
+message ProfilePreview {
+	int32 id= 1;
+
+	string name= 2;
+	string username= 3;
+}
+
+service ProfilesService {
+
+	rpc SearchProfiles(SearchProfilesRequest) returns(SearchProfilesResponse);
+
+	rpc GetProfilePreviews(GetProfilePreviewsRequest) returns(GetProfilePreviewsResponse);
+}
+
+message SearchProfilesRequest {
+	string query= 1;
+}
+
+message SearchProfilesResponse {
+	repeated ProfilePreview profile_previews= 1;
+}
+
+message GetProfilePreviewsRequest {
+	repeated int32 ids= 1;
+}
+
+message GetProfilePreviewsResponse {
+	repeated ProfilePreview profile_previews= 1;
+}
