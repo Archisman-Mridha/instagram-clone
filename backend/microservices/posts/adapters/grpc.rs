@@ -1,0 +1,71 @@
+use crate::{
+	domain::usecases::Usecases, proto::{posts_service_server::*, *},
+	CONFIG, THREAD_CANCELLATION_TOKEN,
+};
+use async_trait::async_trait;
+use shared::utils::mapToGrpcError;
+use tokio::spawn;
+use tonic::{codec::CompressionEncoding, transport::Server, Request, Response, Status};
+
+const MAX_REQUEST_SIZE: usize= 512; //bytes
+
+pub struct GrpcAdapter { }
+
+impl GrpcAdapter {
+	// startServer starts a gRPC server.
+	pub async fn startServer(usecases: Box<Usecases>) {
+		let address= format!("[::]:{}", &*CONFIG.GRPC_SERVER_PORT);
+		let address= address.parse( )
+												.expect(&format!("ERROR: parsing binding address of the gRPC server : {}", address));
+
+		let postsService=
+			PostsServiceServer::new(PostsServiceImpl { usecases })
+				.max_decoding_message_size(MAX_REQUEST_SIZE)
+				.send_compressed(CompressionEncoding::Gzip)
+				.accept_compressed(CompressionEncoding::Gzip);
+
+		let reflectionService=
+			tonic_reflection::server::Builder::configure( )
+				.register_encoded_file_descriptor_set(FILE_DESCRIPTOR_SET)
+				.build( )
+				.expect("ERROR: building gRPC reflection service")
+				.max_decoding_message_size(MAX_REQUEST_SIZE);
+
+		println!("INFO: Starting gRPC server");
+
+		spawn(async move {
+			Server::builder( )
+				.add_service(postsService)
+				.add_service(reflectionService)
+				.serve_with_shutdown(address, THREAD_CANCELLATION_TOKEN.clone( ).cancelled( ))
+				.await
+				.expect("ERROR: starting gRPC server");
+		});
+	}
+}
+
+struct PostsServiceImpl {
+	usecases: Box<Usecases>
+}
+
+#[async_trait]
+impl PostsService for PostsServiceImpl {
+
+	async fn create_post(&self, request: Request<CreatePostRequest>) -> Result<Response<CreatePostResponse>, Status> {
+		let request= request.into_inner( );
+
+		self.usecases.createPost(request)
+								 .await
+								 .map(|postId| Response::new(CreatePostResponse { post_id: postId }))
+								 .map_err(mapToGrpcError)
+	}
+
+	async fn get_posts_of_user(&self, request: Request<GetPostsOfUserRequest>) -> Result<Response<GetPostsResponse>, Status> {
+		let request= request.into_inner( );
+
+		self.usecases.getPostsOfUser(request)
+								 .await
+								 .map(|posts| Response::new(GetPostsResponse { posts }))
+								 .map_err(mapToGrpcError)
+	}
+}
