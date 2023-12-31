@@ -233,3 +233,12 @@ services:
   ##     - PROMETHEUS_URL=http://prometheus:9090
   ##   ports:
   ##     - 6789:6789
+
+  ## jaeger:
+  ##   container_name: jaeger
+  ##   image: jaegertracing/all-in-one:latest
+  ##   ports:
+  ##     - 4317:4317   ## gRPC endpoint
+  ##     - 16686:16686 ## UI dashboard endpoint
+  ##   environment:
+  ##     - COLLECTOR_OTLP_ENABLED=true
