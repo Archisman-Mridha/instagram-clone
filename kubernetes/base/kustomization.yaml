@@ -1,3 +1,4 @@
 resources:
   - bitnami-sealed-secrets.yaml
   - autometrics.yaml
+  - opa-gatekeeper

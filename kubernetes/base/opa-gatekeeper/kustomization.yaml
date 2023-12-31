@@ -1,0 +1,10 @@
+resources:
+  ## Kubernetes allows decoupling policy decisions from the inner workings of the API Server by
+  ## means of Admission Controller Webhooks, which are executed whenever a resource is created,
+  ## updated or deleted. OPA Gatekeeper is a validating and mutating webhook that enforces CRD-based
+  ## policies executed by Open Policy Agent, a policy engine for Cloud Native environments. In
+  ## addition to the admission scenario, Gatekeeper's audit functionality allows admins to see what
+  ## resources are currently violating any given policy. Finally, Gatekeeper's engine is designed to
+  ## be portable, allowing admins to detect and reject non-compliant commits to an IAC system's
+  ## source-of-truth.
+  - https://raw.githubusercontent.com/open-policy-agent/gatekeeper/master/deploy/gatekeeper.yaml
