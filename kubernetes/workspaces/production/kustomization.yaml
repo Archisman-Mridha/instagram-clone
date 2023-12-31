@@ -4,3 +4,4 @@ resources:
   - kube-prometheus-stack.yaml
   - jaeger.yaml
   - kubescape.yaml
+  - istio.yaml
