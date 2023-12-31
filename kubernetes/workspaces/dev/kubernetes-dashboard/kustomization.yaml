@@ -1,0 +1,7 @@
+resources:
+  - https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
+
+  ## Currently Kubernetes dashboard only supports Kubernetes ServiceAccounts(SA) as the
+  ## authentication mechanism. So, we will create a ServiceAccount named cluster-admin which
+  ## represents the cluster admin (a.k.a me 😎).
+  - ./serviceaccounts/cluster-admin
