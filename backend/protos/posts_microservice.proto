@@ -1,0 +1,38 @@
+syntax= "proto3";
+
+package posts_microservice;
+option go_package= "grpc_generated/";
+
+message Post {
+	int32 id= 1;
+	int32 owner_id= 2;
+
+	string description= 3;
+	string createdAt= 4;
+}
+
+service PostsService {
+	rpc CreatePost(CreatePostRequest) returns(CreatePostResponse);
+
+	rpc GetPostsOfUser(GetPostsOfUserRequest) returns(GetPostsResponse);
+}
+
+message CreatePostRequest {
+	int32 owner_id= 1;
+	string description= 2;
+}
+
+message CreatePostResponse {
+	int32 post_id= 1;
+}
+
+message GetPostsOfUserRequest {
+	int32 owner_id= 1;
+
+	int64 offset= 2;
+	int64 page_size= 3;
+}
+
+message GetPostsResponse {
+	repeated Post posts= 1;
+}

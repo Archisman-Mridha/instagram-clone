@@ -1,6 +1,7 @@
 syntax= "proto3";
 
 package users_microservice;
+option go_package= "grpc_generated/";
 
 service UsersService {
 	rpc Signup(SignupRequest) returns(AuthenticationResponse);
