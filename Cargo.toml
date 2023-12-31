@@ -11,6 +11,10 @@ path= "backend/lib.rs"
 name= "users-microservice"
 path= "backend/microservices/users/main.rs"
 
+[[bin]]
+name= "profiles-microservice"
+path= "backend/microservices/profiles/main.rs"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
@@ -22,17 +26,21 @@ cornucopia_async = "0.4.0"
 deadpool-postgres = "0.10.0"
 derive_more = { version = "0.99.17", default-features = false, features = ["constructor"] }
 dotenv = "0.15.0"
+elasticsearch = "8.5.0-alpha.1"
 futures = "0.3.30"
 jsonwebtoken = "9.2.0"
+kafka = "0.10.0"
 lazy_static = "1.4.0"
 postgres-types = "0.2.6"
 prost = "0.12.3"
 serde = "1.0.193"
+serde_json = "1.0.108"
 tokio = { version = "1.35.1", features = ["rt-multi-thread", "macros", "signal"] }
 tokio-postgres = "0.7.10"
 tokio-util = "0.7.10"
 tonic = { version = "0.10.2", features = ["gzip"] }
 tonic-reflection = "0.10.2"
+tracing = "0.1.40"
 
 [build-dependencies]
 tonic-build = "0.10.2"
