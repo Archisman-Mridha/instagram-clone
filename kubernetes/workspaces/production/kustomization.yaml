@@ -2,3 +2,4 @@ resources:
   - ../../base
   - metrics-server.yaml
   - kube-prometheus-stack.yaml
+  - jaeger.yaml
