@@ -5,7 +5,7 @@ use std::{env, path::PathBuf};
 fn main( ) {
   let outputDirectory= PathBuf::from(env::var("OUT_DIR").unwrap( ));
 
-  let microservices= vec![ "users", "profiles", "followships", "posts" ];
+  let microservices= vec![ "users", "profiles", "followships", "posts", "feeds" ];
 
   for microservice in microservices {
     let protoFilePath= format!("backend/protos/{}_microservice.proto", microservice);
