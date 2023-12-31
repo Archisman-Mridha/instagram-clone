@@ -1,0 +1,11 @@
+version: v1
+
+plugins:
+
+  ## Base types for Go. Generates message and enum types.
+  - plugin: buf.build/protocolbuffers/go:v1.31.0
+    out: backend/gateway/generated/grpc
+
+  ## Generates optimized marshalling & unmarshalling code for ProtoBuf APIv2.
+  - plugin: buf.build/community/planetscale-vtprotobuf:v0.5.0
+    out: backend/gateway/generated/grpc
