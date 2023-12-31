@@ -1,0 +1,74 @@
+plugins {
+	id "java"
+	id "application"
+
+	// Shadow plugin to produce fat JARs.
+	id "com.github.johnrengelman.shadow" version "7.1.2"
+}
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+jar {
+	enabled = false
+}
+
+tasks.withType(JavaCompile) {
+	options.encoding = "UTF-8"
+}
+
+apply plugin: "java"
+apply plugin: "com.github.johnrengelman.shadow"
+
+repositories {
+	mavenCentral( )
+}
+
+dependencies {
+	compileOnly "org.projectlombok:lombok:1.18.30"
+
+	// --------------------------------------------------------------
+	// Compile-time dependencies that should NOT be part of the
+	// shadow jar and are provided in the lib folder of Flink
+	// --------------------------------------------------------------
+
+	// --------------------------------------------------------------
+	// Dependencies that should be part of the shadow jar, e.g.
+	// connectors. These must be in the flinkShadowJar configuration!
+	// --------------------------------------------------------------
+	implementation "org.apache.flink:flink-streaming-java:1.18.0"
+	implementation "org.apache.flink:flink-clients:1.18.0"
+	implementation "org.apache.flink:flink-connector-kafka:3.0.2-1.18"
+	implementation "org.apache.flink:flink-shaded-jackson:2.14.2-17.0"
+}
+
+// NOTE: We cannot use "compileOnly" or "shadow" configurations since then we could not run code
+// in the IDE or with "gradle run". We also cannot exclude transitive dependencies from the
+// shadowJar yet (see https://github.com/johnrengelman/shadow/issues/159).
+// -> Explicitly define the // libraries we want to be included in the "flinkShadowJar" configuration!
+configurations {
+	flinkShadowJar // Dependencies which go into the shadowJar
+
+	// Always exclude these (also from transitive dependencies) since they are provided by Flink.
+	flinkShadowJar.exclude group: "org.apache.flink", module: "force-shading"
+	flinkShadowJar.exclude group: "com.google.code.findbugs", module: "jsr305"
+	flinkShadowJar.exclude group: "org.slf4j"
+	flinkShadowJar.exclude group: "org.apache.logging.log4j"
+}
+
+// Make compileOnly dependencies available for tests:
+sourceSets {
+	main.compileClasspath += configurations.flinkShadowJar
+	main.runtimeClasspath += configurations.flinkShadowJar
+	test.compileClasspath += configurations.flinkShadowJar
+	test.runtimeClasspath += configurations.flinkShadowJar
+	javadoc.classpath += configurations.flinkShadowJar
+}
+run.classpath = sourceSets.main.runtimeClasspath
+
+shadowJar {
+	archiveFileName = "FeedsUpdater.jar"
+	from(sourceSets.main.output)
+
+	mainClassName = "jobs.feeds_updater.Job"
+}
