@@ -25,6 +25,7 @@ var (
 	profilesMicroserviceConnector *connectors.ProfilesMicroserviceConnector
 	followshipsMicroserviceConnector *connectors.FollowshipsMicroserviceConnector
 	postsMicroserviceConnector *connectors.PostsMicroserviceConnector
+	feedsMicroserviceConnector *connectors.FeedsMicroserviceConnector
 )
 
 func main( ) {
@@ -59,6 +60,7 @@ func main( ) {
 	profilesMicroserviceConnector= connectors.NewProfilesMicroserviceConnector( )
 	followshipsMicroserviceConnector= connectors.NewFollowshipsMicroserviceConnector( )
 	postsMicroserviceConnector= connectors.NewPostsMicroserviceConnector( )
+	feedsMicroserviceConnector= connectors.NewFeedsMicroserviceConnector( )
 
 	waitGroup.Go(func( ) error {
 		graphqlServer := handler.NewDefaultServer(
@@ -69,6 +71,7 @@ func main( ) {
 					ProfilesMicroservice: profilesMicroserviceConnector,
 					FollowshipsMicroservice: followshipsMicroserviceConnector,
 					PostsMicroservice: postsMicroserviceConnector,
+					FeedsMicroservice: feedsMicroserviceConnector,
 				},
 			}),
 		)
@@ -104,6 +107,9 @@ func cleanup( ) {
 
 	if postsMicroserviceConnector != nil {
 		postsMicroserviceConnector.Disconnect( )}
+
+	if feedsMicroserviceConnector != nil {
+		feedsMicroserviceConnector.Disconnect( )}
 }
 
 // authenticationMiddleware will verify the JWT (if present) in the 'Authorization' header, present

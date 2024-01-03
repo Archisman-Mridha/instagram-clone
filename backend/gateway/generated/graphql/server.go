@@ -81,6 +81,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		GetFeed        func(childComplexity int, args GetFeedArgs) int
 		GetFollowers   func(childComplexity int, args GetFollowersArgs) int
 		GetFollowings  func(childComplexity int, args GetFollowingsArgs) int
 		GetPostsOfUser func(childComplexity int, args GetPostsOfUserArgs) int
@@ -107,6 +108,7 @@ type QueryResolver interface {
 	GetFollowings(ctx context.Context, args GetFollowingsArgs) ([]*ProfilePreview, error)
 	GetProfile(ctx context.Context, args GetProfileArgs) (*Profile, error)
 	GetPostsOfUser(ctx context.Context, args GetPostsOfUserArgs) ([]*Post, error)
+	GetFeed(ctx context.Context, args GetFeedArgs) ([]*Post, error)
 }
 
 type executableSchema struct {
@@ -288,6 +290,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ProfilePreview.Username(childComplexity), true
 
+	case "Query.getFeed":
+		if e.complexity.Query.GetFeed == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getFeed_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetFeed(childComplexity, args["args"].(GetFeedArgs)), true
+
 	case "Query.getFollowers":
 		if e.complexity.Query.GetFollowers == nil {
 			break
@@ -377,6 +391,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputCreatePostArgs,
 		ec.unmarshalInputFollowshipOperationArgs,
+		ec.unmarshalInputGetFeedArgs,
 		ec.unmarshalInputGetFollowersArgs,
 		ec.unmarshalInputGetFollowingsArgs,
 		ec.unmarshalInputGetPostsOfUserArgs,
@@ -531,6 +546,8 @@ type Query {
 
 	getProfile(args: GetProfileArgs!): Profile
 	getPostsOfUser(args: GetPostsOfUserArgs!): [Post]!
+
+	getFeed(args: GetFeedArgs!): [Post]!
 }
 
 input SignupArgs {
@@ -589,6 +606,11 @@ input GetFollowingsArgs {
 	userId: Int!
 
 	pageSize: Int! = 25
+	offset: Int!
+}
+
+input GetFeedArgs {
+	pageSize: Int! = 35
 	offset: Int!
 }`, BuiltIn: false},
 }
@@ -670,6 +692,21 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getFeed_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 GetFeedArgs
+	if tmp, ok := rawArgs["args"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("args"))
+		arg0, err = ec.unmarshalNGetFeedArgs2githubᚗcomᚋArchismanᚑMridhaᚋinstagramᚑcloneᚋbackendᚋgatewayᚋgeneratedᚋgraphqlᚐGetFeedArgs(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["args"] = arg0
 	return args, nil
 }
 
@@ -2102,6 +2139,71 @@ func (ec *executionContext) fieldContext_Query_getPostsOfUser(ctx context.Contex
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_getPostsOfUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getFeed(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getFeed(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetFeed(rctx, fc.Args["args"].(GetFeedArgs))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*Post)
+	fc.Result = res
+	return ec.marshalNPost2ᚕᚖgithubᚗcomᚋArchismanᚑMridhaᚋinstagramᚑcloneᚋbackendᚋgatewayᚋgeneratedᚋgraphqlᚐPost(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getFeed(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Post_id(ctx, field)
+			case "ownerId":
+				return ec.fieldContext_Post_ownerId(ctx, field)
+			case "description":
+				return ec.fieldContext_Post_description(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Post_createdAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Post", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getFeed_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -4125,6 +4227,44 @@ func (ec *executionContext) unmarshalInputFollowshipOperationArgs(ctx context.Co
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputGetFeedArgs(ctx context.Context, obj interface{}) (GetFeedArgs, error) {
+	var it GetFeedArgs
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	if _, present := asMap["pageSize"]; !present {
+		asMap["pageSize"] = 35
+	}
+
+	fieldsInOrder := [...]string{"pageSize", "offset"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "pageSize":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pageSize"))
+			data, err := ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PageSize = data
+		case "offset":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("offset"))
+			data, err := ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Offset = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputGetFollowersArgs(ctx context.Context, obj interface{}) (GetFollowersArgs, error) {
 	var it GetFollowersArgs
 	asMap := map[string]interface{}{}
@@ -4837,6 +4977,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getFeed":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getFeed(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "__type":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___type(ctx, field)
@@ -5264,6 +5426,11 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 
 func (ec *executionContext) unmarshalNCreatePostArgs2githubᚗcomᚋArchismanᚑMridhaᚋinstagramᚑcloneᚋbackendᚋgatewayᚋgeneratedᚋgraphqlᚐCreatePostArgs(ctx context.Context, v interface{}) (CreatePostArgs, error) {
 	res, err := ec.unmarshalInputCreatePostArgs(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNGetFeedArgs2githubᚗcomᚋArchismanᚑMridhaᚋinstagramᚑcloneᚋbackendᚋgatewayᚋgeneratedᚋgraphqlᚐGetFeedArgs(ctx context.Context, v interface{}) (GetFeedArgs, error) {
+	res, err := ec.unmarshalInputGetFeedArgs(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 

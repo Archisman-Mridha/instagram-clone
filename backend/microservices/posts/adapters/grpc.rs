@@ -70,4 +70,13 @@ impl PostsService for PostsServiceImpl {
 								 .map(|posts| Response::new(GetPostsResponse { posts }))
 								 .map_err(mapToGrpcError)
 	}
+
+	async fn get_posts(&self, request: Request<GetPostsRequest>) -> Result<Response<GetPostsResponse>, Status> {
+		let request= request.into_inner( );
+
+		self.usecases.getPosts(request.post_ids)
+								 .await
+								 .map(|posts| Response::new(GetPostsResponse { posts }))
+								 .map_err(mapToGrpcError)
+	}
 }

@@ -5,7 +5,10 @@ use shared::{
 	utils::{createConnectionPool, toServerError},
 	sql::queries::followships_microservice::{create, delete, getFollowshipCounts, getFollowings, getFollowers}
 };
-use crate::{domain::ports::FollowshipsRepository, proto::{GetFollowshipCountsResponse, FollowshipOperationRequest, GetFollowersRequest, GetFollowingsRequest}};
+use crate::{
+	domain::ports::FollowshipsRepository,
+	proto::{GetFollowshipCountsResponse, FollowshipOperationRequest, GetFollowersRequest, GetFollowingsRequest}
+};
 
 pub struct PostgresAdapter {
   connectionPool: Pool
@@ -67,27 +70,23 @@ impl FollowshipsRepository for PostgresAdapter {
 	async fn getFollowers(&self, args: &GetFollowersRequest) -> Result<Vec<i32>> {
 		let client= self.getClient( ).await?;
 
-		let followers= getFollowers( )
-										.bind(&client, &args.user_id, &args.page_size, &args.offset)
-										.all( )
-										.await
-										// TODO: Send the error to a central log management platform.
-										.map_err(toServerError)?;
-
-		Ok(followers)
+		getFollowers( )
+			.bind(&client, &args.user_id, &args.page_size, &args.offset)
+			.all( )
+			.await
+			// TODO: Send the error to a central log management platform.
+			.map_err(toServerError)
 	}
 
 	async fn getFollowings(&self, args: &GetFollowingsRequest) -> Result<Vec<i32>> {
 		let client= self.getClient( ).await?;
 
-		let followings= getFollowings( )
-											.bind(&client, &args.user_id, &args.page_size, &args.offset)
-											.all( )
-											.await
-											// TODO: Send the error to a central log management platform.
-											.map_err(toServerError)?;
-
-		Ok(followings)
+		getFollowings( )
+			.bind(&client, &args.user_id, &args.page_size, &args.offset)
+			.all( )
+			.await
+			// TODO: Send the error to a central log management platform.
+			.map_err(toServerError)
 	}
 
 	async fn getFollowshipCounts(&self, userId: i32) -> Result<GetFollowshipCountsResponse> {

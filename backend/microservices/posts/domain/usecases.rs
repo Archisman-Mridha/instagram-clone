@@ -16,4 +16,8 @@ impl Usecases {
 	pub async fn getPostsOfUser(&self, args: GetPostsOfUserRequest) -> Result<Vec<Post>> {
 		self.postsRepository.getPostsOfUser(&args).await
 	}
+
+	pub async fn getPosts(&self, postIds: Vec<i32>) -> Result<Vec<Post>> {
+		self.postsRepository.getPosts(postIds).await
+	}
 }

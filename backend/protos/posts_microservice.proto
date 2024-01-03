@@ -19,6 +19,7 @@ service PostsService {
 	rpc CreatePost(CreatePostRequest) returns(CreatePostResponse);
 
 	rpc GetPostsOfUser(GetPostsOfUserRequest) returns(GetPostsResponse);
+	rpc GetPosts(GetPostsRequest) returns(GetPostsResponse);
 }
 
 message CreatePostRequest {
@@ -35,6 +36,10 @@ message GetPostsOfUserRequest {
 
 	int64 offset= 2;
 	int64 page_size= 3;
+}
+
+message GetPostsRequest {
+	repeated int32 post_ids= 1;
 }
 
 message GetPostsResponse {

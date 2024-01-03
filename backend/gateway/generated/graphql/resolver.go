@@ -11,4 +11,5 @@ type Resolver struct {
 	ProfilesMicroservice *connectors.ProfilesMicroserviceConnector
 	FollowshipsMicroservice *connectors.FollowshipsMicroserviceConnector
 	PostsMicroservice *connectors.PostsMicroserviceConnector
+	FeedsMicroservice *connectors.FeedsMicroserviceConnector
 }

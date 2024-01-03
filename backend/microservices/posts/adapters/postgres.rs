@@ -3,7 +3,7 @@ use async_trait::async_trait;
 use deadpool_postgres::{Pool, Object};
 use shared::{
 	utils::{createConnectionPool, toServerError},
-	sql::queries::posts_microservice::{create, getPostsOfUser}
+	sql::queries::posts_microservice::{create, getPostsOfUser, getPosts}
 };
 use crate::{domain::ports::PostsRepository, proto::{CreatePostRequest, Post, GetPostsOfUserRequest}};
 
@@ -56,19 +56,40 @@ impl PostsRepository for PostgresAdapter {
 
 		Ok(
 			getPostsOfUser( )
-			.bind(&client, &args.owner_id, &args.page_size, &args.offset)
-			.all( )
-			.await.map_err(toServerError)? // TODO: Send the error to a central log management platform.
-			.iter( ).map(|value| {
-				Post {
-					id: value.id,
-					owner_id: args.owner_id,
+				.bind(&client, &args.owner_id, &args.page_size, &args.offset)
+				.all( )
+				.await.map_err(toServerError)? // TODO: Send the error to a central log management platform.
+				.iter( ).map(|value| {
+					Post {
+						id: value.id,
+						owner_id: args.owner_id,
 
-					description: value.description.to_owned( ),
-					created_at: value.created_at.to_string( )
-				}
-			})
-			.collect( )
+						description: value.description.to_owned( ),
+						created_at: value.created_at.to_string( )
+					}
+				})
+				.collect( )
+		)
+	}
+
+	async fn getPosts(&self, postIds: Vec<i32>) -> Result<Vec<Post>> {
+		let client= self.getClient( ).await?;
+
+		Ok(
+			getPosts( )
+				.bind(&client, &postIds)
+				.all( )
+				.await.map_err(toServerError)? // TODO: Send the error to a central log management platform.
+				.iter( ).map(|value| {
+					Post {
+						id: value.id,
+						owner_id: value.owner_id,
+
+						description: value.description.to_owned( ),
+						created_at: value.created_at.to_string( )
+					}
+				})
+				.collect( )
 		)
 	}
 }

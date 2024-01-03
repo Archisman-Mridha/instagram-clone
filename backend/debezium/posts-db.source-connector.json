@@ -1,0 +1,27 @@
+{
+	"name": "posts-db-source-connector",
+	"config": {
+		"name": "posts-db-source-connector",
+	
+		"connector.id": "postgres",
+		"connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+		"connector.displayName": "PostgreSQL",
+
+		"database.user": "default",
+		"database.dbname": "instagram_clone",
+		"database.hostname": "postgres",
+		"database.password": "pass",
+
+		"tombstones.on.delete": "false",
+		"skip.messages.without.change": "true",
+		"slot.name": "posts_db_source_connector",
+
+		"schema.include.list": "public",
+		"table.include.list": "public.posts",
+		"column.include.list": "public.posts.id,public.posts.owner_id",
+
+		"plugin.name": "pgoutput",
+
+		"topic.prefix": "db-events"
+	}
+}

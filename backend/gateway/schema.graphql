@@ -48,6 +48,8 @@ type Query {
 
 	getProfile(args: GetProfileArgs!): Profile
 	getPostsOfUser(args: GetPostsOfUserArgs!): [Post]!
+
+	getFeed(args: GetFeedArgs!): [Post]!
 }
 
 input SignupArgs {
@@ -106,5 +108,10 @@ input GetFollowingsArgs {
 	userId: Int!
 
 	pageSize: Int! = 25
+	offset: Int!
+}
+
+input GetFeedArgs {
+	pageSize: Int! = 35
 	offset: Int!
 }

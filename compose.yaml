@@ -80,6 +80,7 @@ services:
       kafka-topics.sh --bootstrap-server kafka:9092 --list
 
       kafka-topics.sh --bootstrap-server kafka:9092 --create --if-not-exists --topic db-events.public.users --replication-factor 1 --partitions 2
+      kafka-topics.sh --bootstrap-server kafka:9092 --create --if-not-exists --topic db-events.public.posts --replication-factor 1 --partitions 2
       "
 
   ## Debezium is a set of distributed services to capture changes in your databases so that your
@@ -179,18 +180,26 @@ services:
   ##   volumes:
   ##     - ./backend/flink/build/libs:/opt/flink/usrlib
 
+  redis:
+    container_name: redis
+    image: 'bitnami/redis:latest'
+    environment:
+      - REDIS_PASSWORD=pass
+    ports:
+      - 6379:6379
+
   ## OBSERVABILITY TOOLS
 
-  ## kafka-ui:
-  ##   container_name: kafka-ui
-  ##   image: provectuslabs/kafka-ui:latest
-  ##   ports:
-  ##     - 8080:8080
-  ##   depends_on:
-  ##     - kafka
-  ##   environment:
-  ##     KAFKA_CLUSTERS_0_NAME: default
-  ##     KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - 8080:8080
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_CLUSTERS_0_NAME: default
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
 
   ## debezium-ui:
   ##   container_name: debezium-ui

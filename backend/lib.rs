@@ -92,7 +92,7 @@ pub mod utils {
 																	 .map_err(|error| anyhow!("Error parsing message received from '{}' Kafka topic to 'String' type: {}", kafkaTopic, error))?;
 
 			serde_json::from_str(&messageAsString)
-										.map_err(|error| anyhow!("Error de-serializing message received from '{}' Kafka topic: {}", kafkaTopic, error))
+									.map_err(|error| anyhow!("Error de-serializing message received from '{}' Kafka topic: {}", kafkaTopic, error))
 		}
 	}
 

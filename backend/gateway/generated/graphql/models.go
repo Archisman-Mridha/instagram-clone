@@ -15,6 +15,11 @@ type FollowshipOperationArgs struct {
 	FolloweeID int `json:"followeeId"`
 }
 
+type GetFeedArgs struct {
+	PageSize int `json:"pageSize"`
+	Offset   int `json:"offset"`
+}
+
 type GetFollowersArgs struct {
 	UserID   int `json:"userId"`
 	PageSize int `json:"pageSize"`
