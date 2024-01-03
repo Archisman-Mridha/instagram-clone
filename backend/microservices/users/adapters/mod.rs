@@ -1,5 +1,5 @@
 mod grpc;
-pub use grpc::*;
+pub use self::grpc::*;
 
 mod postgres;
-pub use postgres::*;
+pub use self::postgres::*;

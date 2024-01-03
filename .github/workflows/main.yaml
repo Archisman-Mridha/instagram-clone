@@ -141,15 +141,14 @@ jobs:
             target/
           key: ${{ runner.os }}-cargo-${{ matrix.microservice.name }}-${{ hashFiles('**/Cargo.lock') }}
 
-      ## It takes pretty long to build container images for the ARM64 platform (even when using QEMU),
-      ## so skipping that one.
       - name: Build and push AMD64 container image
         if: steps.path-filter.outputs.changed == 'true'
         uses: docker/build-push-action@v4
         with:
           context: .
           file: ${{ matrix.microservice.path }}/Dockerfile
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64 ## It takes pretty long to build container images for
+                                             ## the ARM64 platform (even when using QEMU).
           push: true
           tags: ghcr.io/archisman-mridha/instagram-clone-${{ matrix.microservice.name }}:${{ github.sha }}
           ## Experimental cache exporter for GitHub Actions provided by buildx and BuildKit.

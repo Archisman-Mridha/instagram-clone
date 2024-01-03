@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-ARG APP_NAME=posts-microservice
+ARG APP_NAME=feeds-microservice
 ARG APP_NAME
 
 ARG PORT=4000
@@ -18,7 +18,7 @@ RUN apt update -y && \
 ## Leverage a cache mount to /usr/local/cargo/registry/ for downloaded dependencies and a cache mount
 ## to /app/target/ for compiled dependencies which will speed up subsequent builds. Once built, copy
 ## the executable to an output directory before the cache mounted at /app/target is unmounted.
-RUN --mount=type=bind,source=backend/microservices/posts,target=backend/microservices/posts \
+RUN --mount=type=bind,source=backend/microservices/feeds,target=backend/microservices/feeds \
 	--mount=type=bind,source=backend/lib.rs,target=backend/lib.rs \
 	--mount=type=bind,source=backend/sql/mod.rs,target=backend/sql/mod.rs \
     --mount=type=bind,source=build.rs,target=build.rs \
@@ -29,8 +29,8 @@ RUN --mount=type=bind,source=backend/microservices/posts,target=backend/microser
     --mount=type=cache,target=/usr/local/cargo/registry/ \
     <<EOF
 set -e
-cargo build --bin posts-microservice --locked --release
-cp ./target/release/posts-microservice /bin/server
+cargo build --bin feeds-microservice --locked --release
+cp ./target/release/feeds-microservice /bin/server
 EOF
 
 CMD ["/bin/server"]

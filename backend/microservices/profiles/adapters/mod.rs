@@ -1,11 +1,11 @@
 mod kafka;
-pub use kafka::*;
+pub use self::kafka::*;
 
 mod postgres;
-pub use postgres::*;
+pub use self::postgres::*;
 
 mod elasticsearch;
-pub use elasticsearch::*;
+pub use self::elasticsearch::*;
 
 mod grpc;
-pub use grpc::*;
+pub use self::grpc::*;

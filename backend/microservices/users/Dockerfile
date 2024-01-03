@@ -12,13 +12,15 @@ FROM rust:1.70.0-slim-bullseye AS build
 WORKDIR /app
 
 RUN apt update -y && \
-    apt install -y protobuf-compiler
+    apt install -y protobuf-compiler pkg-config libssl-dev
 
 ## Build the application.
 ## Leverage a cache mount to /usr/local/cargo/registry/ for downloaded dependencies and a cache mount
 ## to /app/target/ for compiled dependencies which will speed up subsequent builds. Once built, copy
 ## the executable to an output directory before the cache mounted at /app/target is unmounted.
 RUN --mount=type=bind,source=backend/microservices/users,target=backend/microservices/users \
+	--mount=type=bind,source=backend/lib.rs,target=backend/lib.rs \
+	--mount=type=bind,source=backend/sql/mod.rs,target=backend/sql/mod.rs \
     --mount=type=bind,source=build.rs,target=build.rs \
     --mount=type=bind,source=Cargo.toml,target=Cargo.toml \
     --mount=type=bind,source=Cargo.lock,target=Cargo.lock \

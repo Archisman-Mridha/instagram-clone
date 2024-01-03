@@ -1,11 +1,11 @@
 mod grpc;
-pub use grpc::*;
+pub use self::grpc::*;
 
 mod kafka;
-pub use kafka::*;
+pub use self::kafka::*;
 
 mod redis;
-pub use redis::*;
+pub use self::redis::*;
 
 mod postgres;
-pub use postgres::*;
+pub use self::postgres::*;
