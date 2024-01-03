@@ -212,17 +212,17 @@ jobs:
           name: trivy.${{ matrix.microservice.name }}-microservice.container-image-scan-result.sarif
           path: ./outputs/trivy/${{ matrix.microservice.name }}.container-image-scan-result.sarif
 
-      - name: Update container image tag in Kubernetes manifests
-        if: steps.path-filter.outputs.changed == 'true'
-        run: |
-          git config --global user.name "Archisman-Mridha"
-          git config --global user.email "archismanmridha12345@gmail.com"
-          git config --global pull.rebase false
+      ## - name: Update container image tag in Kubernetes manifests
+      ##   if: steps.path-filter.outputs.changed == 'true'
+      ##   run: |
+      ##     git config --global user.name "Archisman-Mridha"
+      ##     git config --global user.email "archismanmridha12345@gmail.com"
+      ##     git config --global pull.rebase false
 
-          git pull origin main
+      ##     git pull origin main
 
-          sed -i 's/instagram-clone-\(.*\):[[:alnum:]]\+/instagram-clone-\1:${{ github.sha }}/g' ${{ matrix.microservice.manifest }}
+      ##     sed -i 's/instagram-clone-\(.*\):[[:alnum:]]\+/instagram-clone-\1:${{ github.sha }}/g' ${{ matrix.microservice.manifest }}
 
-          git add .
-          git commit -m "🤖 Update container image tag for ${{ matrix.microservice.name }} to ${{ github.sha }}"
-          git push --set-upstream origin main
+      ##     git add .
+      ##     git commit -m "🤖 Update container image tag for ${{ matrix.microservice.name }} to ${{ github.sha }}"
+      ##     git push --set-upstream origin main

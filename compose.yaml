@@ -188,18 +188,18 @@ services:
     ports:
       - 6379:6379
 
-  ## OBSERVABILITY TOOLS
+  ## --- OBSERVABILITY TOOLS ---
 
-  kafka-ui:
-    container_name: kafka-ui
-    image: provectuslabs/kafka-ui:latest
-    ports:
-      - 8080:8080
-    depends_on:
-      - kafka
-    environment:
-      KAFKA_CLUSTERS_0_NAME: default
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+  ## kafka-ui:
+  ##   container_name: kafka-ui
+  ##   image: provectuslabs/kafka-ui:latest
+  ##   ports:
+  ##     - 8080:8080
+  ##   depends_on:
+  ##     - kafka
+  ##   environment:
+  ##     KAFKA_CLUSTERS_0_NAME: default
+  ##     KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
 
   ## debezium-ui:
   ##   container_name: debezium-ui
@@ -250,3 +250,5 @@ services:
   ##     - 16686:16686 ## UI dashboard endpoint
   ##   environment:
   ##     - COLLECTOR_OTLP_ENABLED=true
+
+  ## --- MICROSERVICES ---

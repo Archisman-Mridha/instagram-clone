@@ -106,6 +106,11 @@ pub mod queries {
       pub followeeId: i32,
     }
     #[derive(Clone, Copy, Debug)]
+    pub struct ExistsParams {
+      pub followerId: i32,
+      pub followeeId: i32,
+    }
+    #[derive(Clone, Copy, Debug)]
     pub struct GetFollowersParams {
       pub userId: i32,
       pub pageSize: i64,
@@ -308,6 +313,37 @@ pub mod queries {
         Box<dyn futures::Future<Output = Result<u64, tokio_postgres::Error>> + Send + 'a>,
       > {
         Box::pin(self.bind(client, &params.followerId, &params.followeeId))
+      }
+    }
+    pub fn exists() -> ExistsStmt {
+      ExistsStmt(cornucopia_async::private::Stmt::new(
+        "SELECT 1 FROM followships
+	WHERE follower_id= $1 AND followee_id= $2
+	LIMIT 1",
+      ))
+    }
+    pub struct ExistsStmt(cornucopia_async::private::Stmt);
+    impl ExistsStmt {
+      pub fn bind<'a, C: GenericClient>(
+        &'a mut self,
+        client: &'a C,
+        followerId: &'a i32,
+        followeeId: &'a i32,
+      ) -> I32Query<'a, C, i32, 2> {
+        I32Query {
+          client,
+          params: [followerId, followeeId],
+          stmt: &mut self.0,
+          extractor: |row| row.get(0),
+          mapper: |it| it,
+        }
+      }
+    }
+    impl<'a, C: GenericClient>
+      cornucopia_async::Params<'a, ExistsParams, I32Query<'a, C, i32, 2>, C> for ExistsStmt
+    {
+      fn params(&'a mut self, client: &'a C, params: &'a ExistsParams) -> I32Query<'a, C, i32, 2> {
+        self.bind(client, &params.followerId, &params.followeeId)
       }
     }
     pub fn getFollowers() -> GetFollowersStmt {

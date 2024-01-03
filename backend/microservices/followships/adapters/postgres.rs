@@ -1,13 +1,18 @@
-use anyhow::{Result, Ok};
+use anyhow::{Result, anyhow};
 use async_trait::async_trait;
 use deadpool_postgres::{Pool, Object};
 use shared::{
-	utils::{createConnectionPool, toServerError},
-	sql::queries::followships_microservice::{create, delete, getFollowshipCounts, getFollowings, getFollowers}
+	utils::{createConnectionPool, toServerError, SERVER_ERROR},
+	sql::queries::followships_microservice::{
+		create, delete, getFollowshipCounts, getFollowings, getFollowers, exists
+	}
 };
 use crate::{
 	domain::ports::FollowshipsRepository,
-	proto::{GetFollowshipCountsResponse, FollowshipOperationRequest, GetFollowersRequest, GetFollowingsRequest}
+	proto::{
+		GetFollowshipCountsResponse, FollowshipOperationRequest, GetFollowersRequest,
+		GetFollowingsRequest, DoesFollowshipExistRequest
+	}
 };
 
 pub struct PostgresAdapter {
@@ -65,6 +70,26 @@ impl FollowshipsRepository for PostgresAdapter {
 			.map_err(toServerError)?;
 
 		Ok(( ))
+	}
+
+	async fn exists(&self, args: &DoesFollowshipExistRequest) -> Result<bool> {
+		let client= self.getClient( ).await?;
+
+		let result= exists( )
+									.bind(&client, &args.follower_id, &args.followee_id)
+									.one( )
+									.await;
+
+		match result {
+			Ok(_) => anyhow::Ok(true),
+
+			Err(error) => {
+				if error.to_string( ) == "query returned an unexpected number of rows" {
+					return anyhow::Ok(false)}
+
+				Err(anyhow!(SERVER_ERROR))
+			}
+		}
 	}
 
 	async fn getFollowers(&self, args: &GetFollowersRequest) -> Result<Vec<i32>> {

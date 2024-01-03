@@ -60,6 +60,7 @@ type Profile struct {
 	ProfilePictureURI *string `json:"profilePictureUri,omitempty"`
 	FollowerCount     int     `json:"followerCount"`
 	FollowingCount    int     `json:"followingCount"`
+	IsFollowee        bool    `json:"isFollowee"`
 	RecentPosts       []*Post `json:"recentPosts"`
 }
 

@@ -17,6 +17,10 @@ impl Usecases {
 		self.followshipsRepository.delete(args).await
 	}
 
+	pub async fn doesFollowshipExist(&self, args: &DoesFollowshipExistRequest) -> Result<bool> {
+		self.followshipsRepository.exists(args).await
+	}
+
 	pub async fn getFollowers(&self, args: &GetFollowersRequest) -> Result<GetFollowersResponse> {
 		self.followshipsRepository.
 				getFollowers(args).await

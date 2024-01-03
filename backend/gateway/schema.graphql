@@ -23,6 +23,7 @@ type Profile {
 
 	followerCount: Int!
 	followingCount: Int!
+	isFollowee: Boolean!
 
 	recentPosts: [Post]!
 }

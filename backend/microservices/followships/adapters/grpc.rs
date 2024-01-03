@@ -70,6 +70,13 @@ impl FollowshipsService for FollowshipsServiceImpl {
 								 .map_err(mapToGrpcError)
 	}
 
+	async fn does_followship_exist(&self, request: Request<DoesFollowshipExistRequest>) -> Result<Response<DoesFollowshipExistResponse>, Status> {
+		let request= request.into_inner( );
+
+		self.usecases.doesFollowshipExist(&request).await
+								 .map(|value| Response::new(DoesFollowshipExistResponse { exists: value }))
+								 .map_err(mapToGrpcError)
+	}
 
 	async fn get_followers(&self, request: Request<GetFollowersRequest>) -> Result<Response<GetFollowersResponse>, Status> {		let request= request.into_inner( );
 

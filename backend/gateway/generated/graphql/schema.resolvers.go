@@ -163,7 +163,7 @@ func (r *queryResolver) GetFollowings(ctx context.Context, args GetFollowingsArg
 
 // GetProfile is the resolver for the getProfile field.
 func (r *queryResolver) GetProfile(ctx context.Context, args GetProfileArgs) (*Profile, error) {
-	_, isUserAuthenticated := ctx.Value(utils.USER_ID_CONTEXT_KEY).(int32)
+	userId, isUserAuthenticated := ctx.Value(utils.USER_ID_CONTEXT_KEY).(int32)
 	if !isUserAuthenticated {
 		return nil, utils.ErrUnauthenticated
 	}
@@ -201,6 +201,20 @@ func (r *queryResolver) GetProfile(ctx context.Context, args GetProfileArgs) (*P
 
 		profile.FollowerCount = int(response.FollowerCount)
 		profile.FollowingCount = int(response.FollowingCount)
+
+		return nil
+	})
+
+	waitGroup.Go(func() error {
+		response, err := r.FollowshipsMicroservice.DoesFollowshipExist(ctx, &grpc_generated.DoesFollowshipExistRequest{
+			FollowerId: userId,
+			FolloweeId: int32(args.UserID),
+		})
+		if err != nil {
+			return err
+		}
+
+		profile.IsFollowee = response.Exists
 
 		return nil
 	})

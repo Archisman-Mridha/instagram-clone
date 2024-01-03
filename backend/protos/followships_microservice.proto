@@ -10,6 +10,7 @@ service FollowshipsService {
 
 	rpc Follow(FollowshipOperationRequest) returns(google.protobuf.Empty);
 	rpc Unfollow(FollowshipOperationRequest) returns(google.protobuf.Empty);
+	rpc DoesFollowshipExist(DoesFollowshipExistRequest) returns(DoesFollowshipExistResponse);
 
 	rpc GetFollowers(GetFollowersRequest) returns(GetFollowersResponse);
 	rpc GetFollowings(GetFollowingsRequest) returns(GetFollowingsResponse);
@@ -50,4 +51,13 @@ message GetFollowshipCountsRequest {
 message GetFollowshipCountsResponse {
 	int64 follower_count= 1;
 	int64 following_count= 2;
+}
+
+message DoesFollowshipExistRequest {
+	int32 follower_id= 1;
+	int32 followee_id= 2;
+}
+
+message DoesFollowshipExistResponse {
+	bool exists= 1;
 }

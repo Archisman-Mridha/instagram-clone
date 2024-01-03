@@ -7,6 +7,11 @@ INSERT INTO followships
 DELETE FROM followships
 	WHERE follower_id= :followerId AND followee_id= :followeeId;
 
+--! exists
+SELECT 1 FROM followships
+	WHERE follower_id= :followerId AND followee_id= :followeeId
+	LIMIT 1;
+
 --! getFollowers
 SELECT follower_id FROM followships
 	WHERE followee_id= :userId
