@@ -11,8 +11,15 @@ ARG PORT
 FROM rust:1.70.0-slim-bullseye AS build
 WORKDIR /app
 
+RUN rustup target add x86_64-unknown-linux-musl
+
 RUN apt update -y && \
-    apt install -y protobuf-compiler pkg-config libssl-dev
+    apt install -y protobuf-compiler musl-dev musl-tools build-essential gcc-x86-64-linux-gnu
+
+ENV RUSTFLAGS='-C linker=x86_64-linux-gnu-gcc'
+ENV CC='gcc'
+ENV CC_x86_64_unknown_linux_musl=x86_64-linux-gnu-gcc
+ENV CC_x86_64-unknown-linux-musl=x86_64-linux-gnu-gcc
 
 ## Build the application.
 ## Leverage a cache mount to /usr/local/cargo/registry/ for downloaded dependencies and a cache mount
@@ -29,27 +36,13 @@ RUN --mount=type=bind,source=backend/microservices/followships,target=backend/mi
     --mount=type=cache,target=/usr/local/cargo/registry/ \
     <<EOF
 set -e
-cargo build --bin followships-microservice --locked --release
-cp ./target/release/followships-microservice /bin/server
+cargo build --bin followships-microservice --locked --release --target x86_64-unknown-linux-musl
+cp ./target/x86_64-unknown-linux-musl/release/followships-microservice /bin/server
 EOF
-
-CMD ["/bin/server"]
 
 ### --- STAGE 2 - Running the application --- ###
 
-FROM debian AS final
-
-## Create non-privileged user.
-ARG UID=10001
-RUN adduser \
-    --disabled-password \
-    --gecos "" \
-    --home "/nonexistent" \
-    --shell "/sbin/nologin" \
-    --no-create-home \
-    --uid "${UID}" \
-    default
-USER default
+FROM scratch
 
 ## Copy the executable from the "build" stage.
 COPY --from=build /bin/server /bin/

@@ -38,10 +38,10 @@ cornucopia_async = "0.4.0"
 deadpool-postgres = "0.10.0"
 derive_more = { version = "0.99.17", default-features = false, features = ["constructor"] }
 dotenv = "0.15.0"
-elasticsearch = "8.5.0-alpha.1"
+elasticsearch = { version = "8.5.0-alpha.1", default-features = false }
 futures = "0.3.30"
 jsonwebtoken = "9.2.0"
-kafka = "0.10.0"
+kafka = { version = "0.10.0", default-features = false }
 lazy_static = "1.4.0"
 postgres-types = { version = "0.2.6", features = ["with-time-0_3"] }
 prost = "0.12.3"
