@@ -7,13 +7,11 @@ package graphql_generated
 import (
 	"context"
 
-	"golang.org/x/sync/errgroup"
-
 	grpc_generated "github.com/Archisman-Mridha/instagram-clone/backend/gateway/generated/grpc"
 	"github.com/Archisman-Mridha/instagram-clone/backend/gateway/utils"
+	"golang.org/x/sync/errgroup"
 )
 
-// Signup is the resolver for the Signup field.
 func (r *mutationResolver) Signup(ctx context.Context, args SignupArgs) (*AuthenticationOutput, error) {
 	response, err := r.UsersMicroservice.Signup(ctx, &grpc_generated.SignupRequest{
 		Name:     args.Name,
@@ -28,7 +26,6 @@ func (r *mutationResolver) Signup(ctx context.Context, args SignupArgs) (*Authen
 	return &AuthenticationOutput{Jwt: response.Jwt}, nil
 }
 
-// Follow is the resolver for the follow field.
 func (r *mutationResolver) Follow(ctx context.Context, followeeID int) (*bool, error) {
 	userId, isUserAuthenticated := ctx.Value(utils.USER_ID_CONTEXT_KEY).(int32)
 	if !isUserAuthenticated {
@@ -43,7 +40,6 @@ func (r *mutationResolver) Follow(ctx context.Context, followeeID int) (*bool, e
 	return nil, err
 }
 
-// Unfollow is the resolver for the unfollow field.
 func (r *mutationResolver) Unfollow(ctx context.Context, followeeID int) (*bool, error) {
 	userId, isUserAuthenticated := ctx.Value(utils.USER_ID_CONTEXT_KEY).(int32)
 	if !isUserAuthenticated {
@@ -58,7 +54,6 @@ func (r *mutationResolver) Unfollow(ctx context.Context, followeeID int) (*bool,
 	return nil, err
 }
 
-// CreatePost is the resolver for the createPost field.
 func (r *mutationResolver) CreatePost(ctx context.Context, args CreatePostArgs) (int, error) {
 	userId, isUserAuthenticated := ctx.Value(utils.USER_ID_CONTEXT_KEY).(int32)
 	if !isUserAuthenticated {
@@ -74,7 +69,6 @@ func (r *mutationResolver) CreatePost(ctx context.Context, args CreatePostArgs) 
 	return int(postID.PostId), err
 }
 
-// Signin is the resolver for the Signin field.
 func (r *queryResolver) Signin(ctx context.Context, args SigninArgs) (*AuthenticationOutput, error) {
 	response, err := r.UsersMicroservice.Signin(ctx, &grpc_generated.SigninRequest{
 		Identifier: args.Identifier,
@@ -87,7 +81,6 @@ func (r *queryResolver) Signin(ctx context.Context, args SigninArgs) (*Authentic
 	return &AuthenticationOutput{Jwt: response.Jwt}, nil
 }
 
-// SearchProfiles is the resolver for the searchProfiles field.
 func (r *queryResolver) SearchProfiles(ctx context.Context, args SearchProfilesArgs) (*SearchProfilesOutput, error) {
 	_, isUserAuthenticated := ctx.Value(utils.USER_ID_CONTEXT_KEY).(int32)
 	if !isUserAuthenticated {
@@ -105,7 +98,6 @@ func (r *queryResolver) SearchProfiles(ctx context.Context, args SearchProfilesA
 	return &SearchProfilesOutput{ProfilePreviews: profilePreviews}, err
 }
 
-// GetFollowers is the resolver for the getFollowers field.
 func (r *queryResolver) GetFollowers(ctx context.Context, args GetFollowersArgs) ([]*ProfilePreview, error) {
 	_, isUserAuthenticated := ctx.Value(utils.USER_ID_CONTEXT_KEY).(int32)
 	if !isUserAuthenticated {
@@ -133,7 +125,6 @@ func (r *queryResolver) GetFollowers(ctx context.Context, args GetFollowersArgs)
 	return profilePreviews, err
 }
 
-// GetFollowings is the resolver for the getFollowings field.
 func (r *queryResolver) GetFollowings(ctx context.Context, args GetFollowingsArgs) ([]*ProfilePreview, error) {
 	_, isUserAuthenticated := ctx.Value(utils.USER_ID_CONTEXT_KEY).(int32)
 	if !isUserAuthenticated {
@@ -161,7 +152,6 @@ func (r *queryResolver) GetFollowings(ctx context.Context, args GetFollowingsArg
 	return profilePreviews, err
 }
 
-// GetProfile is the resolver for the getProfile field.
 func (r *queryResolver) GetProfile(ctx context.Context, args GetProfileArgs) (*Profile, error) {
 	userId, isUserAuthenticated := ctx.Value(utils.USER_ID_CONTEXT_KEY).(int32)
 	if !isUserAuthenticated {
@@ -240,7 +230,6 @@ func (r *queryResolver) GetProfile(ctx context.Context, args GetProfileArgs) (*P
 	return profile, err
 }
 
-// GetPostsOfUser is the resolver for the getPostsOfUser field.
 func (r *queryResolver) GetPostsOfUser(ctx context.Context, args GetPostsOfUserArgs) ([]*Post, error) {
 	_, isUserAuthenticated := ctx.Value(utils.USER_ID_CONTEXT_KEY).(int32)
 	if !isUserAuthenticated {
@@ -260,7 +249,6 @@ func (r *queryResolver) GetPostsOfUser(ctx context.Context, args GetPostsOfUserA
 	return PostsToGraphQL(response.Posts), err
 }
 
-// GetFeed is the resolver for the getFeed field.
 func (r *queryResolver) GetFeed(ctx context.Context, args GetFeedArgs) ([]*Post, error) {
 	userId, isUserAuthenticated := ctx.Value(utils.USER_ID_CONTEXT_KEY).(int32)
 	if !isUserAuthenticated {
@@ -287,10 +275,8 @@ func (r *queryResolver) GetFeed(ctx context.Context, args GetFeedArgs) ([]*Post,
 	return PostsToGraphQL(response.Posts), err
 }
 
-// Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
-// Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }

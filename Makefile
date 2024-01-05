@@ -8,6 +8,7 @@ graphql-generate:
 	cd backend/gateway && \
 		go run github.com/99designs/gqlgen generate && \
 		go mod tidy
+## ./scripts/metrics-instrument-graphql-resolvers.sh
 
 ## Generate GoLang types from protobuf definitions using 'buf'.
 buf-generate:

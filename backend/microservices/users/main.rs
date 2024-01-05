@@ -16,7 +16,7 @@ use std::process::exit;
 use adapters::{GrpcAdapter, PostgresAdapter};
 use domain::usecases::Usecases;
 use lazy_static::lazy_static;
-use shared::utils::getEnv;
+use shared::utils::{getEnv, initMetricsServer};
 use tokio::signal;
 use tokio_util::sync::CancellationToken;
 use crate::domain::ports::UsersRepository;
@@ -47,6 +47,8 @@ lazy_static! {
 async fn main( ) {
 	if let Err(error)= dotenv::from_filename("./backend/microservices/users/.env") {
     println!("WARNING: Couldn't load environment variables from .env file due to error : {}", error)}
+
+	initMetricsServer( );
 
 	let postgresAdapter=
     Box::leak::<'static>(Box::new(PostgresAdapter::new( ).await)) as &'static PostgresAdapter;

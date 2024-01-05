@@ -1,4 +1,5 @@
 use crate::{proto::{users_service_server::*, *}, THREAD_CANCELLATION_TOKEN, CONFIG, domain::usecases::Usecases};
+use autometrics::{autometrics, objectives::Objective};
 use shared::utils::mapToGrpcError;
 use tokio::spawn;
 use tonic::{codec::CompressionEncoding, transport::Server, Request, Response, Status, async_trait};
@@ -43,6 +44,12 @@ struct UsersServiceImpl {
 	usecases: Box<Usecases>
 }
 
+// Service Level Objectives (SLOs) are a way to define and measure the reliability and performance
+// of a service.
+// Autometrics raises an alert whenever any of the SLO objectives fail.
+const API_SLO: Objective= Objective::new("users-microservice");
+
+#[autometrics(objective = API_SLO)]
 #[async_trait]
 impl UsersService for UsersServiceImpl {
 	async fn ping(&self, _: Request<( )>) -> Result<Response<( )>, Status> {

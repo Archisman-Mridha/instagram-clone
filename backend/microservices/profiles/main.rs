@@ -15,7 +15,7 @@ use std::process::exit;
 use adapters::{PostgresAdapter, GrpcAdapter, ElasticsearchAdapter};
 use domain::usecases::Usecases;
 use lazy_static::lazy_static;
-use shared::utils::getEnv;
+use shared::utils::{getEnv, initMetricsServer};
 use tokio::{signal, spawn};
 use tokio_util::sync::CancellationToken;
 use crate::domain::ports::ProfilesRepository;
@@ -41,6 +41,8 @@ async fn main( ) {
 	// Load environment variables from a .env file, during development process.
   if let Err(error)= dotenv::from_filename("./backend/microservices/profiles/.env") {
     println!("WARNING: couldn't load environment variables from .env file due to error : {}", error)}
+
+	initMetricsServer( );
 
 	let postgresAdapter=
 		Box::leak::<'static>(Box::new(PostgresAdapter::new( ).await)) as &'static PostgresAdapter;

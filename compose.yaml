@@ -5,6 +5,7 @@ services:
   postgres:
     container_name: postgres
     image: postgres:alpine
+    hostname: postgres
     environment:
       - POSTGRES_USER=default
       - POSTGRES_PASSWORD=pass
@@ -33,6 +34,7 @@ services:
   elasticsearch:
     container_name: elasticsearch
     image: docker.elastic.co/elasticsearch/elasticsearch:8.11.1
+    hostname: elasticsearch
     ports:
       - 9200:9200
       - 9300:9300
@@ -184,6 +186,7 @@ services:
   redis:
     container_name: redis
     image: bitnami/redis:latest
+    hostname: redis
     environment:
       - REDIS_PASSWORD=pass
     ports:
@@ -227,21 +230,21 @@ services:
   ##   depends_on:
   ##     - elasticsearch
 
-  ## prometheus:
-  ##   container_name: prometheus
-  ##   image: prom/prometheus
-  ##   ports:
-  ##     - 9090:9090
-  ##   volumes:
-  ##     - ./prometheus.dev-config.yaml:/etc/prometheus/prometheus.yml:ro
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus.dev-config.yaml:/etc/prometheus/prometheus.yml:ro
 
-  ## autometrics:
-  ##   container_name: autometrics
-  ##   image: autometrics/am-proxy
-  ##   environment:
-  ##     - PROMETHEUS_URL=http://prometheus:9090
-  ##   ports:
-  ##     - 6789:6789
+  autometrics:
+    container_name: autometrics
+    image: autometrics/am-proxy
+    environment:
+      - PROMETHEUS_URL=http://prometheus:9090
+    ports:
+      - 6789:6789
 
   ## jaeger:
   ##   container_name: jaeger
@@ -254,126 +257,139 @@ services:
 
   ## --- MICROSERVICES ---
 
-  ## users-microservice:
-  ##   container_name: users-microservice
-  ##   build:
-  ##     context: .
-  ##     dockerfile: ./backend/microservices/users/Dockerfile
-  ##   environment:
-  ##     - JWT_SECRET="secret"
-  ##     ## gRPC
-  ##     - GRPC_SERVER_PORT=4001
-  ##     ## PostgreSQL
-  ##     - POSTGRES_HOST="postgres"
-  ##     - POSTGRES_PORT=5432
-  ##     - POSTGRES_USER="default"
-  ##     - POSTGRES_PASSWORD="pass"
-  ##     - POSTGRES_CONNECTION_POOL_SIZE=300
-  ##   depends_on:
-  ##     - postgres-migrate
+  users-microservice:
+    container_name: users-microservice
+    build:
+      context: .
+      dockerfile: ./backend/microservices/users/Dockerfile
+    environment:
+      - JWT_SECRET=secret
+      ## gRPC
+      - GRPC_SERVER_PORT=4001
+      ## PostgreSQL
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=default
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_CONNECTION_POOL_SIZE=300
+      ## Prometheus
+      - METRICS_SERVER_PORT=5000
+    depends_on:
+      - postgres-migrate
 
-  ## profiles-microservice:
-  ##   container_name: profiles-microservice
-  ##   build:
-  ##     context: .
-  ##     dockerfile: ./backend/microservices/profiles/Dockerfile
-  ##   environment:
-  ##     ## gRPC
-  ##     - GRPC_SERVER_PORT=4002
-  ##     ## Elasticsearch
-  ##     - ELASTICSEARCH_URL="http://elasticsearch:9200"
-  ##     - ELASTICSEARCH_USERNAME="kibanna_system"
-  ##     - ELASTICSEARCH_PASSWORD="pass"
-  ##     ## Apache Kafka
-  ##     - KAFKA_HOSTS="kafka:29092"
-  ##     ## PostgreSQL
-  ##     - POSTGRES_HOST="postgres"
-  ##     - POSTGRES_PORT=5432
-  ##     - POSTGRES_USER="default"
-  ##     - POSTGRES_PASSWORD="pass"
-  ##     - POSTGRES_CONNECTION_POOL_SIZE=300
-  ##   depends_on:
-  ##     - postgres-migrate
-  ##     - kafka-migrate
-  ##     - elasticsearch
-  ##   restart: on-failure
+  profiles-microservice:
+    container_name: profiles-microservice
+    build:
+      context: .
+      dockerfile: ./backend/microservices/profiles/Dockerfile
+    environment:
+      ## gRPC
+      - GRPC_SERVER_PORT=4002
+      ## Elasticsearch
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=kibanna_system
+      - ELASTICSEARCH_PASSWORD=pass
+      ## Apache Kafka
+      - KAFKA_HOSTS=kafka:9092
+      ## PostgreSQL
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=default
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_CONNECTION_POOL_SIZE=300
+      ## Prometheus
+      - METRICS_SERVER_PORT=5000
+    depends_on:
+      - postgres-migrate
+      - kafka-migrate
+      - elasticsearch
+    restart: on-failure
 
-  ## followships-microservice:
-  ##   container_name: followships-microservice
-  ##   build:
-  ##     context: .
-  ##     dockerfile: ./backend/microservices/followships/Dockerfile
-  ##   environment:
-  ##     ## gRPC
-  ##     - GRPC_SERVER_PORT=4003
-  ##     ## PostgreSQL
-  ##     - POSTGRES_HOST="postgres"
-  ##     - POSTGRES_PORT=5432
-  ##     - POSTGRES_USER="default"
-  ##     - POSTGRES_PASSWORD="pass"
-  ##     - POSTGRES_CONNECTION_POOL_SIZE=300
-  ##   depends_on:
-  ##     - postgres-migrate
+  followships-microservice:
+    container_name: followships-microservice
+    build:
+      context: .
+      dockerfile: ./backend/microservices/followships/Dockerfile
+    environment:
+      ## gRPC
+      - GRPC_SERVER_PORT=4003
+      ## PostgreSQL
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=default
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_CONNECTION_POOL_SIZE=300
+      ## Prometheus
+      - METRICS_SERVER_PORT=5000
+    depends_on:
+      - postgres-migrate
 
-  ## posts-microservice:
-  ##   container_name: posts-microservice
-  ##   build:
-  ##     context: .
-  ##     dockerfile: ./backend/microservices/posts/Dockerfile
-  ##   environment:
-  ##     ## gRPC
-  ##     - GRPC_SERVER_PORT=4004
-  ##     ## PostgreSQL
-  ##     - POSTGRES_HOST="postgres"
-  ##     - POSTGRES_PORT=5432
-  ##     - POSTGRES_USER="default"
-  ##     - POSTGRES_PASSWORD="pass"
-  ##     - POSTGRES_CONNECTION_POOL_SIZE=300
-  ##   depends_on:
-  ##     - postgres-migrate
+  posts-microservice:
+    container_name: posts-microservice
+    build:
+      context: .
+      dockerfile: ./backend/microservices/posts/Dockerfile
+    environment:
+      ## gRPC
+      - GRPC_SERVER_PORT=4004
+      ## PostgreSQL
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=default
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_CONNECTION_POOL_SIZE=300
+      ## Prometheus
+      - METRICS_SERVER_PORT=5000
+    depends_on:
+      - postgres-migrate
 
-  ## feeds-microservice:
-  ##   container_name: feeds-microservice
-  ##   build:
-  ##     context: .
-  ##     dockerfile: ./backend/microservices/feeds/Dockerfile
-  ##   environment:
-  ##     ## gRPC
-  ##     - GRPC_SERVER_PORT=4005
-  ##     ## PostgreSQL
-  ##     - POSTGRES_HOST="postgres"
-  ##     - POSTGRES_PORT=5432
-  ##     - POSTGRES_USER="default"
-  ##     - POSTGRES_PASSWORD="pass"
-  ##     - POSTGRES_CONNECTION_POOL_SIZE=300
-  ##     ## Apache Kafka
-  ##     - KAFKA_HOSTS="kafka:29092"
-  ##     ## Redis
-  ##     - REDIS_URL="redis://:pass@redis:6379"
-  ##   depends_on:
-  ##     - postgres-migrate
-  ##     - kafka-migrate
-  ##     - redis
-  ##   restart: on-failure
+  feeds-microservice:
+    container_name: feeds-microservice
+    build:
+      context: .
+      dockerfile: ./backend/microservices/feeds/Dockerfile
+    environment:
+      ## gRPC
+      - GRPC_SERVER_PORT=4005
+      ## PostgreSQL
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=default
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_CONNECTION_POOL_SIZE=300
+      ## Apache Kafka
+      - KAFKA_HOSTS=kafka:9092
+      ## Redis
+      - REDIS_URL=redis://:pass@redis:6379
+      ## Prometheus
+      - METRICS_SERVER_PORT=5000
+    depends_on:
+      - postgres-migrate
+      - kafka-migrate
+      - redis
+    restart: on-failure
 
-  ## gateway:
-  ##   container_name: gateway
-  ##   build:
-  ##     context: .
-  ##     dockerfile: ./backend/gateway/Dockerfile
-  ##   environment:
-  ##     - GRAPHQL_SERVER_PORT=4000
-  ##     ## Microservices
-  ##     - USERS_MICROSERVICE_URL="users-microservice:4001"
-  ##     - PROFILES_MICROSERVICE_URL="profiles-microservice:4002"
-  ##     - FOLLOWSHIPS_MICROSERVICE_URL="followships-microservice:4003"
-  ##     - POSTS_MICROSERVICE_URL="posts-microservice:4004"
-  ##     - FEEDS_MICROSERVICE_URL="feeds-microservice:4005"
-  ##   depends_on:
-  ##     - users-microservice
-  ##     - profiles-microservice
-  ##     - followships-microservice
-  ##     - posts-microservice
-  ##     - feeds-microservice
-  ##   ports:
-  ##     - 4000:4000
+  gateway:
+    container_name: gateway
+    build:
+      context: .
+      dockerfile: ./backend/gateway/Dockerfile
+    environment:
+      - GRAPHQL_SERVER_PORT=4000
+      ## Microservices
+      - USERS_MICROSERVICE_URL=users-microservice:4001
+      - PROFILES_MICROSERVICE_URL=profiles-microservice:4002
+      - FOLLOWSHIPS_MICROSERVICE_URL=followships-microservice:4003
+      - POSTS_MICROSERVICE_URL=posts-microservice:4004
+      - FEEDS_MICROSERVICE_URL=feeds-microservice:4005
+      ## Prometheus
+      - METRICS_SERVER_PORT=5000
+    depends_on:
+      - users-microservice
+      - profiles-microservice
+      - followships-microservice
+      - posts-microservice
+      - feeds-microservice
+    ports:
+      - 4000:4000
+    restart: on-failure

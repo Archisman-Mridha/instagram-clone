@@ -4,13 +4,33 @@ pub mod sql;
 
 pub mod utils {
 	use anyhow::anyhow;
-  use deadpool_postgres::{ManagerConfig, Pool, RecyclingMethod};
+  use autometrics::prometheus_exporter;
+	use deadpool_postgres::{ManagerConfig, Pool, RecyclingMethod};
+	use tokio::spawn;
 	use tonic::{Status, Code};
+	use warp::Filter;
   use std::{env, time::Duration};
   use tokio_postgres::NoTls;
 
 	pub fn getEnv(name: &str) -> String {
     env::var(name).expect(&format!("ERROR: Getting env {}", name))}
+
+	// initMetricsServer starts an HTTP server in a separate thread, which exposes application metrics
+	// to Prometheus.
+	pub fn initMetricsServer( ) {
+		prometheus_exporter::init( );
+
+		let routes= warp::get( )
+											.and(warp::path("metrics"))
+											.map(| | prometheus_exporter::encode_http_response( ));
+
+		let address= ([0, 0, 0, 0], getEnv("METRICS_SERVER_PORT").parse( ).unwrap( ));
+		let metricsServer= warp::serve(routes)
+														 .run(address);
+
+		println!("INFO: Starting metrics server");
+		spawn(metricsServer);
+	}
 
   pub const SERVER_ERROR: &'static str= "Server error occurred";
 
@@ -20,6 +40,7 @@ pub mod utils {
     anyhow!(SERVER_ERROR)
   }
 
+	// createConnectionPool creates a PostgreSQL database connection pool.
   pub fn createConnectionPool( ) -> Pool {
 		deadpool_postgres::Config {
 			host: Some(getEnv("POSTGRES_HOST")),

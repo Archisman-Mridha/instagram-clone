@@ -3,6 +3,7 @@ use crate::{
 	CONFIG, THREAD_CANCELLATION_TOKEN,
 };
 use async_trait::async_trait;
+use autometrics::{objectives::Objective, autometrics};
 use shared::utils::mapToGrpcError;
 use tokio::spawn;
 use tonic::{codec::CompressionEncoding, transport::Server, Request, Response, Status};
@@ -48,6 +49,9 @@ struct PostsServiceImpl {
 	usecases: Box<Usecases>
 }
 
+const API_SLO: Objective= Objective::new("users-microservice");
+
+#[autometrics(objective = API_SLO)]
 #[async_trait]
 impl PostsService for PostsServiceImpl {
 	async fn ping(&self, _: Request<( )>) -> Result<Response<( )>, Status> {

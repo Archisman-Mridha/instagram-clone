@@ -1,4 +1,5 @@
 use crate::{proto::{feeds_service_server::*, *}, THREAD_CANCELLATION_TOKEN, CONFIG, domain::usecases::Usecases};
+use autometrics::{objectives::Objective, autometrics};
 use shared::utils::mapToGrpcError;
 use tokio::spawn;
 use tonic::{codec::CompressionEncoding, transport::Server, Request, Response, Status, async_trait};
@@ -43,6 +44,9 @@ struct FeedsServiceImpl {
 	usecases: &'static Usecases
 }
 
+const API_SLO: Objective= Objective::new("users-microservice");
+
+#[autometrics(objective = API_SLO)]
 #[async_trait]
 impl FeedsService for FeedsServiceImpl {
 	async fn ping(&self, _: Request<( )>) -> Result<Response<( )>, Status> {

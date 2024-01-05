@@ -10,8 +10,10 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/autometrics-dev/autometrics-go/prometheus/autometrics"
 	"github.com/charmbracelet/log"
 	"github.com/go-chi/chi"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"golang.org/x/sync/errgroup"
 
 	"github.com/Archisman-Mridha/instagram-clone/backend/gateway/connectors"
@@ -26,12 +28,19 @@ var (
 	followshipsMicroserviceConnector *connectors.FollowshipsMicroserviceConnector
 	postsMicroserviceConnector *connectors.PostsMicroserviceConnector
 	feedsMicroserviceConnector *connectors.FeedsMicroserviceConnector
+
+	shutdownMetricsServer context.CancelCauseFunc
 )
 
 func main( ) {
 	log.SetReportCaller(true)
 
 	utils.LoadEnvs( )
+
+	var err error
+	shutdownMetricsServer, err= autometrics.Init(autometrics.WithService("gateway"))
+	if err != nil {
+		log.Fatalf("Error initializing autometrics : %v", err)}
 
 	waitGroup, waitGroupContext := errgroup.WithContext(context.Background( ))
 
@@ -81,7 +90,9 @@ func main( ) {
 		router.Use(authenticationMiddleware)
 
 		router.Handle("/graphql", graphqlServer)
-	
+
+		router.Handle("/metrics", promhttp.Handler( ))
+
 		router.Handle("/graphiql", playground.ApolloSandboxHandler("GraphQL Playground", "/graphql"))
 		log.Infof("GraphQL playground can be accessed at http://localhost:%s/graphiql", utils.Envs.GRAPHQL_SERVER_PORT)
 
@@ -110,6 +121,9 @@ func cleanup( ) {
 
 	if feedsMicroserviceConnector != nil {
 		feedsMicroserviceConnector.Disconnect( )}
+
+	if shutdownMetricsServer != nil {
+		shutdownMetricsServer(nil)}
 }
 
 // authenticationMiddleware will verify the JWT (if present) in the 'Authorization' header, present
