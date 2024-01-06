@@ -12,6 +12,7 @@ pub trait UsersRepository: Sync + Send {
 	fn cleanup(&self);
 }
 
+#[derive(Debug)]
 pub struct CreateArgs<'createArgs> {
   pub name: &'createArgs str,
   pub email: &'createArgs str,

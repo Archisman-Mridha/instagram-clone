@@ -14,11 +14,11 @@ import (
 	"github.com/charmbracelet/log"
 	"github.com/go-chi/chi"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"go.opentelemetry.io/otel/sdk/trace"
 	"golang.org/x/sync/errgroup"
 
 	"github.com/Archisman-Mridha/instagram-clone/backend/gateway/connectors"
 	graphql_generated "github.com/Archisman-Mridha/instagram-clone/backend/gateway/generated/graphql"
-	grpc_generated "github.com/Archisman-Mridha/instagram-clone/backend/gateway/generated/grpc"
 	"github.com/Archisman-Mridha/instagram-clone/backend/gateway/utils"
 )
 
@@ -29,18 +29,23 @@ var (
 	postsMicroserviceConnector *connectors.PostsMicroserviceConnector
 	feedsMicroserviceConnector *connectors.FeedsMicroserviceConnector
 
+	_connectors= []connectors.Connector{
+		usersMicroserviceConnector,
+		profilesMicroserviceConnector,
+		followshipsMicroserviceConnector,
+		postsMicroserviceConnector,
+		feedsMicroserviceConnector,
+	}
+
 	shutdownMetricsServer context.CancelCauseFunc
+
+	tracerProvider *trace.TracerProvider
 )
 
 func main( ) {
 	log.SetReportCaller(true)
 
 	utils.LoadEnvs( )
-
-	var err error
-	shutdownMetricsServer, err= autometrics.Init(autometrics.WithService("gateway"))
-	if err != nil {
-		log.Fatalf("Error initializing autometrics : %v", err)}
 
 	waitGroup, waitGroupContext := errgroup.WithContext(context.Background( ))
 
@@ -65,6 +70,13 @@ func main( ) {
 		return err
 	})
 
+	var err error
+	shutdownMetricsServer, err= autometrics.Init(autometrics.WithService("gateway"))
+	if err != nil {
+		log.Fatalf("Error initializing autometrics : %v", err)}
+
+	tracerProvider = initTracer( )
+
 	usersMicroserviceConnector= connectors.NewUsersMicroserviceConnector( )
 	profilesMicroserviceConnector= connectors.NewProfilesMicroserviceConnector( )
 	followshipsMicroserviceConnector= connectors.NewFollowshipsMicroserviceConnector( )
@@ -72,6 +84,11 @@ func main( ) {
 	feedsMicroserviceConnector= connectors.NewFeedsMicroserviceConnector( )
 
 	waitGroup.Go(func( ) error {
+		router := chi.NewRouter( )
+		router.Use(authenticationMiddleware)
+
+		router.Handle("/metrics", promhttp.Handler( ))
+
 		graphqlServer := handler.NewDefaultServer(
 			graphql_generated.NewExecutableSchema(graphql_generated.Config {
 				Resolvers: &graphql_generated.Resolver {
@@ -81,23 +98,17 @@ func main( ) {
 					FollowshipsMicroservice: followshipsMicroserviceConnector,
 					PostsMicroservice: postsMicroserviceConnector,
 					FeedsMicroservice: feedsMicroserviceConnector,
+
+					Tracer: tracerProvider.Tracer("gateway"),
 				},
 			}),
 		)
-	
-		router := chi.NewRouter( )
-
-		router.Use(authenticationMiddleware)
-
 		router.Handle("/graphql", graphqlServer)
-
-		router.Handle("/metrics", promhttp.Handler( ))
 
 		router.Handle("/graphiql", playground.ApolloSandboxHandler("GraphQL Playground", "/graphql"))
 		log.Infof("GraphQL playground can be accessed at http://localhost:%s/graphiql", utils.Envs.GRAPHQL_SERVER_PORT)
 
 		log.Infof("Starting GraphQL server")
-
 		listeningAddress := fmt.Sprintf(":%s", utils.Envs.GRAPHQL_SERVER_PORT)
 		return http.ListenAndServe(listeningAddress, router)
 	})
@@ -107,54 +118,22 @@ func main( ) {
 }
 
 func cleanup( ) {
-	if usersMicroserviceConnector != nil {
-		usersMicroserviceConnector.Disconnect( )}
+	// Disconnect microservices.
+	for _, connector := range _connectors {
+		if connector != nil {
+			connector.Disconnect( )}}
 
-	if profilesMicroserviceConnector != nil {
-		profilesMicroserviceConnector.Disconnect( )}
-
-	if followshipsMicroserviceConnector != nil {
-		followshipsMicroserviceConnector.Disconnect( )}
-
-	if postsMicroserviceConnector != nil {
-		postsMicroserviceConnector.Disconnect( )}
-
-	if feedsMicroserviceConnector != nil {
-		feedsMicroserviceConnector.Disconnect( )}
-
+	// Shutdown metrics server.
 	if shutdownMetricsServer != nil {
-		shutdownMetricsServer(nil)}
-}
+		shutdownMetricsServer(nil)
+		log.Debug("Metrics server shut down")
+	}
 
-// authenticationMiddleware will verify the JWT (if present) in the 'Authorization' header, present
-// in the form of a Bearer Token.
-func authenticationMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	// Shutdown tracer provider.
+	if tracerProvider != nil {
+		if err := tracerProvider.Shutdown(context.Background( )); err != nil {
+			log.Errorf("Error shutting down tracer provider : %v", err)}
 
-		authorizationHeader := r.Header.Get("Authorization")
-		if len(authorizationHeader) == 0 {
-			next.ServeHTTP(w, r)
-			return
-		}
-
-		jwt, err := utils.ExtractJwtFromAuthorizationHeader(authorizationHeader)
-		if err != nil {
-			http.Error(w, err.Error( ), http.StatusBadRequest)
-			return
-		}
-
-		// TODO: Add a timeout.
-		response, err := usersMicroserviceConnector.VerifyJwt(context.Background( ),
-																													&grpc_generated.VerifyJwtRequest{ Jwt: jwt })
-		if err != nil {
-			http.Error(w, "server error occurred", http.StatusInternalServerError)
-			return
-		}
-
-		// Add the user-id in context.
-		ctx := context.WithValue(r.Context( ), utils.USER_ID_CONTEXT_KEY, response.UserId)
-		r = r.WithContext(ctx)
-
-		next.ServeHTTP(w, r)
-	})
+		log.Debug("Tracer provider shut down")
+	}
 }

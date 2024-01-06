@@ -1,8 +1,11 @@
 use crate::{proto::{feeds_service_server::*, *}, THREAD_CANCELLATION_TOKEN, CONFIG, domain::usecases::Usecases};
 use autometrics::{objectives::Objective, autometrics};
-use shared::utils::mapToGrpcError;
+use shared::utils::{mapToGrpcError, distributedTracing::{makeSpan, linkParentTrace}};
 use tokio::spawn;
 use tonic::{codec::CompressionEncoding, transport::Server, Request, Response, Status, async_trait};
+use tower::ServiceBuilder;
+use tower_http::trace::TraceLayer;
+use tracing::instrument;
 
 const MAX_REQUEST_SIZE: usize= 512; // 512 Bytes
 
@@ -31,6 +34,11 @@ impl GrpcAdapter {
 
     spawn(async move {
       Server::builder( )
+				.layer(
+					ServiceBuilder::new( )
+						.layer(TraceLayer::new_for_grpc( ).make_span_with(makeSpan))
+						.map_request(linkParentTrace)
+				)
         .add_service(feedsService)
         .add_service(reflectionService)
         .serve_with_shutdown(address, THREAD_CANCELLATION_TOKEN.clone( ).cancelled( ))
@@ -52,6 +60,7 @@ impl FeedsService for FeedsServiceImpl {
 	async fn ping(&self, _: Request<( )>) -> Result<Response<( )>, Status> {
 		Ok(Response::new(( )))}
 
+	#[instrument(skip(self))]
   async fn get_feed(&self, request: Request<GetFeedRequest>) -> Result<Response<GetFeedResponse>, Status> {
     let request= request.into_inner( );
 

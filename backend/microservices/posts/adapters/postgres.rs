@@ -6,6 +6,7 @@ use shared::{
 	sql::queries::posts_microservice::{create, getPostsOfUser, getPosts}
 };
 use crate::{domain::ports::PostsRepository, proto::{CreatePostRequest, Post, GetPostsOfUserRequest}};
+use tracing::instrument;
 
 pub struct PostgresAdapter {
 	connectionPool: Pool
@@ -40,6 +41,7 @@ impl PostsRepository for PostgresAdapter {
 		println!("DEBUG: PostgreSQL database connection pool destroyed");
 	}
 
+	#[instrument(skip(self))]
 	async fn create(&self, args: &CreatePostRequest) -> Result<i32> {
 		let client= self.getClient( ).await?;
 
@@ -51,6 +53,7 @@ impl PostsRepository for PostgresAdapter {
       .map_err(toServerError)
 	}
 
+	#[instrument(skip(self))]
 	async fn getPostsOfUser(&self, args: &GetPostsOfUserRequest) -> Result<Vec<Post>> {
 		let client= self.getClient( ).await?;
 
@@ -72,6 +75,7 @@ impl PostsRepository for PostgresAdapter {
 		)
 	}
 
+	#[instrument(skip(self))]
 	async fn getPosts(&self, postIds: Vec<i32>) -> Result<Vec<Post>> {
 		let client= self.getClient( ).await?;
 

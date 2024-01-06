@@ -32,7 +32,7 @@ func NewFollowshipsMicroserviceConnector( ) *FollowshipsMicroserviceConnector {
 	u.FollowshipsServiceClient= grpc_generated.NewFollowshipsServiceClient(u.grpcConnection)
 
 	if err := u.Healthcheck( ); err != nil {
-		panic(err.Error( ))}
+		log.Fatalf("Couldn't connect to followships microservice : %v", err)}
 
 	log.Infof("Connected to %s", u.serviceName)
 

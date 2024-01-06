@@ -9,6 +9,7 @@ use serde_json::json;
 use shared::utils::{getEnv, SERVER_ERROR};
 use crate::{CONFIG, domain::ports::UserCreatedEvent, proto::ProfilePreview};
 use serde::{Serialize, Deserialize};
+use tracing::instrument;
 
 const ELASTICSEARCH_PROFILES_INDEX: &str= "profiles";
 
@@ -42,6 +43,7 @@ impl ElasticsearchAdapter {
 		Self { client }
 	}
 
+	#[instrument(skip(self))]
 	pub async fn indexProfile(&self, args: UserCreatedEvent) -> Result<( )> {
 		let id= &args.id.to_string( );
 
@@ -60,6 +62,7 @@ impl ElasticsearchAdapter {
     Ok(( ))
 	}
 
+	#[instrument(skip(self))]
 	pub async fn searchProfiles(&self, query: &str) -> Result<Vec<ProfilePreview>> {
 		let response=
 			self.client

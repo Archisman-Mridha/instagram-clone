@@ -16,6 +16,8 @@ type EnvsSchema struct {
 	FOLLOWSHIPS_MICROSERVICE_URL string `env:"FOLLOWSHIPS_MICROSERVICE_URL,notEmpty"`
 	POSTS_MICROSERVICE_URL string `env:"POSTS_MICROSERVICE_URL,notEmpty"`
 	FEEDS_MICROSERVICE_URL string `env:"FEEDS_MICROSERVICE_URL,notEmpty"`
+
+	JAEGER_COLLECTOR_URL string `env:"JAEGER_COLLECTOR_URL,notEmpty"`
 }
 
 var Envs EnvsSchema

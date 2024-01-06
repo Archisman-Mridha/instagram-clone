@@ -1,8 +1,11 @@
 use crate::{proto::{users_service_server::*, *}, THREAD_CANCELLATION_TOKEN, CONFIG, domain::usecases::Usecases};
 use autometrics::{autometrics, objectives::Objective};
-use shared::utils::mapToGrpcError;
+use shared::utils::{mapToGrpcError, distributedTracing::{makeSpan, linkParentTrace}};
 use tokio::spawn;
 use tonic::{codec::CompressionEncoding, transport::Server, Request, Response, Status, async_trait};
+use tower::ServiceBuilder;
+use tracing::instrument;
+use tower_http::trace::TraceLayer;
 
 const MAX_REQUEST_SIZE: usize= 512; // 512 Bytes
 
@@ -31,6 +34,11 @@ impl GrpcAdapter {
 
     spawn(async move {
       Server::builder( )
+				.layer(
+					ServiceBuilder::new( )
+						.layer(TraceLayer::new_for_grpc( ).make_span_with(makeSpan))
+						.map_request(linkParentTrace)
+				)
         .add_service(usersService)
         .add_service(reflectionService)
         .serve_with_shutdown(address, THREAD_CANCELLATION_TOKEN.clone( ).cancelled( ))
@@ -55,6 +63,7 @@ impl UsersService for UsersServiceImpl {
 	async fn ping(&self, _: Request<( )>) -> Result<Response<( )>, Status> {
 		Ok(Response::new(( )))}
 
+	#[instrument(skip(self))]
   async fn signup(&self, request: Request<SignupRequest>) -> Result<Response<AuthenticationResponse>, Status> {
     let request= request.into_inner( );
 
@@ -63,6 +72,7 @@ impl UsersService for UsersServiceImpl {
 								 .map_err(mapToGrpcError)
   }
 
+	#[instrument(skip(self))]
   async fn signin(&self, request: Request<SigninRequest>) -> Result<Response<AuthenticationResponse>, Status> {
     let request= request.into_inner( );
 
@@ -71,6 +81,7 @@ impl UsersService for UsersServiceImpl {
 								 .map_err(mapToGrpcError)
   }
 
+	#[instrument(skip(self))]
   async fn verify_jwt(&self, request: Request<VerifyJwtRequest>) -> Result<Response<VerifyJwtResponse>, Status> {
     let request= request.into_inner( );
 

@@ -15,9 +15,11 @@ use std::process::exit;
 use adapters::{RedisAdapter, GrpcAdapter, PostgresAdapter};
 use domain::usecases::Usecases;
 use lazy_static::lazy_static;
-use shared::utils::{getEnv, initMetricsServer};
+use shared::utils::{getEnv, initMetricsServer, distributedTracing::initTracer};
 use tokio::{signal, spawn};
 use tokio_util::sync::CancellationToken;
+use tracing::subscriber::set_global_default;
+use tracing_subscriber::{Registry, layer::SubscriberExt};
 use crate::domain::ports::FollowshipsRepository;
 
 struct Config {
@@ -39,7 +41,14 @@ async fn main( ) {
 	if let Err(error)= dotenv::from_filename("./backend/microservices/feeds/.env") {
     println!("WARNING: Couldn't load environment variables from .env file due to error : {}", error)}
 
+	// Metrics Monitoring
 	initMetricsServer( );
+	//
+	// Distributed Tracing
+	let tracingLayer= initTracer("feeds-microservice");
+
+	let registry= Registry::default( ).with(tracingLayer);
+	set_global_default(registry).unwrap( );
 
 	let postgresAdapter=
     Box::leak::<'static>(Box::new(PostgresAdapter::new( ).await)) as &'static PostgresAdapter;

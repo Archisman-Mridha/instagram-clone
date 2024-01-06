@@ -4,9 +4,12 @@ use crate::{
 };
 use async_trait::async_trait;
 use autometrics::{objectives::Objective, autometrics};
-use shared::utils::mapToGrpcError;
+use shared::utils::{mapToGrpcError, distributedTracing::{makeSpan, linkParentTrace}};
 use tokio::spawn;
 use tonic::{codec::CompressionEncoding, transport::Server, Request, Response, Status};
+use tower::ServiceBuilder;
+use tower_http::trace::TraceLayer;
+use tracing::instrument;
 
 const MAX_REQUEST_SIZE: usize= 512; //bytes
 
@@ -36,6 +39,11 @@ impl GrpcAdapter {
 
 		spawn(async move {
 			Server::builder( )
+				.layer(
+					ServiceBuilder::new( )
+						.layer(TraceLayer::new_for_grpc( ).make_span_with(makeSpan))
+						.map_request(linkParentTrace)
+				)
 				.add_service(postsService)
 				.add_service(reflectionService)
 				.serve_with_shutdown(address, THREAD_CANCELLATION_TOKEN.clone( ).cancelled( ))
@@ -57,6 +65,7 @@ impl PostsService for PostsServiceImpl {
 	async fn ping(&self, _: Request<( )>) -> Result<Response<( )>, Status> {
 		Ok(Response::new(( )))}
 
+	#[instrument(skip(self))]
 	async fn create_post(&self, request: Request<CreatePostRequest>) -> Result<Response<CreatePostResponse>, Status> {
 		let request= request.into_inner( );
 
@@ -66,6 +75,7 @@ impl PostsService for PostsServiceImpl {
 								 .map_err(mapToGrpcError)
 	}
 
+	#[instrument(skip(self))]
 	async fn get_posts_of_user(&self, request: Request<GetPostsOfUserRequest>) -> Result<Response<GetPostsResponse>, Status> {
 		let request= request.into_inner( );
 
@@ -75,6 +85,7 @@ impl PostsService for PostsServiceImpl {
 								 .map_err(mapToGrpcError)
 	}
 
+	#[instrument(skip(self))]
 	async fn get_posts(&self, request: Request<GetPostsRequest>) -> Result<Response<GetPostsResponse>, Status> {
 		let request= request.into_inner( );
 

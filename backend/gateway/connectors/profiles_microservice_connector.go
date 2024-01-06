@@ -32,7 +32,7 @@ func NewProfilesMicroserviceConnector( ) *ProfilesMicroserviceConnector {
 	u.ProfilesServiceClient= grpc_generated.NewProfilesServiceClient(u.grpcConnection)
 
 	if err := u.Healthcheck( ); err != nil {
-		panic(err.Error( ))}
+		log.Fatalf("Couldn't connect to profiles microservice : %v", err)}
 
 	log.Infof("Connected to %s", u.serviceName)
 

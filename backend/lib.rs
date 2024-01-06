@@ -32,6 +32,81 @@ pub mod utils {
 		spawn(metricsServer);
 	}
 
+	pub mod distributedTracing {
+		use opentelemetry::{KeyValue, propagation::Extractor, global::get_text_map_propagator};
+		use opentelemetry_otlp::{new_pipeline, new_exporter, WithExportConfig};
+		use opentelemetry_sdk::{
+			trace::{Sampler, RandomIdGenerator, Tracer}, Resource, runtime,
+			propagation::TraceContextPropagator
+		};
+		use tracing::{Span, info_span, warn};
+		use tracing_opentelemetry::{OpenTelemetryLayer, OpenTelemetrySpanExt};
+		use super::getEnv;
+		use tracing_subscriber::Registry;
+		use axum::{body::Body, http::{Request, HeaderMap}};
+
+		// initTracer creates an OpenTelemetry tracing pipeline and sets the global tracer.
+		pub fn initTracer(serviceName: &'static str) -> OpenTelemetryLayer<Registry, Tracer> {
+			opentelemetry::global::set_text_map_propagator(TraceContextPropagator::new( ));
+
+			let tracer=
+				new_pipeline( )
+					.tracing( )
+					.with_exporter(
+						new_exporter( )
+							.tonic( )
+							.with_protocol(opentelemetry_otlp::Protocol::Grpc)
+							.with_endpoint(getEnv("JAEGER_COLLECTOR_URL"))
+							.with_compression(opentelemetry_otlp::Compression::Gzip)
+					)
+					.with_trace_config(
+						opentelemetry_sdk::trace::config( )
+							.with_sampler(Sampler::AlwaysOn)
+							.with_id_generator(RandomIdGenerator::default( ))
+							.with_resource(Resource::new(vec![
+								KeyValue::new("service.name", serviceName)
+							]))
+					)
+					.install_batch(runtime::Tokio)
+					.expect("ERROR: Creating OpenTelemetry tracing pipeline");
+
+			tracing_opentelemetry::layer( ).with_tracer(tracer)
+		}
+
+		pub fn makeSpan(request: &Request<Body>) -> Span {
+			let headers= request.headers( );
+			info_span!("Incoming Request", ?headers, trace_id = tracing::field::Empty)
+		}
+
+		pub fn linkParentTrace(request: Request<Body>) -> Request<Body> {
+			let parentCtx= get_text_map_propagator(|propagator| {
+				propagator.extract(&MetadataMapExtractor(request.headers( )))
+			});
+			Span::current( ).set_parent(parentCtx);
+
+			request
+		}
+
+		pub struct MetadataMapExtractor<'a>(&'a HeaderMap);
+
+		impl<'a> Extractor for MetadataMapExtractor<'a> {
+			fn get(&self, key: &str) -> Option<&str> {
+				self.0.get(key).and_then(|v| {
+					let s = v.to_str( );
+
+					if let Err(ref error) = s {
+						warn!(%error, ?v, "cannot convert header value to ASCII")};
+
+					s.ok( )
+				})
+			}
+
+			fn keys(&self) -> Vec<&str> {
+				self.0.keys( ).map(|k| k.as_str( )).collect( )
+			}
+		}
+	}
+
   pub const SERVER_ERROR: &'static str= "Server error occurred";
 
   // toServerError captures any error, logs it and then returns SERVER_ERROR as an anyhow error.

@@ -5,7 +5,7 @@ use shared::{
 	utils::{createConnectionPool, toServerError},
 	sql::queries::feeds_microservice::getAllFollowers
 };
-
+use tracing::instrument;
 use crate::domain::ports::FollowshipsRepository;
 
 pub struct PostgresAdapter {
@@ -39,6 +39,7 @@ impl FollowshipsRepository for PostgresAdapter {
 		println!("DEBUG: PostgreSQL database connection pool destroyed");
 	}
 
+	#[instrument(skip(self))]
 	async fn getAllFollowers(&self, userId: i32) -> Result<Vec<i32>> {
 		let client= self.getClient( ).await?;
 

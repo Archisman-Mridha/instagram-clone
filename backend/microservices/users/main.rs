@@ -16,9 +16,12 @@ use std::process::exit;
 use adapters::{GrpcAdapter, PostgresAdapter};
 use domain::usecases::Usecases;
 use lazy_static::lazy_static;
-use shared::utils::{getEnv, initMetricsServer};
+use opentelemetry::global;
+use shared::utils::{getEnv, initMetricsServer, distributedTracing::initTracer};
 use tokio::signal;
 use tokio_util::sync::CancellationToken;
+use tracing::subscriber::set_global_default;
+use tracing_subscriber::{Registry, layer::SubscriberExt};
 use crate::domain::ports::UsersRepository;
 
 struct Config {
@@ -48,7 +51,14 @@ async fn main( ) {
 	if let Err(error)= dotenv::from_filename("./backend/microservices/users/.env") {
     println!("WARNING: Couldn't load environment variables from .env file due to error : {}", error)}
 
+	// Metrics Monitoring
 	initMetricsServer( );
+	//
+	// Distributed Tracing
+	let tracingLayer= initTracer("users-microservice");
+
+	let registry= Registry::default( ).with(tracingLayer);
+	set_global_default(registry).unwrap( );
 
 	let postgresAdapter=
     Box::leak::<'static>(Box::new(PostgresAdapter::new( ).await)) as &'static PostgresAdapter;
@@ -64,6 +74,7 @@ async fn main( ) {
     let _= &THREAD_CANCELLATION_TOKEN.cancel( ); // Do cleanup tasks in currently active Tokio
                                                  // threads.
 		postgresAdapter.cleanup( );
+		global::shutdown_tracer_provider( );
 
     match error {
       None => exit(0),

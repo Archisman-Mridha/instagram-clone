@@ -1,6 +1,10 @@
 package graphql_generated
 
-import "github.com/Archisman-Mridha/instagram-clone/backend/gateway/connectors"
+import (
+	"go.opentelemetry.io/otel/trace"
+
+	"github.com/Archisman-Mridha/instagram-clone/backend/gateway/connectors"
+)
 
 // This file will not be regenerated automatically.
 //
@@ -12,4 +16,6 @@ type Resolver struct {
 	FollowshipsMicroservice *connectors.FollowshipsMicroserviceConnector
 	PostsMicroservice *connectors.PostsMicroserviceConnector
 	FeedsMicroservice *connectors.FeedsMicroserviceConnector
+
+	Tracer trace.Tracer
 }

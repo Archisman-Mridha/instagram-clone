@@ -7,12 +7,16 @@ package graphql_generated
 import (
 	"context"
 
+	"golang.org/x/sync/errgroup"
+
 	grpc_generated "github.com/Archisman-Mridha/instagram-clone/backend/gateway/generated/grpc"
 	"github.com/Archisman-Mridha/instagram-clone/backend/gateway/utils"
-	"golang.org/x/sync/errgroup"
 )
 
 func (r *mutationResolver) Signup(ctx context.Context, args SignupArgs) (*AuthenticationOutput, error) {
+	ctx, span := r.Tracer.Start(ctx, "Signup")
+	defer span.End( )
+
 	response, err := r.UsersMicroservice.Signup(ctx, &grpc_generated.SignupRequest{
 		Name:     args.Name,
 		Email:    args.Email,
@@ -20,6 +24,7 @@ func (r *mutationResolver) Signup(ctx context.Context, args SignupArgs) (*Authen
 		Password: args.Password,
 	})
 	if err != nil {
+		span.RecordError(err)
 		return nil, err
 	}
 
@@ -27,6 +32,9 @@ func (r *mutationResolver) Signup(ctx context.Context, args SignupArgs) (*Authen
 }
 
 func (r *mutationResolver) Follow(ctx context.Context, followeeID int) (*bool, error) {
+	ctx, span := r.Tracer.Start(ctx, "Follow")
+	defer span.End( )
+
 	userId, isUserAuthenticated := ctx.Value(utils.USER_ID_CONTEXT_KEY).(int32)
 	if !isUserAuthenticated {
 		return nil, utils.ErrUnauthenticated
@@ -36,11 +44,18 @@ func (r *mutationResolver) Follow(ctx context.Context, followeeID int) (*bool, e
 		FollowerId: userId,
 		FolloweeId: int32(followeeID),
 	})
+	if err != nil {
+		span.RecordError(err)
+		return nil, err
+	}
 
-	return nil, err
+	return nil, nil
 }
 
 func (r *mutationResolver) Unfollow(ctx context.Context, followeeID int) (*bool, error) {
+	ctx, span := r.Tracer.Start(ctx, "Unfollow")
+	defer span.End( )
+
 	userId, isUserAuthenticated := ctx.Value(utils.USER_ID_CONTEXT_KEY).(int32)
 	if !isUserAuthenticated {
 		return nil, utils.ErrUnauthenticated
@@ -50,11 +65,18 @@ func (r *mutationResolver) Unfollow(ctx context.Context, followeeID int) (*bool,
 		FollowerId: userId,
 		FolloweeId: int32(followeeID),
 	})
+	if err != nil {
+		span.RecordError(err)
+		return nil, err
+	}
 
-	return nil, err
+	return nil, nil
 }
 
 func (r *mutationResolver) CreatePost(ctx context.Context, args CreatePostArgs) (int, error) {
+	ctx, span := r.Tracer.Start(ctx, "CreatePost")
+	defer span.End( )
+
 	userId, isUserAuthenticated := ctx.Value(utils.USER_ID_CONTEXT_KEY).(int32)
 	if !isUserAuthenticated {
 		return 0, utils.ErrUnauthenticated
@@ -65,16 +87,24 @@ func (r *mutationResolver) CreatePost(ctx context.Context, args CreatePostArgs) 
 
 		Description: args.Description,
 	})
+	if err != nil {
+		span.RecordError(err)
+		return 0, err
+	}
 
-	return int(postID.PostId), err
+	return int(postID.PostId), nil
 }
 
 func (r *queryResolver) Signin(ctx context.Context, args SigninArgs) (*AuthenticationOutput, error) {
+	ctx, span := r.Tracer.Start(ctx, "Signin")
+	defer span.End( )
+
 	response, err := r.UsersMicroservice.Signin(ctx, &grpc_generated.SigninRequest{
 		Identifier: args.Identifier,
 		Password:   args.Password,
 	})
 	if err != nil {
+		span.RecordError(err)
 		return nil, err
 	}
 
@@ -82,6 +112,9 @@ func (r *queryResolver) Signin(ctx context.Context, args SigninArgs) (*Authentic
 }
 
 func (r *queryResolver) SearchProfiles(ctx context.Context, args SearchProfilesArgs) (*SearchProfilesOutput, error) {
+	ctx, span := r.Tracer.Start(ctx, "SearchProfiles")
+	defer span.End( )
+
 	_, isUserAuthenticated := ctx.Value(utils.USER_ID_CONTEXT_KEY).(int32)
 	if !isUserAuthenticated {
 		return nil, utils.ErrUnauthenticated
@@ -91,14 +124,18 @@ func (r *queryResolver) SearchProfiles(ctx context.Context, args SearchProfilesA
 		Query: args.Query,
 	})
 	if err != nil {
+		span.RecordError(err)
 		return nil, err
 	}
 
 	profilePreviews := ProfilePreviewsToGraphQL(response.ProfilePreviews)
-	return &SearchProfilesOutput{ProfilePreviews: profilePreviews}, err
+	return &SearchProfilesOutput{ProfilePreviews: profilePreviews}, nil
 }
 
 func (r *queryResolver) GetFollowers(ctx context.Context, args GetFollowersArgs) ([]*ProfilePreview, error) {
+	ctx, span := r.Tracer.Start(ctx, "GetFollowers")
+	defer span.End( )
+
 	_, isUserAuthenticated := ctx.Value(utils.USER_ID_CONTEXT_KEY).(int32)
 	if !isUserAuthenticated {
 		return nil, utils.ErrUnauthenticated
@@ -111,6 +148,7 @@ func (r *queryResolver) GetFollowers(ctx context.Context, args GetFollowersArgs)
 		Offset:   int64(args.Offset),
 	})
 	if err != nil {
+		span.RecordError(err)
 		return nil, err
 	}
 
@@ -118,14 +156,18 @@ func (r *queryResolver) GetFollowers(ctx context.Context, args GetFollowersArgs)
 		Ids: getFollowersResponse.FollowerIds,
 	})
 	if err != nil {
+		span.RecordError(err)
 		return nil, err
 	}
 
 	profilePreviews := ProfilePreviewsToGraphQL(getProfilePreviewsResponse.ProfilePreviews)
-	return profilePreviews, err
+	return profilePreviews, nil
 }
 
 func (r *queryResolver) GetFollowings(ctx context.Context, args GetFollowingsArgs) ([]*ProfilePreview, error) {
+	ctx, span := r.Tracer.Start(ctx, "GetFollowings")
+	defer span.End( )
+
 	_, isUserAuthenticated := ctx.Value(utils.USER_ID_CONTEXT_KEY).(int32)
 	if !isUserAuthenticated {
 		return nil, utils.ErrUnauthenticated
@@ -138,6 +180,7 @@ func (r *queryResolver) GetFollowings(ctx context.Context, args GetFollowingsArg
 		Offset:   int64(args.Offset),
 	})
 	if err != nil {
+		span.RecordError(err)
 		return nil, err
 	}
 
@@ -145,14 +188,18 @@ func (r *queryResolver) GetFollowings(ctx context.Context, args GetFollowingsArg
 		Ids: getFollowingsResponse.FolloweeIds,
 	})
 	if err != nil {
+		span.RecordError(err)
 		return nil, err
 	}
 
 	profilePreviews := ProfilePreviewsToGraphQL(getProfilePreviewsResponse.ProfilePreviews)
-	return profilePreviews, err
+	return profilePreviews, nil
 }
 
 func (r *queryResolver) GetProfile(ctx context.Context, args GetProfileArgs) (*Profile, error) {
+	ctx, span := r.Tracer.Start(ctx, "GetProfile")
+	defer span.End( )
+
 	userId, isUserAuthenticated := ctx.Value(utils.USER_ID_CONTEXT_KEY).(int32)
 	if !isUserAuthenticated {
 		return nil, utils.ErrUnauthenticated
@@ -226,11 +273,17 @@ func (r *queryResolver) GetProfile(ctx context.Context, args GetProfileArgs) (*P
 	})
 
 	err := waitGroup.Wait()
+	if err != nil {
+		span.RecordError(err)
+	}
 
 	return profile, err
 }
 
 func (r *queryResolver) GetPostsOfUser(ctx context.Context, args GetPostsOfUserArgs) ([]*Post, error) {
+	ctx, span := r.Tracer.Start(ctx, "GetPostsOfUser")
+	defer span.End( )
+
 	_, isUserAuthenticated := ctx.Value(utils.USER_ID_CONTEXT_KEY).(int32)
 	if !isUserAuthenticated {
 		return nil, utils.ErrUnauthenticated
@@ -243,13 +296,17 @@ func (r *queryResolver) GetPostsOfUser(ctx context.Context, args GetPostsOfUserA
 		PageSize: int64(args.PageSize),
 	})
 	if err != nil {
+		span.RecordError(err)
 		return nil, err
 	}
 
-	return PostsToGraphQL(response.Posts), err
+	return PostsToGraphQL(response.Posts), nil
 }
 
 func (r *queryResolver) GetFeed(ctx context.Context, args GetFeedArgs) ([]*Post, error) {
+	ctx, span := r.Tracer.Start(ctx, "GetFeed")
+	defer span.End( )
+
 	userId, isUserAuthenticated := ctx.Value(utils.USER_ID_CONTEXT_KEY).(int32)
 	if !isUserAuthenticated {
 		return nil, utils.ErrUnauthenticated
@@ -262,6 +319,7 @@ func (r *queryResolver) GetFeed(ctx context.Context, args GetFeedArgs) ([]*Post,
 		PageSize: int64(args.PageSize),
 	})
 	if err != nil {
+		span.RecordError(err)
 		return nil, err
 	}
 
@@ -269,10 +327,11 @@ func (r *queryResolver) GetFeed(ctx context.Context, args GetFeedArgs) ([]*Post,
 		PostIds: getFeedResponse.PostIds,
 	})
 	if err != nil {
+		span.RecordError(err)
 		return nil, err
 	}
 
-	return PostsToGraphQL(response.Posts), err
+	return PostsToGraphQL(response.Posts), nil
 }
 
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }

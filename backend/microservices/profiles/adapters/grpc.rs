@@ -5,9 +5,12 @@ use crate::{
 };
 use async_trait::async_trait;
 use autometrics::{autometrics, objectives::Objective};
-use shared::utils::mapToGrpcError;
+use shared::utils::{mapToGrpcError, distributedTracing::{linkParentTrace, makeSpan}};
 use tokio::spawn;
 use tonic::{transport::Server, codec::CompressionEncoding, Request, Response, Status};
+use tower::ServiceBuilder;
+use tower_http::trace::TraceLayer;
+use tracing::instrument;
 
 const MAX_REQUEST_SIZE: usize= 512; //bytes
 
@@ -37,6 +40,11 @@ impl GrpcAdapter {
 
     spawn(async move {
       Server::builder( )
+				.layer(
+					ServiceBuilder::new( )
+						.layer(TraceLayer::new_for_grpc( ).make_span_with(makeSpan))
+						.map_request(linkParentTrace)
+				)
 				.add_service(profilesService)
         .add_service(reflectionService)
         .serve_with_shutdown(address, THREAD_CANCELLATION_TOKEN.clone( ).cancelled( ))
@@ -58,6 +66,7 @@ impl ProfilesService for ProfilesServiceImpl {
 	async fn ping(&self, _: Request<( )>) -> Result<Response<( )>, Status> {
 		Ok(Response::new(( )))}
 
+	#[instrument(skip(self))]
 	async fn search_profiles(&self, request: Request<SearchProfilesRequest>) -> Result<Response<SearchProfilesResponse>, Status> {
 		let request= request.into_inner( );
 
@@ -66,6 +75,7 @@ impl ProfilesService for ProfilesServiceImpl {
 								 .map_err(mapToGrpcError)
 	}
 
+	#[instrument(skip(self))]
 	async fn get_profile_previews(&self, request: Request<GetProfilePreviewsRequest>) -> Result<Response<GetProfilePreviewsResponse>, Status> {
 		let request= request.into_inner( );
 

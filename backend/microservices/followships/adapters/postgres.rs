@@ -14,6 +14,7 @@ use crate::{
 		GetFollowingsRequest, DoesFollowshipExistRequest
 	}
 };
+use tracing::instrument;
 
 pub struct PostgresAdapter {
   connectionPool: Pool
@@ -48,6 +49,7 @@ impl FollowshipsRepository for PostgresAdapter {
 		println!("DEBUG: PostgreSQL database connection pool destroyed");
 	}
 
+	#[instrument(skip(self))]
 	async fn create(&self, args: &FollowshipOperationRequest) ->  Result<( )> {
 		let client= self.getClient( ).await?;
 
@@ -60,6 +62,7 @@ impl FollowshipsRepository for PostgresAdapter {
 		Ok(( ))
 	}
 
+	#[instrument(skip(self))]
 	async fn delete(&self, args: &FollowshipOperationRequest) ->  Result<( )> {
 		let client= self.getClient( ).await?;
 
@@ -72,6 +75,7 @@ impl FollowshipsRepository for PostgresAdapter {
 		Ok(( ))
 	}
 
+	#[instrument(skip(self))]
 	async fn exists(&self, args: &DoesFollowshipExistRequest) -> Result<bool> {
 		let client= self.getClient( ).await?;
 
@@ -92,6 +96,7 @@ impl FollowshipsRepository for PostgresAdapter {
 		}
 	}
 
+	#[instrument(skip(self))]
 	async fn getFollowers(&self, args: &GetFollowersRequest) -> Result<Vec<i32>> {
 		let client= self.getClient( ).await?;
 
@@ -103,6 +108,7 @@ impl FollowshipsRepository for PostgresAdapter {
 			.map_err(toServerError)
 	}
 
+	#[instrument(skip(self))]
 	async fn getFollowings(&self, args: &GetFollowingsRequest) -> Result<Vec<i32>> {
 		let client= self.getClient( ).await?;
 
@@ -114,6 +120,7 @@ impl FollowshipsRepository for PostgresAdapter {
 			.map_err(toServerError)
 	}
 
+	#[instrument(skip(self))]
 	async fn getFollowshipCounts(&self, userId: i32) -> Result<GetFollowshipCountsResponse> {
 		let client= self.getClient( ).await?;
 
@@ -129,5 +136,4 @@ impl FollowshipsRepository for PostgresAdapter {
 			following_count: followshipCounts.following_count
 		})
 	}
-
 }

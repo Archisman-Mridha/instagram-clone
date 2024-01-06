@@ -5,9 +5,12 @@ use crate::{
 };
 use async_trait::async_trait;
 use autometrics::{autometrics, objectives::Objective};
-use shared::utils::mapToGrpcError;
+use shared::utils::{mapToGrpcError, distributedTracing::{makeSpan, linkParentTrace}};
 use tokio::spawn;
 use tonic::{codec::CompressionEncoding, transport::Server, Request, Response, Status};
+use tower::ServiceBuilder;
+use tower_http::trace::TraceLayer;
+use tracing::instrument;
 
 const MAX_REQUEST_SIZE: usize= 512; //bytes
 
@@ -37,6 +40,11 @@ impl GrpcAdapter {
 
     spawn(async move {
       Server::builder( )
+				.layer(
+					ServiceBuilder::new( )
+						.layer(TraceLayer::new_for_grpc( ).make_span_with(makeSpan))
+						.map_request(linkParentTrace)
+				)
         .add_service(followshipsService)
         .add_service(reflectionService)
         .serve_with_shutdown(address, THREAD_CANCELLATION_TOKEN.clone( ).cancelled( ))
@@ -58,6 +66,7 @@ impl FollowshipsService for FollowshipsServiceImpl {
 	async fn ping(&self, _: Request<( )>) -> Result<Response<( )>, Status> {
 		Ok(Response::new(( )))}
 
+	#[instrument(skip(self))]
 	async fn follow(&self, request: Request<FollowshipOperationRequest>) -> Result<Response<( )>, Status> {
 		let request= request.into_inner( );
 
@@ -66,6 +75,7 @@ impl FollowshipsService for FollowshipsServiceImpl {
 								 .map_err(mapToGrpcError)
 	}
 
+	#[instrument(skip(self))]
 	async fn unfollow(&self, request: Request<FollowshipOperationRequest>) -> Result<Response<( )>, Status> {
 		let request= request.into_inner( );
 
@@ -74,6 +84,7 @@ impl FollowshipsService for FollowshipsServiceImpl {
 								 .map_err(mapToGrpcError)
 	}
 
+	#[instrument(skip(self))]
 	async fn does_followship_exist(&self, request: Request<DoesFollowshipExistRequest>) -> Result<Response<DoesFollowshipExistResponse>, Status> {
 		let request= request.into_inner( );
 
@@ -82,6 +93,7 @@ impl FollowshipsService for FollowshipsServiceImpl {
 								 .map_err(mapToGrpcError)
 	}
 
+	#[instrument(skip(self))]
 	async fn get_followers(&self, request: Request<GetFollowersRequest>) -> Result<Response<GetFollowersResponse>, Status> {		let request= request.into_inner( );
 
 		self.usecases.getFollowers(&request).await
@@ -89,7 +101,7 @@ impl FollowshipsService for FollowshipsServiceImpl {
 								 .map_err(mapToGrpcError)
 	}
 
-
+	#[instrument(skip(self))]
 	async fn get_followings(&self, request: Request<GetFollowingsRequest>) -> Result<Response<GetFollowingsResponse>, Status> {
 		let request= request.into_inner( );
 		self.usecases.getFollowings(&request).await
@@ -97,7 +109,7 @@ impl FollowshipsService for FollowshipsServiceImpl {
 								 .map_err(mapToGrpcError)
 	}
 
-
+	#[instrument(skip(self))]
 	async fn get_followship_counts(&self, request: Request<GetFollowshipCountsRequest>) -> Result<Response<GetFollowshipCountsResponse>, Status> {
 		let request= request.into_inner( );
 		self.usecases.getFollowshipCounts(request.user_id).await

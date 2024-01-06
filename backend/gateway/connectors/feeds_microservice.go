@@ -32,7 +32,7 @@ func NewFeedsMicroserviceConnector( ) *FeedsMicroserviceConnector {
 	u.FeedsServiceClient= grpc_generated.NewFeedsServiceClient(u.grpcConnection)
 
 	if err := u.Healthcheck( ); err != nil {
-		panic(err.Error( ))}
+		log.Fatalf("Couldn't connect to feeds microservice : %v", err)}
 
 	log.Infof("Connected to %s", u.serviceName)
 

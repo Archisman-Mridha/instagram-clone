@@ -7,6 +7,7 @@ use shared::{
 	sql::queries::profiles_microservice::{CreateParams, create, getProfilePreviews}
 };
 use crate::{domain::ports::{ProfilesRepository, UserCreatedEvent}, proto::ProfilePreview};
+use tracing::instrument;
 
 pub struct PostgresAdapter {
 	connectionPool: Pool
@@ -41,6 +42,7 @@ impl ProfilesRepository for PostgresAdapter {
 		println!("DEBUG: PostgreSQL database connection pool destroyed");
 	}
 
+	#[instrument(skip(self))]
 	async fn create(&self, args: &UserCreatedEvent) -> Result<( )> {
 		let client= self.getClient( ).await?;
 
@@ -66,6 +68,7 @@ impl ProfilesRepository for PostgresAdapter {
 		}
 	}
 
+	#[instrument(skip(self))]
 	async fn getProfilePreviews(&self, ids: Vec<i32>) -> Result<Vec<ProfilePreview>> {
 		let client= self.getClient( ).await?;
 

@@ -5,6 +5,7 @@ use cornucopia_async::Params;
 use deadpool_postgres::{Pool, Object};
 use shared::sql::queries::users_microservice::{create, findByEmail, findByUsername, CreateParams, findById};
 use shared::utils::{createConnectionPool, SERVER_ERROR, toServerError};
+use tracing::instrument;
 
 const EMAIL_ALREADY_REGISTERED_ERROR: &str= "Email is already registered";
 const USERNAME_UNAVAILABLE_ERROR: &str= "Username is unavailable";
@@ -41,6 +42,7 @@ impl UsersRepository for PostgresAdapter {
 		println!("DEBUG: PostgreSQL database connection pool destroyed");
 	}
 
+	#[instrument(skip(self))]
   async fn create<'create>(&self, args: CreateArgs<'create>) -> Result<String> {
     let client= self.getClient( ).await?;
 
@@ -73,6 +75,7 @@ impl UsersRepository for PostgresAdapter {
     })
   }
 
+	#[instrument(skip(self))]
   async fn findByEmail(&self, email: &str) -> Result<FindByOutput> {
     let client= self.getClient( ).await?;
 
@@ -95,6 +98,7 @@ impl UsersRepository for PostgresAdapter {
       })
   }
 
+	#[instrument(skip(self))]
   async fn findByUsername(&self, username: &str) -> Result<FindByOutput> {
     let client= self.getClient( ).await?;
 
@@ -117,6 +121,7 @@ impl UsersRepository for PostgresAdapter {
       })
   }
 
+	#[instrument(skip(self))]
 	async fn findById(&self, id: i32) -> Result<FindByOutput> {
 		let client= self.getClient( ).await?;
 

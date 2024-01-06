@@ -32,7 +32,7 @@ func NewPostsMicroserviceConnector( ) *PostsMicroserviceConnector {
 	u.PostsServiceClient= grpc_generated.NewPostsServiceClient(u.grpcConnection)
 
 	if err := u.Healthcheck( ); err != nil {
-		panic(err.Error( ))}
+		log.Fatalf("Couldn't connect to posts microservice : %v", err)}
 
 	log.Infof("Connected to %s", u.serviceName)
 
