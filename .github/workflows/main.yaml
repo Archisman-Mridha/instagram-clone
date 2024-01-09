@@ -96,9 +96,9 @@ jobs:
             path: backend/microservices/posts
             manifest: kubernetes/base/microservices/posts-microservice.application.yaml
 
-          - name: application-controller
-            path: kubernetes/operators/application
-            manifest: kubernetes/base/application-controller/deployment.yaml
+          - name: feeds-microservice
+            path: backend/microservices/feeds
+            manifest: kubernetes/base/microservices/feeds-microservice.application.yaml
 
     steps:
 
@@ -115,6 +115,8 @@ jobs:
           filters: |
             changed:
               - '${{ matrix.microservice.path }}/**'
+              - backend/lib.rs
+              - backend/sql/mod.rs
 
       - name: Set up QEMU
         if: steps.path-filter.outputs.changed == 'true'
