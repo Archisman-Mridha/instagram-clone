@@ -1,10 +1,10 @@
 use crate::{proto::{users_service_server::*, *}, THREAD_CANCELLATION_TOKEN, CONFIG, domain::usecases::Usecases};
 use autometrics::{autometrics, objectives::Objective};
-use shared::utils::{mapToGrpcError, distributedTracing::{makeSpan, linkParentTrace}};
+use shared::utils::{mapToGrpcError, observability::{makeSpan, linkParentTrace}};
 use tokio::spawn;
 use tonic::{codec::CompressionEncoding, transport::Server, Request, Response, Status, async_trait};
 use tower::ServiceBuilder;
-use tracing::instrument;
+use tracing::{instrument, debug};
 use tower_http::trace::TraceLayer;
 
 const MAX_REQUEST_SIZE: usize= 512; // 512 Bytes
@@ -15,7 +15,7 @@ impl GrpcAdapter {
   pub async fn startServer(usecases: Box<Usecases>) {
     let address= format!("[::]:{}", CONFIG.GRPC_SERVER_PORT);
     let address= address.parse( )
-												.expect(&format!("ERROR: Parsing binding address of the gRPC server : {}", address));
+												.expect(&format!("ERROR : Parsing binding address of the gRPC server : {}", address));
 
     let usersService=
 			UsersServiceServer::new(UsersServiceImpl { usecases })
@@ -27,10 +27,10 @@ impl GrpcAdapter {
 			tonic_reflection::server::Builder::configure( )
 				.register_encoded_file_descriptor_set(FILE_DESCRIPTOR_SET)
 				.build( )
-				.expect("ERROR: Building gRPC reflection service")
+				.expect("ERROR : Building gRPC reflection service")
 				.max_decoding_message_size(MAX_REQUEST_SIZE);
 
-    println!("INFO: Starting gRPC server");
+    debug!("Starting gRPC server");
 
     spawn(async move {
       Server::builder( )
@@ -43,7 +43,7 @@ impl GrpcAdapter {
         .add_service(reflectionService)
         .serve_with_shutdown(address, THREAD_CANCELLATION_TOKEN.clone( ).cancelled( ))
         .await
-        .expect("ERROR: Starting gRPC server");
+        .expect("ERROR : occurred in gRPC server");
     });
   }
 }
@@ -63,7 +63,7 @@ impl UsersService for UsersServiceImpl {
 	async fn ping(&self, _: Request<( )>) -> Result<Response<( )>, Status> {
 		Ok(Response::new(( )))}
 
-	#[instrument(skip(self))]
+	#[instrument(skip(self), level= "info")]
   async fn signup(&self, request: Request<SignupRequest>) -> Result<Response<AuthenticationResponse>, Status> {
     let request= request.into_inner( );
 
@@ -72,7 +72,7 @@ impl UsersService for UsersServiceImpl {
 								 .map_err(mapToGrpcError)
   }
 
-	#[instrument(skip(self))]
+	#[instrument(skip(self), level= "info")]
   async fn signin(&self, request: Request<SigninRequest>) -> Result<Response<AuthenticationResponse>, Status> {
     let request= request.into_inner( );
 
@@ -81,7 +81,7 @@ impl UsersService for UsersServiceImpl {
 								 .map_err(mapToGrpcError)
   }
 
-	#[instrument(skip(self))]
+	#[instrument(skip(self), level= "info")]
   async fn verify_jwt(&self, request: Request<VerifyJwtRequest>) -> Result<Response<VerifyJwtResponse>, Status> {
     let request= request.into_inner( );
 

@@ -17,11 +17,10 @@ use adapters::{GrpcAdapter, PostgresAdapter};
 use domain::usecases::Usecases;
 use lazy_static::lazy_static;
 use opentelemetry::global;
-use shared::utils::{getEnv, initMetricsServer, distributedTracing::initTracer};
+use shared::utils::{getEnv, observability::setupObservability};
 use tokio::signal;
 use tokio_util::sync::CancellationToken;
-use tracing::subscriber::set_global_default;
-use tracing_subscriber::{Registry, layer::SubscriberExt};
+use tracing::{warn, error};
 use crate::domain::ports::UsersRepository;
 
 struct Config {
@@ -48,17 +47,10 @@ lazy_static! {
 // the poll method on that future.
 #[tokio::main] // By default, Tokio will spawn a separate thread to run the Tokio runtime.
 async fn main( ) {
-	if let Err(error)= dotenv::from_filename("./backend/microservices/users/.env") {
-    println!("WARNING: Couldn't load environment variables from .env file due to error : {}", error)}
+	// Load environment variables from a .env file, during development process.
+	let _= dotenv::from_filename("./backend/microservices/users/.env");
 
-	// Metrics Monitoring
-	initMetricsServer( );
-	//
-	// Distributed Tracing
-	let tracingLayer= initTracer("users-microservice");
-
-	let registry= Registry::default( ).with(tracingLayer);
-	set_global_default(registry).unwrap( );
+	setupObservability("users-microservice");
 
 	let postgresAdapter=
     Box::leak::<'static>(Box::new(PostgresAdapter::new( ).await)) as &'static PostgresAdapter;
@@ -69,7 +61,7 @@ async fn main( ) {
 
 	/* Gracefully shutdown on receiving program shutdown signal. */ {
     let error= signal::ctrl_c( ).await.err( );
-    println!("WARNING: Received program shutdown signal");
+    warn!("Received program shutdown signal");
 
     let _= &THREAD_CANCELLATION_TOKEN.cancel( ); // Do cleanup tasks in currently active Tokio
                                                  // threads.
@@ -80,7 +72,7 @@ async fn main( ) {
       None => exit(0),
 
       Some(error) => {
-        println!("ERROR: {}", error);
+        error!("{}", error);
         exit(1);
       }
     }

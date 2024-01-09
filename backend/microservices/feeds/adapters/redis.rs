@@ -1,8 +1,8 @@
-use anyhow::{Result, anyhow};
+use anyhow::Result;
 use r2d2_redis::{RedisConnectionManager, r2d2::Pool, redis::{pipe, Commands}};
-use shared::utils::getEnv;
+use shared::utils::{getEnv, toServerError};
 use crate::{domain::ports::FeedsRepository, proto::GetFeedRequest};
-use tracing::instrument;
+use tracing::{instrument, debug};
 
 pub struct RedisAdapter {
 	pool: Pool<RedisConnectionManager>
@@ -11,23 +11,22 @@ pub struct RedisAdapter {
 impl RedisAdapter {
 	pub async fn new( ) -> Self {
 		let connectionManager= RedisConnectionManager::new(getEnv("REDIS_URL"))
-																									 .expect("Invalid Redis url");
-
+																									 .expect("ERROR : Invalid Redis url");
 		let pool= Pool::builder( )
 										.build(connectionManager)
-										.expect("Error creating Redis connection pool");
+										.expect("ERROR : Creating Redis connection pool");
 
-		println!("INFO: Created Redis connection pool");
+		debug!("Created Redis connection pool");
 
 		Self { pool }
 	}
 }
 
 impl FeedsRepository for RedisAdapter {
-	#[instrument(skip(self))]
+	#[instrument(skip(self), level= "debug")]
 	fn pushPostToFeeds(&self, userIds: Vec<i32>, postId: i32) -> Result<( )> {
 		let mut connection= self.pool.get( )
-																 .map_err(|error| anyhow!("Error trying to get a connection from the Redis connection pool : {}", error))?;
+																 .map_err(toServerError)?;
 		let mut pipe= pipe( );
 
 		for userId in userIds {
@@ -36,17 +35,18 @@ impl FeedsRepository for RedisAdapter {
 		}
 
 		pipe.query(&mut *connection)
-				.map_err(|error| anyhow!("Error execution Redis transaction : {}", error))
+				.map_err(toServerError)
 	}
 
-	#[instrument(skip(self))]
+	#[instrument(skip(self), level= "debug")]
 	fn getFeed(&self, args: GetFeedRequest) -> Result<Vec<i32>> {
 		let mut connection= self.pool.get( )
-																 .map_err(|error| anyhow!("Error trying to get a connection from the Redis connection pool : {}", error))?;
+																 .map_err(toServerError)?;
 
-		let result: Vec<i32>= connection.lrange(args.user_id,
-																						args.offset as isize, (args.offset + args.page_size) as isize)?;
-
-		Ok(result)
+		connection.lrange(
+			args.user_id,
+			args.offset as isize, (args.offset + args.page_size) as isize
+		)
+			.map_err(toServerError)
 	}
 }

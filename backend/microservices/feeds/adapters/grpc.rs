@@ -1,11 +1,11 @@
 use crate::{proto::{feeds_service_server::*, *}, THREAD_CANCELLATION_TOKEN, CONFIG, domain::usecases::Usecases};
 use autometrics::{objectives::Objective, autometrics};
-use shared::utils::{mapToGrpcError, distributedTracing::{makeSpan, linkParentTrace}};
+use shared::utils::{mapToGrpcError, observability::{makeSpan, linkParentTrace}};
 use tokio::spawn;
 use tonic::{codec::CompressionEncoding, transport::Server, Request, Response, Status, async_trait};
 use tower::ServiceBuilder;
 use tower_http::trace::TraceLayer;
-use tracing::instrument;
+use tracing::{instrument, debug};
 
 const MAX_REQUEST_SIZE: usize= 512; // 512 Bytes
 
@@ -30,7 +30,7 @@ impl GrpcAdapter {
 				.expect("ERROR: Building gRPC reflection service")
 				.max_decoding_message_size(MAX_REQUEST_SIZE);
 
-    println!("INFO: Starting gRPC server");
+    debug!("Starting gRPC server");
 
     spawn(async move {
       Server::builder( )
@@ -52,7 +52,7 @@ struct FeedsServiceImpl {
 	usecases: &'static Usecases
 }
 
-const API_SLO: Objective= Objective::new("users-microservice");
+const API_SLO: Objective= Objective::new("feeds-microservice");
 
 #[autometrics(objective = API_SLO)]
 #[async_trait]
@@ -60,7 +60,7 @@ impl FeedsService for FeedsServiceImpl {
 	async fn ping(&self, _: Request<( )>) -> Result<Response<( )>, Status> {
 		Ok(Response::new(( )))}
 
-	#[instrument(skip(self))]
+	#[instrument(skip(self), level= "info")]
   async fn get_feed(&self, request: Request<GetFeedRequest>) -> Result<Response<GetFeedResponse>, Status> {
     let request= request.into_inner( );
 

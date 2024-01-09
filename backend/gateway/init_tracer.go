@@ -14,8 +14,8 @@ import (
 	"github.com/Archisman-Mridha/instagram-clone/backend/gateway/utils"
 )
 
-// initTracer initializes and returns a trace.TracerProvider for OpenTelemetry.
-func initTracer( ) *trace.TracerProvider {
+// startTracer initializes and returns a trace.TracerProvider for OpenTelemetry.
+func startTracer( ) *trace.TracerProvider {
 	traceExporter, err := otlptracegrpc.New(context.Background( ),
 		otlptracegrpc.WithEndpoint(utils.Envs.JAEGER_COLLECTOR_URL),
 		otlptracegrpc.WithCompressor("gzip"),
@@ -48,7 +48,7 @@ func initTracer( ) *trace.TracerProvider {
 		propagation.Baggage{ },
 	))
 
-	log.Info("Created OpenTelemetry tracer provider")
+	log.Debug("Created OpenTelemetry tracer provider")
 
 	return tracerProvider
 }

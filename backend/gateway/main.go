@@ -73,9 +73,9 @@ func main( ) {
 	var err error
 	shutdownMetricsServer, err= autometrics.Init(autometrics.WithService("gateway"))
 	if err != nil {
-		log.Fatalf("Error initializing autometrics : %v", err)}
+		log.Fatalf("ERROR : Initializing autometrics : %v", err)}
 
-	tracerProvider = initTracer( )
+	tracerProvider = startTracer( )
 
 	usersMicroserviceConnector= connectors.NewUsersMicroserviceConnector( )
 	profilesMicroserviceConnector= connectors.NewProfilesMicroserviceConnector( )
@@ -106,9 +106,9 @@ func main( ) {
 		router.Handle("/graphql", graphqlServer)
 
 		router.Handle("/graphiql", playground.ApolloSandboxHandler("GraphQL Playground", "/graphql"))
-		log.Infof("GraphQL playground can be accessed at http://localhost:%s/graphiql", utils.Envs.GRAPHQL_SERVER_PORT)
+		log.Debugf("GraphQL playground can be accessed at http://localhost:%s/graphiql", utils.Envs.GRAPHQL_SERVER_PORT)
 
-		log.Infof("Starting GraphQL server")
+		log.Debugf("Starting GraphQL server")
 		listeningAddress := fmt.Sprintf(":%s", utils.Envs.GRAPHQL_SERVER_PORT)
 		return http.ListenAndServe(listeningAddress, router)
 	})
@@ -132,8 +132,8 @@ func cleanup( ) {
 	// Shutdown tracer provider.
 	if tracerProvider != nil {
 		if err := tracerProvider.Shutdown(context.Background( )); err != nil {
-			log.Errorf("Error shutting down tracer provider : %v", err)}
-
-		log.Debug("Tracer provider shut down")
+			log.Errorf("ERROR : Shutting down tracer provider : %v", err)
+			log.Debug("Tracer provider shut down")
+		}
 	}
 }

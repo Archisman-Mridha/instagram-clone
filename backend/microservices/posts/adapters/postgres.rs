@@ -2,11 +2,11 @@ use anyhow::{Result, Ok};
 use async_trait::async_trait;
 use deadpool_postgres::{Pool, Object};
 use shared::{
-	utils::{createConnectionPool, toServerError},
+	utils::{createPgConnectionPool, toServerError},
 	sql::queries::posts_microservice::{create, getPostsOfUser, getPosts}
 };
 use crate::{domain::ports::PostsRepository, proto::{CreatePostRequest, Post, GetPostsOfUserRequest}};
-use tracing::instrument;
+use tracing::{instrument, debug, info};
 
 pub struct PostgresAdapter {
 	connectionPool: Pool
@@ -15,13 +15,13 @@ pub struct PostgresAdapter {
 impl PostgresAdapter {
 	pub async fn new( ) -> Self {
 		let postgresAdapter= Self {
-			connectionPool: createConnectionPool( )
+			connectionPool: createPgConnectionPool( )
 		};
 
 		// Get a client from the connection pool to verify that the database is reachable.
 		let _= postgresAdapter.connectionPool.get( )
-																				.await.expect("ERROR: Connecting to the Postgres database");
-		println!("DEBUG: Connected to Postgres database");
+																				 .await.expect("ERROR: Connecting to the Postgres database");
+		debug!("Connected to Postgres database");
 
 		postgresAdapter
 	}
@@ -38,10 +38,10 @@ impl PostsRepository for PostgresAdapter {
 	// cleanup closes the underlying Postgres database connection pool.
 	fn cleanup(&self) {
 		self.connectionPool.close( );
-		println!("DEBUG: PostgreSQL database connection pool destroyed");
+		debug!("PostgreSQL database connection pool destroyed");
 	}
 
-	#[instrument(skip(self))]
+	#[instrument(skip(self), level= "debug")]
 	async fn create(&self, args: &CreatePostRequest) -> Result<i32> {
 		let client= self.getClient( ).await?;
 
@@ -49,11 +49,14 @@ impl PostsRepository for PostgresAdapter {
 			.bind(&client, &args.owner_id, &args.description)
 			.one( )
 			.await
-			// TODO: Send the error to a central log management platform.
+			.map(|id| {
+				info!("New post created with id {} and details : {:?}", id, args);
+				id
+			})
       .map_err(toServerError)
 	}
 
-	#[instrument(skip(self))]
+	#[instrument(skip(self), level= "debug")]
 	async fn getPostsOfUser(&self, args: &GetPostsOfUserRequest) -> Result<Vec<Post>> {
 		let client= self.getClient( ).await?;
 
@@ -61,7 +64,7 @@ impl PostsRepository for PostgresAdapter {
 			getPostsOfUser( )
 				.bind(&client, &args.owner_id, &args.page_size, &args.offset)
 				.all( )
-				.await.map_err(toServerError)? // TODO: Send the error to a central log management platform.
+				.await.map_err(toServerError)?
 				.iter( ).map(|value| {
 					Post {
 						id: value.id,
@@ -75,7 +78,7 @@ impl PostsRepository for PostgresAdapter {
 		)
 	}
 
-	#[instrument(skip(self))]
+	#[instrument(skip(self), level= "debug")]
 	async fn getPosts(&self, postIds: Vec<i32>) -> Result<Vec<Post>> {
 		let client= self.getClient( ).await?;
 
@@ -83,7 +86,7 @@ impl PostsRepository for PostgresAdapter {
 			getPosts( )
 				.bind(&client, &postIds)
 				.all( )
-				.await.map_err(toServerError)? // TODO: Send the error to a central log management platform.
+				.await.map_err(toServerError)?
 				.iter( ).map(|value| {
 					Post {
 						id: value.id,

@@ -34,8 +34,7 @@ impl KafkaAdapter {
 				result= self._consume(usecases) => result
 			};
 
-			if let Err(error)= result {
-				error!("{}", error)}
+			if let Err(error)= result { error!("{}", error)}
 
 			sleep(Duration::from_secs(1)).await;
 		}
@@ -43,7 +42,7 @@ impl KafkaAdapter {
 
 	async fn _consume(&mut self, usecases: &Usecases) -> Result<( )> {
 		let messageSets= self.consumer.poll( )
-								 									.map_err(|error| anyhow!("Error consuming messages from '{}' kafka topic: {}", KAFKA_TOPIC, error))?;
+								 									.map_err(|error| anyhow!("ERROR : Consuming messages from '{}' kafka topic: {}", KAFKA_TOPIC, error))?;
 
 		if messageSets.is_empty( ) {
 			return Ok(( ))}
@@ -69,12 +68,12 @@ impl KafkaAdapter {
 
 				if consumeMessage {
 					self.consumer.consume_message(KAFKA_TOPIC, partition, message.offset)
-											 .map_err(|error| anyhow!("Error trying to consume Kafka message : {}", error))?;
+											 .map_err(|error| anyhow!("ERROR : Trying to consume Kafka message : {}", error))?;
 				}
 			}
 		}
 
 		self.consumer.commit_consumed( )
-								 .map_err(|error| anyhow!("Error trying to commit consumed Kafka messages : {}", error))
+								 .map_err(|error| anyhow!("ERROR : Trying to commit consumed Kafka messages : {}", error))
 	}
 }

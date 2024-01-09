@@ -34,7 +34,7 @@ func NewUsersMicroserviceConnector( ) *UsersMicroserviceConnector {
 	if err := u.Healthcheck( ); err != nil {
 		log.Fatalf("Couldn't connect to users microservice : %v", err)}
 
-	log.Infof("Connected to %s", u.serviceName)
+	log.Debugf("Connected to %s", u.serviceName)
 
 	return u
 }
@@ -53,5 +53,5 @@ func(u *UsersMicroserviceConnector) Disconnect( ) {
 	if err := u.grpcConnection.Close( ); err != nil {
 		log.Errorf("Error closing connection to %s : %v", u.serviceName, err)}
 
-	log.Infof("Closed connection to %s", u.serviceName)
+	log.Debugf("Closed connection to %s", u.serviceName)
 }

@@ -34,13 +34,6 @@ impl Usecases {
 	}
 
 	pub async fn getFollowshipCounts(&self, userId: i32) -> Result<GetFollowshipCountsResponse> {
-		self.followshipsRepository
-				.getFollowshipCounts(userId).await
-				.map(|followshipCounts| {
-					GetFollowshipCountsResponse {
-						follower_count: followshipCounts.follower_count,
-						following_count: followshipCounts.following_count
-					}
-				})
+		self.followshipsRepository.getFollowshipCounts(userId).await
 	}
 }

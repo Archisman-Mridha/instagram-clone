@@ -4,8 +4,8 @@ use async_trait::async_trait;
 use cornucopia_async::Params;
 use deadpool_postgres::{Pool, Object};
 use shared::sql::queries::users_microservice::{create, findByEmail, findByUsername, CreateParams, findById};
-use shared::utils::{createConnectionPool, SERVER_ERROR, toServerError};
-use tracing::instrument;
+use shared::utils::{createPgConnectionPool, SERVER_ERROR, toServerError};
+use tracing::{instrument, debug, error, info};
 
 const EMAIL_ALREADY_REGISTERED_ERROR: &str= "Email is already registered";
 const USERNAME_UNAVAILABLE_ERROR: &str= "Username is unavailable";
@@ -17,12 +17,12 @@ pub struct PostgresAdapter {
 
 impl PostgresAdapter {
 	pub async fn new( ) -> Self {
-    let postgresAdapter= Self { connectionPool: createConnectionPool( )};
+    let postgresAdapter= Self { connectionPool: createPgConnectionPool( )};
 
 		// Get a client from the connection pool to verify that the database is reachable.
 		let _= postgresAdapter.connectionPool.get( )
-									 											 .await.expect("ERROR: Connecting to the Postgres database");
-		println!("DEBUG: Connected to Postgres database");
+									 											 .await.expect("ERROR : Connecting to the Postgres database");
+		debug!("Connected to Postgres database");
 
 		postgresAdapter
   }
@@ -39,10 +39,10 @@ impl UsersRepository for PostgresAdapter {
 	// cleanup closes the underlying Postgres database connection pool.
 	fn cleanup(&self) {
 		self.connectionPool.close( );
-		println!("DEBUG: PostgreSQL database connection pool destroyed");
+		debug!("PostgreSQL database connection pool destroyed");
 	}
 
-	#[instrument(skip(self))]
+	#[instrument(skip(self), level= "debug")]
   async fn create<'create>(&self, args: CreateArgs<'create>) -> Result<String> {
     let client= self.getClient( ).await?;
 
@@ -56,26 +56,31 @@ impl UsersRepository for PostgresAdapter {
 			})
 			.one( ).await;
 
-    result.map(|id| id.to_string( )).map_err(|error| {
-      let error= error.to_string( );
+    result
+			.map(|id| {
+				info!("New user created with id {} and details : {:?}", id, args);
+				id.to_string( )
+			})
+			.map_err(|error| {
+				let error= error.to_string( );
 
-      let errorMessage: &str= {
-        if !error.contains("duplicate key value violates unique constraint") {
-					// TODO: Send the error to a central log management platform.
-					SERVER_ERROR
-				}
+				let errorMessage: &str= {
+					if !error.contains("duplicate key value violates unique constraint") {
+						error!("Unexpected server error occurred : {}", error);
+						SERVER_ERROR
+					}
 
-				// CASE: Duplicate email
-				else if error.contains("users_email_key") { EMAIL_ALREADY_REGISTERED_ERROR }
+					// CASE: Duplicate email
+					else if error.contains("users_email_key") { EMAIL_ALREADY_REGISTERED_ERROR }
 
-				// CASE: Duplicate username
-				else { USERNAME_UNAVAILABLE_ERROR }
-      };
-      anyhow!(errorMessage)
-    })
+					// CASE: Duplicate username
+					else { USERNAME_UNAVAILABLE_ERROR }
+				};
+				anyhow!(errorMessage)
+			})
   }
 
-	#[instrument(skip(self))]
+	#[instrument(skip(self), level= "debug")]
   async fn findByEmail(&self, email: &str) -> Result<FindByOutput> {
     let client= self.getClient( ).await?;
 
@@ -91,14 +96,14 @@ impl UsersRepository for PostgresAdapter {
           if error.to_string( ) == "query returned an unexpected number of rows" { USER_NOT_FOUND_ERROR }
 
 					else {
-						// TODO: Send the error to a central log management platform.
+						error!("Unexpected server error occurred : {}", error);
 						SERVER_ERROR
 					}
         })
       })
   }
 
-	#[instrument(skip(self))]
+	#[instrument(skip(self), level= "debug")]
   async fn findByUsername(&self, username: &str) -> Result<FindByOutput> {
     let client= self.getClient( ).await?;
 
@@ -114,14 +119,14 @@ impl UsersRepository for PostgresAdapter {
           if error.to_string( ) == "query returned an unexpected number of rows" { USER_NOT_FOUND_ERROR }
 
 					else {
-						// TODO: Send the error to a central log management platform.
+						error!("Unexpected server error occurred : {}", error);
 						SERVER_ERROR
 					}
         })
       })
   }
 
-	#[instrument(skip(self))]
+	#[instrument(skip(self), level= "debug")]
 	async fn findById(&self, id: i32) -> Result<FindByOutput> {
 		let client= self.getClient( ).await?;
 
@@ -137,7 +142,7 @@ impl UsersRepository for PostgresAdapter {
           if error.to_string( ) == "query returned an unexpected number of rows" { USER_NOT_FOUND_ERROR }
 
 					else {
-						// TODO: Send the error to a central log management platform.
+						error!("Unexpected server error occurred : {}", error);
 						SERVER_ERROR
 					}
         })

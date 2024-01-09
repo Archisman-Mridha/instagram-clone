@@ -19,8 +19,10 @@ impl Usecases {
 	}
 
 	pub async fn searchProfiles(&self, query: &str) -> Result<Vec<ProfilePreview>> {
-		self.elasticsearchAdapter.searchProfiles(query).await}
+		self.elasticsearchAdapter.searchProfiles(query).await
+	}
 
 	pub async fn getProfilePreviews(&self, ids: Vec<i32>) -> Result<Vec<ProfilePreview>> {
-		self.profilesRepository.getProfilePreviews(ids).await}
+		self.profilesRepository.getProfilePreviews(ids).await
+	}
 }

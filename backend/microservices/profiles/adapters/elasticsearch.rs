@@ -1,15 +1,15 @@
 use std::{str::{from_utf8, FromStr}, fmt::Debug};
-use anyhow::{Result, anyhow};
+use anyhow::Result;
 use elasticsearch::{
 	Elasticsearch,
 	http::{Url, transport::{TransportBuilder, SingleNodeConnectionPool}, response::Response},
 	auth::Credentials
 };
 use serde_json::json;
-use shared::utils::{getEnv, SERVER_ERROR};
+use shared::utils::{getEnv, toServerError};
 use crate::{CONFIG, domain::ports::UserCreatedEvent, proto::ProfilePreview};
 use serde::{Serialize, Deserialize};
-use tracing::instrument;
+use tracing::{instrument, debug, error, info};
 
 const ELASTICSEARCH_PROFILES_INDEX: &str= "profiles";
 
@@ -38,12 +38,12 @@ impl ElasticsearchAdapter {
 		client.ping( ).send( ).await
 					.expect("ERROR: Connecting to Elasticsearch");
 
-		println!("DEBUG: Connected to Elasticsearch");
+		debug!("Connected to Elasticsearch");
 
 		Self { client }
 	}
 
-	#[instrument(skip(self))]
+	#[instrument(skip(self), level= "debug")]
 	pub async fn indexProfile(&self, args: UserCreatedEvent) -> Result<( )> {
 		let id= &args.id.to_string( );
 
@@ -56,13 +56,11 @@ impl ElasticsearchAdapter {
 				})
 			)
 			.send( ).await
-			// TODO: Send the error to a central log management platform.
-			.map_err(|_| anyhow!(SERVER_ERROR))?;
-
-    Ok(( ))
+			.map(|_| info!("Profile indexed in Elasticsearch : {:?}", args))
+			.map_err(toServerError)
 	}
 
-	#[instrument(skip(self))]
+	#[instrument(skip(self), level= "debug")]
 	pub async fn searchProfiles(&self, query: &str) -> Result<Vec<ProfilePreview>> {
 		let response=
 			self.client
@@ -79,12 +77,13 @@ impl ElasticsearchAdapter {
 					})
 				)
 				.send( ).await
-				// TODO: Send the error to a central log management platform.
-				.map_err(|_| anyhow!(SERVER_ERROR))?;
+				.map_err(toServerError)?;
 
 		deserializeQueryProfilesResponse(response).await
-			// TODO: Send the error to a central log management platform.
-			.map_err(|_| anyhow!(SERVER_ERROR))
+			.map_err(|error| {
+				error!("Unexpected server error occurred : {}", error);
+				error
+			})
 	}
 }
 

@@ -4,12 +4,12 @@ use crate::{
 };
 use async_trait::async_trait;
 use autometrics::{objectives::Objective, autometrics};
-use shared::utils::{mapToGrpcError, distributedTracing::{makeSpan, linkParentTrace}};
+use shared::utils::{mapToGrpcError, observability::{makeSpan, linkParentTrace}};
 use tokio::spawn;
 use tonic::{codec::CompressionEncoding, transport::Server, Request, Response, Status};
 use tower::ServiceBuilder;
 use tower_http::trace::TraceLayer;
-use tracing::instrument;
+use tracing::{instrument, debug};
 
 const MAX_REQUEST_SIZE: usize= 512; //bytes
 
@@ -20,7 +20,7 @@ impl GrpcAdapter {
 	pub async fn startServer(usecases: Box<Usecases>) {
 		let address= format!("[::]:{}", &*CONFIG.GRPC_SERVER_PORT);
 		let address= address.parse( )
-												.expect(&format!("ERROR: parsing binding address of the gRPC server : {}", address));
+												.expect(&format!("ERROR: Parsing binding address of the gRPC server : {}", address));
 
 		let postsService=
 			PostsServiceServer::new(PostsServiceImpl { usecases })
@@ -32,10 +32,10 @@ impl GrpcAdapter {
 			tonic_reflection::server::Builder::configure( )
 				.register_encoded_file_descriptor_set(FILE_DESCRIPTOR_SET)
 				.build( )
-				.expect("ERROR: building gRPC reflection service")
+				.expect("ERROR: Building gRPC reflection service")
 				.max_decoding_message_size(MAX_REQUEST_SIZE);
 
-		println!("INFO: Starting gRPC server");
+		debug!("Starting gRPC server");
 
 		spawn(async move {
 			Server::builder( )
@@ -48,7 +48,7 @@ impl GrpcAdapter {
 				.add_service(reflectionService)
 				.serve_with_shutdown(address, THREAD_CANCELLATION_TOKEN.clone( ).cancelled( ))
 				.await
-				.expect("ERROR: starting gRPC server");
+				.expect("ERROR: Starting gRPC server");
 		});
 	}
 }
@@ -57,7 +57,7 @@ struct PostsServiceImpl {
 	usecases: Box<Usecases>
 }
 
-const API_SLO: Objective= Objective::new("users-microservice");
+const API_SLO: Objective= Objective::new("posts-microservice");
 
 #[autometrics(objective = API_SLO)]
 #[async_trait]
@@ -65,7 +65,7 @@ impl PostsService for PostsServiceImpl {
 	async fn ping(&self, _: Request<( )>) -> Result<Response<( )>, Status> {
 		Ok(Response::new(( )))}
 
-	#[instrument(skip(self))]
+	#[instrument(skip(self), level= "info")]
 	async fn create_post(&self, request: Request<CreatePostRequest>) -> Result<Response<CreatePostResponse>, Status> {
 		let request= request.into_inner( );
 
@@ -75,7 +75,7 @@ impl PostsService for PostsServiceImpl {
 								 .map_err(mapToGrpcError)
 	}
 
-	#[instrument(skip(self))]
+	#[instrument(skip(self), level= "info")]
 	async fn get_posts_of_user(&self, request: Request<GetPostsOfUserRequest>) -> Result<Response<GetPostsResponse>, Status> {
 		let request= request.into_inner( );
 
@@ -85,7 +85,7 @@ impl PostsService for PostsServiceImpl {
 								 .map_err(mapToGrpcError)
 	}
 
-	#[instrument(skip(self))]
+	#[instrument(skip(self), level= "info")]
 	async fn get_posts(&self, request: Request<GetPostsRequest>) -> Result<Response<GetPostsResponse>, Status> {
 		let request= request.into_inner( );
 

@@ -2,7 +2,7 @@ use anyhow::{Result, anyhow};
 use async_trait::async_trait;
 use deadpool_postgres::{Pool, Object};
 use shared::{
-	utils::{createConnectionPool, toServerError, SERVER_ERROR},
+	utils::{createPgConnectionPool, toServerError, SERVER_ERROR},
 	sql::queries::followships_microservice::{
 		create, delete, getFollowshipCounts, getFollowings, getFollowers, exists
 	}
@@ -14,7 +14,7 @@ use crate::{
 		GetFollowingsRequest, DoesFollowshipExistRequest
 	}
 };
-use tracing::instrument;
+use tracing::{instrument, debug, error};
 
 pub struct PostgresAdapter {
   connectionPool: Pool
@@ -23,13 +23,13 @@ pub struct PostgresAdapter {
 impl PostgresAdapter {
 	pub async fn new( ) -> Self {
     let postgresAdapter= Self {
-			connectionPool: createConnectionPool( )
+			connectionPool: createPgConnectionPool( )
 		};
 
 		// Get a client from the connection pool to verify that the database is reachable.
 		let _= postgresAdapter.connectionPool.get( )
 									 											 .await.expect("ERROR: Connecting to the Postgres database");
-		println!("DEBUG: Connected to Postgres database");
+		debug!("Connected to Postgres database");
 
 		postgresAdapter
   }
@@ -46,36 +46,32 @@ impl FollowshipsRepository for PostgresAdapter {
 	// cleanup closes the underlying Postgres database connection pool.
 	fn cleanup(&self) {
 		self.connectionPool.close( );
-		println!("DEBUG: PostgreSQL database connection pool destroyed");
+		debug!("PostgreSQL database connection pool destroyed");
 	}
 
-	#[instrument(skip(self))]
+	#[instrument(skip(self), level= "debug")]
 	async fn create(&self, args: &FollowshipOperationRequest) ->  Result<( )> {
 		let client= self.getClient( ).await?;
 
 		create( )
 			.bind(&client, &args.follower_id, &args.followee_id)
 			.await
-			// TODO: Send the error to a central log management platform.
-			.map_err(toServerError)?;
-
-		Ok(( ))
+			.map(|_| ( ))
+			.map_err(toServerError)
 	}
 
-	#[instrument(skip(self))]
+	#[instrument(skip(self), level= "debug")]
 	async fn delete(&self, args: &FollowshipOperationRequest) ->  Result<( )> {
 		let client= self.getClient( ).await?;
 
 		delete( )
 			.bind(&client, &args.follower_id, &args.followee_id)
 			.await
-			// TODO: Send the error to a central log management platform.
-			.map_err(toServerError)?;
-
-		Ok(( ))
+			.map(|_| ( ))
+			.map_err(toServerError)
 	}
 
-	#[instrument(skip(self))]
+	#[instrument(skip(self), level= "debug")]
 	async fn exists(&self, args: &DoesFollowshipExistRequest) -> Result<bool> {
 		let client= self.getClient( ).await?;
 
@@ -85,18 +81,19 @@ impl FollowshipsRepository for PostgresAdapter {
 									.await;
 
 		match result {
-			Ok(_) => anyhow::Ok(true),
+			Ok(_) => Ok(true),
 
 			Err(error) => {
 				if error.to_string( ) == "query returned an unexpected number of rows" {
 					return anyhow::Ok(false)}
 
+				error!("{}", error);
 				Err(anyhow!(SERVER_ERROR))
 			}
 		}
 	}
 
-	#[instrument(skip(self))]
+	#[instrument(skip(self), level= "debug")]
 	async fn getFollowers(&self, args: &GetFollowersRequest) -> Result<Vec<i32>> {
 		let client= self.getClient( ).await?;
 
@@ -104,11 +101,10 @@ impl FollowshipsRepository for PostgresAdapter {
 			.bind(&client, &args.user_id, &args.page_size, &args.offset)
 			.all( )
 			.await
-			// TODO: Send the error to a central log management platform.
 			.map_err(toServerError)
 	}
 
-	#[instrument(skip(self))]
+	#[instrument(skip(self), level= "debug")]
 	async fn getFollowings(&self, args: &GetFollowingsRequest) -> Result<Vec<i32>> {
 		let client= self.getClient( ).await?;
 
@@ -116,24 +112,23 @@ impl FollowshipsRepository for PostgresAdapter {
 			.bind(&client, &args.user_id, &args.page_size, &args.offset)
 			.all( )
 			.await
-			// TODO: Send the error to a central log management platform.
 			.map_err(toServerError)
 	}
 
-	#[instrument(skip(self))]
+	#[instrument(skip(self), level= "debug")]
 	async fn getFollowshipCounts(&self, userId: i32) -> Result<GetFollowshipCountsResponse> {
 		let client= self.getClient( ).await?;
 
-		let followshipCounts= getFollowshipCounts( )
-														.bind(&client, &userId)
-														.one( )
-														.await
-														// TODO: Send the error to a central log management platform.
-														.map_err(toServerError)?;
-
-		Ok(GetFollowshipCountsResponse {
-			follower_count: followshipCounts.follower_count,
-			following_count: followshipCounts.following_count
-		})
+		getFollowshipCounts( )
+			.bind(&client, &userId)
+			.one( )
+			.await
+			.map(|value| {
+				GetFollowshipCountsResponse {
+					follower_count: value.follower_count,
+					following_count: value.following_count
+				}
+			})
+			.map_err(toServerError)
 	}
 }

@@ -2,10 +2,10 @@ use anyhow::Result;
 use async_trait::async_trait;
 use deadpool_postgres::{Pool, Object};
 use shared::{
-	utils::{createConnectionPool, toServerError},
+	utils::{createPgConnectionPool, toServerError},
 	sql::queries::feeds_microservice::getAllFollowers
 };
-use tracing::instrument;
+use tracing::{instrument, debug};
 use crate::domain::ports::FollowshipsRepository;
 
 pub struct PostgresAdapter {
@@ -14,12 +14,12 @@ pub struct PostgresAdapter {
 
 impl PostgresAdapter {
 	pub async fn new( ) -> Self {
-		let postgresAdapter= Self { connectionPool: createConnectionPool( )};
+		let postgresAdapter= Self { connectionPool: createPgConnectionPool( )};
 
 		// Get a client from the connection pool to verify that the database is reachable.
 		let _= postgresAdapter.connectionPool.get( )
-																					.await.expect("ERROR: Connecting to the Postgres database");
-		println!("DEBUG: Connected to Postgres database");
+																				 .await.expect("ERROR: Connecting to the Postgres database");
+		debug!("Connected to Postgres database");
 
 		postgresAdapter
 	}
@@ -36,10 +36,10 @@ impl FollowshipsRepository for PostgresAdapter {
 	// cleanup closes the underlying Postgres database connection pool.
 	fn cleanup(&self) {
 		self.connectionPool.close( );
-		println!("DEBUG: PostgreSQL database connection pool destroyed");
+		debug!("PostgreSQL database connection pool destroyed");
 	}
 
-	#[instrument(skip(self))]
+	#[instrument(skip(self), level= "debug")]
 	async fn getAllFollowers(&self, userId: i32) -> Result<Vec<i32>> {
 		let client= self.getClient( ).await?;
 
@@ -47,7 +47,6 @@ impl FollowshipsRepository for PostgresAdapter {
 			.bind(&client, &userId)
 			.all( )
 			.await
-			// TODO: Send the error to a central log management platform.
 			.map_err(toServerError)
 	}
 }

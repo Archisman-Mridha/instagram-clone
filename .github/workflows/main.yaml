@@ -147,8 +147,9 @@ jobs:
         with:
           context: .
           file: ${{ matrix.microservice.path }}/Dockerfile
-          platforms: linux/amd64,linux/arm64 ## It takes pretty long to build container images for
-                                             ## the ARM64 platform (even when using QEMU).
+          ## It takes pretty long to build container images for the ARM64 platform (even when using
+          ## QEMU). So skipping it !
+          platforms: linux/amd64
           push: true
           tags: ghcr.io/archisman-mridha/instagram-clone-${{ matrix.microservice.name }}:${{ github.sha }}
           ## Experimental cache exporter for GitHub Actions provided by buildx and BuildKit.

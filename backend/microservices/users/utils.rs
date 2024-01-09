@@ -4,17 +4,24 @@ use argon2::{
   Argon2, PasswordHash, PasswordHasher, PasswordVerifier,
 };
 use shared::utils::SERVER_ERROR;
+use tracing::error;
 
 pub fn hashPassword(password: &str) -> Result<String> {
   Argon2::default( )
     .hash_password(password.as_bytes( ), &SaltString::generate(&mut OsRng))
     .map(|value| value.to_string( ))
-    .map_err(|_| anyhow!(SERVER_ERROR))
+    .map_err(|error| {
+			error!("Unexpected server error occurred : {}", error);
+			anyhow!(SERVER_ERROR)
+		})
 }
 
 pub fn verifyPassword(password: &str, hashedPassword: &str) -> Result<bool> {
   let parsedHashedPassword= PasswordHash::new(hashedPassword)
-																					.map_err(|_| anyhow!(SERVER_ERROR))?;
+																					.map_err(|error| {
+																						error!("Unexpected server error occurred : {}", error);
+																						anyhow!(SERVER_ERROR)
+																					})?;
   let result= Argon2::default( ).verify_password(password.as_bytes( ), &parsedHashedPassword);
 
   Ok(result.is_ok( ))
@@ -65,7 +72,7 @@ pub mod jwt {
 
   pub fn decodeJwt(jwt: &str) -> Result<String> {
     let tokenData= decode::<JwtClaims>(jwt, &JWT_DECODING_KEY, &Validation::default( ))
-									   .map_err(toServerError)?;
+									  .map_err(toServerError)?;
     let claims= tokenData.claims;
 
     if claims.exp < Local::now( ).timestamp( ) as usize {

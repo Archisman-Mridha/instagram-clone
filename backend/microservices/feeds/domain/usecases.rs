@@ -17,5 +17,6 @@ impl Usecases {
 	}
 
 	pub fn getFeed(&self, args: GetFeedRequest) -> Result<Vec<i32>> {
-		self.feedsRepository.getFeed(args)}
+		self.feedsRepository.getFeed(args)
+	}
 }

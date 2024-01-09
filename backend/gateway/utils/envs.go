@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/caarlos0/env/v9"
-	"github.com/charmbracelet/log"
 	"github.com/joho/godotenv"
 )
 
@@ -23,8 +22,7 @@ type EnvsSchema struct {
 var Envs EnvsSchema
 
 func LoadEnvs( ) {
-	if err := godotenv.Load(".env"); err != nil {
-		log.Warnf("Couldn't load .env file: %v", err)}
+	godotenv.Load(".env")
 
 	if err := env.Parse(&Envs); err != nil {
 		panic(fmt.Sprintf("Retrieving envs: %v", err))}

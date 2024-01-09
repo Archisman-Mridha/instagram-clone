@@ -231,21 +231,21 @@ services:
     depends_on:
       - elasticsearch
 
-  prometheus:
-    container_name: prometheus
-    image: prom/prometheus
-    ports:
-      - 9090:9090
-    volumes:
-      - ./prometheus.dev-config.yaml:/etc/prometheus/prometheus.yml:ro
+  ## prometheus:
+  ##   container_name: prometheus
+  ##   image: prom/prometheus
+  ##   ports:
+  ##     - 9090:9090
+  ##   volumes:
+  ##     - ./prometheus.dev-config.yaml:/etc/prometheus/prometheus.yml:ro
 
-  autometrics:
-    container_name: autometrics
-    image: autometrics/am-proxy
-    environment:
-      - PROMETHEUS_URL=http://prometheus:9090
-    ports:
-      - 6789:6789
+  ## autometrics:
+  ##   container_name: autometrics
+  ##   image: autometrics/am-proxy
+  ##   environment:
+  ##     - PROMETHEUS_URL=http://prometheus:9090
+  ##   ports:
+  ##     - 6789:6789
 
   jaeger:
     container_name: jaeger
@@ -270,6 +270,12 @@ services:
     ports:
       - 24224:24224
       - 24224:24224/udp
+    healthcheck:
+      test: curl --fail -s http://localhost:24224 || exit 1
+      interval: 30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
 
   ## --- MICROSERVICES ---
 

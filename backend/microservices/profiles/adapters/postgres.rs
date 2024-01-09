@@ -1,13 +1,13 @@
-use anyhow::{Result, anyhow, Ok};
+use anyhow::{Result, anyhow};
 use async_trait::async_trait;
 use cornucopia_async::Params;
 use deadpool_postgres::{Object, Pool};
 use shared::{
-	utils::{createConnectionPool, toServerError, SERVER_ERROR},
+	utils::{createPgConnectionPool, toServerError},
 	sql::queries::profiles_microservice::{CreateParams, create, getProfilePreviews}
 };
 use crate::{domain::ports::{ProfilesRepository, UserCreatedEvent}, proto::ProfilePreview};
-use tracing::instrument;
+use tracing::{instrument, debug, error, info};
 
 pub struct PostgresAdapter {
 	connectionPool: Pool
@@ -16,13 +16,13 @@ pub struct PostgresAdapter {
 impl PostgresAdapter {
 	pub async fn new( ) -> Self {
     let postgresAdapter= Self {
-			connectionPool: createConnectionPool( )
+			connectionPool: createPgConnectionPool( )
 		};
 
 		// Get a client from the connection pool to verify that the database is reachable.
 		let _= postgresAdapter.connectionPool.get( )
 									 											 .await.expect("ERROR: Connecting to the Postgres database");
-		println!("DEBUG: Connected to Postgres database");
+		debug!("Connected to Postgres database");
 
 		postgresAdapter
   }
@@ -39,10 +39,10 @@ impl ProfilesRepository for PostgresAdapter {
 	// cleanup closes the underlying Postgres database connection pool.
 	fn cleanup(&self) {
 		self.connectionPool.close( );
-		println!("DEBUG: PostgreSQL database connection pool destroyed");
+		debug!("PostgreSQL database connection pool destroyed");
 	}
 
-	#[instrument(skip(self))]
+	#[instrument(skip(self), level= "debug")]
 	async fn create(&self, args: &UserCreatedEvent) -> Result<( )> {
 		let client= self.getClient( ).await?;
 
@@ -54,27 +54,30 @@ impl ProfilesRepository for PostgresAdapter {
     let result= create( ).params(&client, createParams).await;
 
     match result {
+			Ok(id) => {
+				info!("New profile created with id {} and details : {:?}", id, args);
+				Ok(( ))
+			},
+
 			Err(error) => {
 				let error= error.to_string( );
 
 				if error == "duplicate key value violates unique constraint \"profiles_pkey\"" {
 					return Ok(( ))}
 
-				// TODO: Send the error to a central log management platform.
-				Err(anyhow!(SERVER_ERROR))
-			},
-
-			_ => Ok(( ))
+				error!(error);
+				Err(anyhow!(error))
+			}
 		}
 	}
 
-	#[instrument(skip(self))]
+	#[instrument(skip(self), level= "debug")]
 	async fn getProfilePreviews(&self, ids: Vec<i32>) -> Result<Vec<ProfilePreview>> {
 		let client= self.getClient( ).await?;
 
 		Ok(
 			getProfilePreviews( ).bind(&client, &ids).all( )
-				.await.map_err(toServerError)? // TODO: Send the error to a central log management platform.
+				.await.map_err(toServerError)?
 				.iter( ).enumerate( ).map(|(index, value)| {
 					ProfilePreview {
 						id: ids[index],

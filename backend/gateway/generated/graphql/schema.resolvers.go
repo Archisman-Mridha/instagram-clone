@@ -7,15 +7,14 @@ package graphql_generated
 import (
 	"context"
 
-	"golang.org/x/sync/errgroup"
-
 	grpc_generated "github.com/Archisman-Mridha/instagram-clone/backend/gateway/generated/grpc"
 	"github.com/Archisman-Mridha/instagram-clone/backend/gateway/utils"
+	"golang.org/x/sync/errgroup"
 )
 
 func (r *mutationResolver) Signup(ctx context.Context, args SignupArgs) (*AuthenticationOutput, error) {
 	ctx, span := r.Tracer.Start(ctx, "Signup")
-	defer span.End( )
+	defer span.End()
 
 	response, err := r.UsersMicroservice.Signup(ctx, &grpc_generated.SignupRequest{
 		Name:     args.Name,
@@ -33,7 +32,7 @@ func (r *mutationResolver) Signup(ctx context.Context, args SignupArgs) (*Authen
 
 func (r *mutationResolver) Follow(ctx context.Context, followeeID int) (*bool, error) {
 	ctx, span := r.Tracer.Start(ctx, "Follow")
-	defer span.End( )
+	defer span.End()
 
 	userId, isUserAuthenticated := ctx.Value(utils.USER_ID_CONTEXT_KEY).(int32)
 	if !isUserAuthenticated {
@@ -54,7 +53,7 @@ func (r *mutationResolver) Follow(ctx context.Context, followeeID int) (*bool, e
 
 func (r *mutationResolver) Unfollow(ctx context.Context, followeeID int) (*bool, error) {
 	ctx, span := r.Tracer.Start(ctx, "Unfollow")
-	defer span.End( )
+	defer span.End()
 
 	userId, isUserAuthenticated := ctx.Value(utils.USER_ID_CONTEXT_KEY).(int32)
 	if !isUserAuthenticated {
@@ -75,7 +74,7 @@ func (r *mutationResolver) Unfollow(ctx context.Context, followeeID int) (*bool,
 
 func (r *mutationResolver) CreatePost(ctx context.Context, args CreatePostArgs) (int, error) {
 	ctx, span := r.Tracer.Start(ctx, "CreatePost")
-	defer span.End( )
+	defer span.End()
 
 	userId, isUserAuthenticated := ctx.Value(utils.USER_ID_CONTEXT_KEY).(int32)
 	if !isUserAuthenticated {
@@ -97,7 +96,7 @@ func (r *mutationResolver) CreatePost(ctx context.Context, args CreatePostArgs) 
 
 func (r *queryResolver) Signin(ctx context.Context, args SigninArgs) (*AuthenticationOutput, error) {
 	ctx, span := r.Tracer.Start(ctx, "Signin")
-	defer span.End( )
+	defer span.End()
 
 	response, err := r.UsersMicroservice.Signin(ctx, &grpc_generated.SigninRequest{
 		Identifier: args.Identifier,
@@ -113,7 +112,7 @@ func (r *queryResolver) Signin(ctx context.Context, args SigninArgs) (*Authentic
 
 func (r *queryResolver) SearchProfiles(ctx context.Context, args SearchProfilesArgs) (*SearchProfilesOutput, error) {
 	ctx, span := r.Tracer.Start(ctx, "SearchProfiles")
-	defer span.End( )
+	defer span.End()
 
 	_, isUserAuthenticated := ctx.Value(utils.USER_ID_CONTEXT_KEY).(int32)
 	if !isUserAuthenticated {
@@ -134,7 +133,7 @@ func (r *queryResolver) SearchProfiles(ctx context.Context, args SearchProfilesA
 
 func (r *queryResolver) GetFollowers(ctx context.Context, args GetFollowersArgs) ([]*ProfilePreview, error) {
 	ctx, span := r.Tracer.Start(ctx, "GetFollowers")
-	defer span.End( )
+	defer span.End()
 
 	_, isUserAuthenticated := ctx.Value(utils.USER_ID_CONTEXT_KEY).(int32)
 	if !isUserAuthenticated {
@@ -166,7 +165,7 @@ func (r *queryResolver) GetFollowers(ctx context.Context, args GetFollowersArgs)
 
 func (r *queryResolver) GetFollowings(ctx context.Context, args GetFollowingsArgs) ([]*ProfilePreview, error) {
 	ctx, span := r.Tracer.Start(ctx, "GetFollowings")
-	defer span.End( )
+	defer span.End()
 
 	_, isUserAuthenticated := ctx.Value(utils.USER_ID_CONTEXT_KEY).(int32)
 	if !isUserAuthenticated {
@@ -198,7 +197,7 @@ func (r *queryResolver) GetFollowings(ctx context.Context, args GetFollowingsArg
 
 func (r *queryResolver) GetProfile(ctx context.Context, args GetProfileArgs) (*Profile, error) {
 	ctx, span := r.Tracer.Start(ctx, "GetProfile")
-	defer span.End( )
+	defer span.End()
 
 	userId, isUserAuthenticated := ctx.Value(utils.USER_ID_CONTEXT_KEY).(int32)
 	if !isUserAuthenticated {
@@ -282,7 +281,7 @@ func (r *queryResolver) GetProfile(ctx context.Context, args GetProfileArgs) (*P
 
 func (r *queryResolver) GetPostsOfUser(ctx context.Context, args GetPostsOfUserArgs) ([]*Post, error) {
 	ctx, span := r.Tracer.Start(ctx, "GetPostsOfUser")
-	defer span.End( )
+	defer span.End()
 
 	_, isUserAuthenticated := ctx.Value(utils.USER_ID_CONTEXT_KEY).(int32)
 	if !isUserAuthenticated {
@@ -305,7 +304,7 @@ func (r *queryResolver) GetPostsOfUser(ctx context.Context, args GetPostsOfUserA
 
 func (r *queryResolver) GetFeed(ctx context.Context, args GetFeedArgs) ([]*Post, error) {
 	ctx, span := r.Tracer.Start(ctx, "GetFeed")
-	defer span.End( )
+	defer span.End()
 
 	userId, isUserAuthenticated := ctx.Value(utils.USER_ID_CONTEXT_KEY).(int32)
 	if !isUserAuthenticated {
