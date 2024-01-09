@@ -216,19 +216,20 @@ services:
   ##   environment:
   ##     KAFKA_CONNECT_URIS: http://debezium:8083
 
-  ## kibana:
-  ##   container_name: kibana
-  ##   image: docker.elastic.co/kibana/kibana:8.11.1
-  ##   ports:
-  ##     - 5601:5601
-  ##   environment:
-  ##     - node.name=kibanna
-  ##     - cluster.name=main
-  ##     - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-  ##     - ELASTICSEARCH_USERNAME=kibana_system
-  ##     - ELASTICSEARCH_PASSWORD=pass
-  ##   depends_on:
-  ##     - elasticsearch
+  kibana:
+    container_name: kibana
+    image: docker.elastic.co/kibana/kibana:8.11.1
+    ports:
+      - 5601:5601
+    environment:
+      - node.name=kibana
+      - cluster.name=main
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=pass
+      - discovery.type=single-node
+    depends_on:
+      - elasticsearch
 
   prometheus:
     container_name: prometheus
@@ -256,6 +257,20 @@ services:
     environment:
       - COLLECTOR_OTLP_ENABLED=true
 
+  fluentd:
+    container_name: fluentd
+    hostname: fluentd
+    build:
+      context: ./backend/fluentd
+    platform: linux/amd64
+    volumes:
+      - ./backend/fluentd/fluent.conf:/fluentd/etc/fluent.conf:ro
+    depends_on:
+      - elasticsearch
+    ports:
+      - 24224:24224
+      - 24224:24224/udp
+
   ## --- MICROSERVICES ---
 
   users-microservice:
@@ -279,6 +294,12 @@ services:
       - JAEGER_COLLECTOR_URL=http://jaeger:4317
     depends_on:
       - postgres-migrate
+      - fluentd
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: localhost:24224
+        tag: users-microservice
 
   profiles-microservice:
     container_name: profiles-microservice
@@ -290,7 +311,7 @@ services:
       - GRPC_SERVER_PORT=4002
       ## Elasticsearch
       - ELASTICSEARCH_URL=http://elasticsearch:9200
-      - ELASTICSEARCH_USERNAME=kibanna_system
+      - ELASTICSEARCH_USERNAME=kibana_system
       - ELASTICSEARCH_PASSWORD=pass
       ## Apache Kafka
       - KAFKA_HOSTS=kafka:9092
@@ -308,7 +329,13 @@ services:
       - postgres-migrate
       - kafka-migrate
       - elasticsearch
+      - fluentd
     restart: on-failure
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: localhost:24224
+        tag: profiles-microservice
 
   followships-microservice:
     container_name: followships-microservice
@@ -330,6 +357,12 @@ services:
       - JAEGER_COLLECTOR_URL=http://jaeger:4317
     depends_on:
       - postgres-migrate
+      - fluentd
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: localhost:24224
+        tag: followships-microservice
 
   posts-microservice:
     container_name: posts-microservice
@@ -351,6 +384,12 @@ services:
       - JAEGER_COLLECTOR_URL=http://jaeger:4317
     depends_on:
       - postgres-migrate
+      - fluentd
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: localhost:24224
+        tag: posts-microservice
 
   feeds-microservice:
     container_name: feeds-microservice
@@ -378,7 +417,13 @@ services:
       - postgres-migrate
       - kafka-migrate
       - redis
+      - fluentd
     restart: on-failure
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: localhost:24224
+        tag: feeds-microservice
 
   gateway:
     container_name: gateway
@@ -406,3 +451,8 @@ services:
     ports:
       - 4000:4000
     restart: on-failure
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: localhost:24224
+        tag: gateway

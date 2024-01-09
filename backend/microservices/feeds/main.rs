@@ -58,10 +58,11 @@ async fn main( ) {
 
 	let usecases= Box::leak::<'static>(Box::new(Usecases::new(postgresAdapter, redisAdapter)));
 
-	spawn(async {
+	let result= spawn(async {
 		let mut kafkaAdapter= adapters::KafkaAdapter::new( );
 		kafkaAdapter.consume(usecases).await;
-	});
+	}).await;
+	if let Err(error)= result { panic!("{}", error) }
 
 	GrpcAdapter::startServer(usecases).await;
 
