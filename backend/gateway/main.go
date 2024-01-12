@@ -23,13 +23,13 @@ import (
 )
 
 var (
-	usersMicroserviceConnector *connectors.UsersMicroserviceConnector
-	profilesMicroserviceConnector *connectors.ProfilesMicroserviceConnector
+	usersMicroserviceConnector       *connectors.UsersMicroserviceConnector
+	profilesMicroserviceConnector    *connectors.ProfilesMicroserviceConnector
 	followshipsMicroserviceConnector *connectors.FollowshipsMicroserviceConnector
-	postsMicroserviceConnector *connectors.PostsMicroserviceConnector
-	feedsMicroserviceConnector *connectors.FeedsMicroserviceConnector
+	postsMicroserviceConnector       *connectors.PostsMicroserviceConnector
+	feedsMicroserviceConnector       *connectors.FeedsMicroserviceConnector
 
-	_connectors= []connectors.Connector{
+	_connectors = []connectors.Connector{
 		usersMicroserviceConnector,
 		profilesMicroserviceConnector,
 		followshipsMicroserviceConnector,
@@ -42,62 +42,63 @@ var (
 	tracerProvider *trace.TracerProvider
 )
 
-func main( ) {
+func main() {
 	log.SetReportCaller(true)
 
-	utils.LoadEnvs( )
+	utils.LoadEnvs()
 
-	waitGroup, waitGroupContext := errgroup.WithContext(context.Background( ))
+	waitGroup, waitGroupContext := errgroup.WithContext(context.Background())
 
 	// Listen for system interruption signals to do gracefull shutdown.
-	waitGroup.Go(func( ) error {
+	waitGroup.Go(func() error {
 		shutdownSignalChan := make(chan os.Signal, 1)
 
 		signal.Notify(shutdownSignalChan, os.Interrupt, syscall.SIGTERM)
 		defer signal.Stop(shutdownSignalChan)
 
-		var err error= nil
+		var err error = nil
 		select {
-			case <- waitGroupContext.Done( ):
-				err= waitGroupContext.Err( )
+		case <-waitGroupContext.Done():
+			err = waitGroupContext.Err()
 
-			case <- shutdownSignalChan:
-				log.Warn("Received program interruption signal")
+		case <-shutdownSignalChan:
+			log.Warn("Received program interruption signal")
 		}
 
-		cleanup( )
+		cleanup()
 
 		return err
 	})
 
 	var err error
-	shutdownMetricsServer, err= autometrics.Init(autometrics.WithService("gateway"))
+	shutdownMetricsServer, err = autometrics.Init(autometrics.WithService("gateway"))
 	if err != nil {
-		log.Fatalf("ERROR : Initializing autometrics : %v", err)}
+		log.Fatalf("ERROR : Initializing autometrics : %v", err)
+	}
 
-	tracerProvider = startTracer( )
+	tracerProvider = startTracer()
 
-	usersMicroserviceConnector= connectors.NewUsersMicroserviceConnector( )
-	profilesMicroserviceConnector= connectors.NewProfilesMicroserviceConnector( )
-	followshipsMicroserviceConnector= connectors.NewFollowshipsMicroserviceConnector( )
-	postsMicroserviceConnector= connectors.NewPostsMicroserviceConnector( )
-	feedsMicroserviceConnector= connectors.NewFeedsMicroserviceConnector( )
+	usersMicroserviceConnector = connectors.NewUsersMicroserviceConnector()
+	profilesMicroserviceConnector = connectors.NewProfilesMicroserviceConnector()
+	followshipsMicroserviceConnector = connectors.NewFollowshipsMicroserviceConnector()
+	postsMicroserviceConnector = connectors.NewPostsMicroserviceConnector()
+	feedsMicroserviceConnector = connectors.NewFeedsMicroserviceConnector()
 
-	waitGroup.Go(func( ) error {
-		router := chi.NewRouter( )
+	waitGroup.Go(func() error {
+		router := chi.NewRouter()
 		router.Use(authenticationMiddleware)
 
-		router.Handle("/metrics", promhttp.Handler( ))
+		router.Handle("/metrics", promhttp.Handler())
 
 		graphqlServer := handler.NewDefaultServer(
-			graphql_generated.NewExecutableSchema(graphql_generated.Config {
-				Resolvers: &graphql_generated.Resolver {
+			graphql_generated.NewExecutableSchema(graphql_generated.Config{
+				Resolvers: &graphql_generated.Resolver{
 
-					UsersMicroservice: usersMicroserviceConnector,
-					ProfilesMicroservice: profilesMicroserviceConnector,
+					UsersMicroservice:       usersMicroserviceConnector,
+					ProfilesMicroservice:    profilesMicroserviceConnector,
 					FollowshipsMicroservice: followshipsMicroserviceConnector,
-					PostsMicroservice: postsMicroserviceConnector,
-					FeedsMicroservice: feedsMicroserviceConnector,
+					PostsMicroservice:       postsMicroserviceConnector,
+					FeedsMicroservice:       feedsMicroserviceConnector,
 
 					Tracer: tracerProvider.Tracer("gateway"),
 				},
@@ -113,15 +114,18 @@ func main( ) {
 		return http.ListenAndServe(listeningAddress, router)
 	})
 
-	if err := waitGroup.Wait( ); err != nil {
-		log.Errorf("Application error occurred : %v", err)}
+	if err := waitGroup.Wait(); err != nil {
+		log.Errorf("Application error occurred : %v", err)
+	}
 }
 
-func cleanup( ) {
+func cleanup() {
 	// Disconnect microservices.
 	for _, connector := range _connectors {
 		if connector != nil {
-			connector.Disconnect( )}}
+			connector.Disconnect()
+		}
+	}
 
 	// Shutdown metrics server.
 	if shutdownMetricsServer != nil {
@@ -131,7 +135,7 @@ func cleanup( ) {
 
 	// Shutdown tracer provider.
 	if tracerProvider != nil {
-		if err := tracerProvider.Shutdown(context.Background( )); err != nil {
+		if err := tracerProvider.Shutdown(context.Background()); err != nil {
 			log.Errorf("ERROR : Shutting down tracer provider : %v", err)
 			log.Debug("Tracer provider shut down")
 		}

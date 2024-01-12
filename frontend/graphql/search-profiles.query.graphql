@@ -1,12 +1,11 @@
 query SearchProfiles($args: SearchProfilesArgs!) {
-  searchProfiles(args: $args) {
+	searchProfiles(args: $args) {
+		profilePreviews {
+			id
 
-    profilePreviews {
-      id
-
-      name
-      username
-      profilePictureUri
-    } 
-  }
+			name
+			username
+			profilePictureUri
+		}
+	}
 }

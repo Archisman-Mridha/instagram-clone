@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-
 	/*
 		Since Server Actions can be invoked in a <form> element, this opens them up to CSRF attacks.
 		Behind the scenes, Server Actions use the POST method, and only this HTTP method is allowed to

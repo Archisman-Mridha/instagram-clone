@@ -1,25 +1,25 @@
 #![allow(non_snake_case)]
 
-mod domain;
 mod adapters;
+mod domain;
 mod proto {
   // Including code generated from the .proto files.
 
   tonic::include_proto!("posts_microservice");
 
-  pub const FILE_DESCRIPTOR_SET: &[u8]=
+  pub const FILE_DESCRIPTOR_SET: &[u8] =
     tonic::include_file_descriptor_set!("posts_microservice.descriptor");
 }
 
-use std::process::exit;
-use adapters::{PostgresAdapter, GrpcAdapter};
+use crate::domain::ports::PostsRepository;
+use adapters::{GrpcAdapter, PostgresAdapter};
 use domain::usecases::Usecases;
 use lazy_static::lazy_static;
 use shared::utils::{getEnv, observability::setupObservability};
+use std::process::exit;
 use tokio::signal;
 use tokio_util::sync::CancellationToken;
-use tracing::{warn, error};
-use crate::domain::ports::PostsRepository;
+use tracing::{error, warn};
 
 pub struct Config {
   GRPC_SERVER_PORT: String,
@@ -39,25 +39,26 @@ lazy_static! {
 }
 
 #[tokio::main]
-async fn main( ) {
-	let _= dotenv::from_filename("./backend/microservices/posts/.env");
+async fn main() {
+  let _ = dotenv::from_filename("./backend/microservices/posts/.env");
 
-	setupObservability("posts-microservice");
+  setupObservability("posts-microservice");
 
-  let postgresAdapter=
-    Box::leak::<'static>(Box::new(PostgresAdapter::new( ).await)) as &'static PostgresAdapter;
+  let postgresAdapter =
+    Box::leak::<'static>(Box::new(PostgresAdapter::new().await)) as &'static PostgresAdapter;
 
-  let usecases= Box::new(Usecases::new(postgresAdapter));
+  let usecases = Box::new(Usecases::new(postgresAdapter));
 
   GrpcAdapter::startServer(usecases).await;
 
-	/* Gracefully shutdown on receiving program shutdown signal. */ {
-    let error= signal::ctrl_c( ).await.err( );
+  /* Gracefully shutdown on receiving program shutdown signal. */
+  {
+    let error = signal::ctrl_c().await.err();
     warn!("Received program shutdown signal");
 
-    let _= &THREAD_CANCELLATION_TOKEN.cancel( ); // Do cleanup tasks in currently active Tokio
+    let _ = &THREAD_CANCELLATION_TOKEN.cancel(); // Do cleanup tasks in currently active Tokio
                                                  // threads.
-		postgresAdapter.cleanup( );
+    postgresAdapter.cleanup();
 
     match error {
       None => exit(0),

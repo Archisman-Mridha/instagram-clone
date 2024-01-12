@@ -7,24 +7,23 @@ use shared::utils::SERVER_ERROR;
 use tracing::error;
 
 pub fn hashPassword(password: &str) -> Result<String> {
-  Argon2::default( )
-    .hash_password(password.as_bytes( ), &SaltString::generate(&mut OsRng))
-    .map(|value| value.to_string( ))
+  Argon2::default()
+    .hash_password(password.as_bytes(), &SaltString::generate(&mut OsRng))
+    .map(|value| value.to_string())
     .map_err(|error| {
-			error!("Unexpected server error occurred : {}", error);
-			anyhow!(SERVER_ERROR)
-		})
+      error!("Unexpected server error occurred : {}", error);
+      anyhow!(SERVER_ERROR)
+    })
 }
 
 pub fn verifyPassword(password: &str, hashedPassword: &str) -> Result<bool> {
-  let parsedHashedPassword= PasswordHash::new(hashedPassword)
-																					.map_err(|error| {
-																						error!("Unexpected server error occurred : {}", error);
-																						anyhow!(SERVER_ERROR)
-																					})?;
-  let result= Argon2::default( ).verify_password(password.as_bytes( ), &parsedHashedPassword);
+  let parsedHashedPassword = PasswordHash::new(hashedPassword).map_err(|error| {
+    error!("Unexpected server error occurred : {}", error);
+    anyhow!(SERVER_ERROR)
+  })?;
+  let result = Argon2::default().verify_password(password.as_bytes(), &parsedHashedPassword);
 
-  Ok(result.is_ok( ))
+  Ok(result.is_ok())
 }
 
 pub mod jwt {
@@ -44,13 +43,12 @@ pub mod jwt {
     sub: String,
     issuedAt: usize,
     exp: usize,
-
     // Public and Private Claims.
   }
 
   impl JwtClaims {
     fn new(sub: String) -> Self {
-      let currentTimestamp= Local::now( ).timestamp( ) as usize;
+      let currentTimestamp = Local::now().timestamp() as usize;
 
       Self {
         sub,
@@ -61,22 +59,25 @@ pub mod jwt {
   }
 
   lazy_static! {
-    static ref JWT_ENCODING_KEY: EncodingKey= EncodingKey::from_secret(CONFIG.JWT_SECRET.as_bytes( ));
-    static ref JWT_DECODING_KEY: DecodingKey= DecodingKey::from_secret(CONFIG.JWT_SECRET.as_bytes( ));
+    static ref JWT_ENCODING_KEY: EncodingKey =
+      EncodingKey::from_secret(CONFIG.JWT_SECRET.as_bytes());
+    static ref JWT_DECODING_KEY: DecodingKey =
+      DecodingKey::from_secret(CONFIG.JWT_SECRET.as_bytes());
   }
 
   pub fn createJwt(id: String) -> Result<String> {
-    let claims= JwtClaims::new(id);
-    encode(&Header::default( ), &claims, &JWT_ENCODING_KEY).map_err(toServerError)
+    let claims = JwtClaims::new(id);
+    encode(&Header::default(), &claims, &JWT_ENCODING_KEY).map_err(toServerError)
   }
 
   pub fn decodeJwt(jwt: &str) -> Result<String> {
-    let tokenData= decode::<JwtClaims>(jwt, &JWT_DECODING_KEY, &Validation::default( ))
-									  .map_err(toServerError)?;
-    let claims= tokenData.claims;
+    let tokenData =
+      decode::<JwtClaims>(jwt, &JWT_DECODING_KEY, &Validation::default()).map_err(toServerError)?;
+    let claims = tokenData.claims;
 
-    if claims.exp < Local::now( ).timestamp( ) as usize {
-      return Err(anyhow!("JWT expired"))}
+    if claims.exp < Local::now().timestamp() as usize {
+      return Err(anyhow!("JWT expired"));
+    }
 
     Ok(claims.sub)
   }

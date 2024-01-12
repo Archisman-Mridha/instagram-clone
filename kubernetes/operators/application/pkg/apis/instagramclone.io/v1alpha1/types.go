@@ -9,16 +9,16 @@ type (
 	// +genclient
 	// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 	Application struct {
-		metav1.TypeMeta 		 `json:",inline"`
-		metav1.ObjectMeta 	 `json:"metadata,omitempty"`
+		metav1.TypeMeta   `json:",inline"`
+		metav1.ObjectMeta `json:"metadata,omitempty"`
 
 		Spec ApplicationSpec `json:"spec,omitempty"`
 	}
 
 	// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 	ApplicationList struct {
-		metav1.TypeMeta 		`json:",inline"`
-		metav1.ListMeta 		`json:"metadata,omitempty"`
+		metav1.TypeMeta `json:",inline"`
+		metav1.ListMeta `json:"metadata,omitempty"`
 
 		Items []Application `json:"items,omitempty"`
 	}

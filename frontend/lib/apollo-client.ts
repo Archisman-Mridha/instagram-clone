@@ -16,10 +16,9 @@ import { registerApolloClient } from "@apollo/experimental-nextjs-app-support/rs
 */
 // We have decided to always use Apollo client on the server side.
 
-export const getApolloClient= (jwt?: string) => {
-	return registerApolloClient(( ) => {
+export const getApolloClient = (jwt?: string) => {
+	return registerApolloClient(() => {
 		return new ApolloClient({
-	
 			/*
 				Apollo Client stores the results of your GraphQL queries in a local, normalized, in-memory
 				cache.
@@ -42,14 +41,16 @@ export const getApolloClient= (jwt?: string) => {
 			*/
 			// InMemoryCache stores data as a flat lookup table of objects that can reference each other.
 			// These objects correspond to the objects that are returned by your GraphQL queries.
-			cache: new InMemoryCache( ),
-	
+			cache: new InMemoryCache(),
+
 			link: new HttpLink({
 				uri: "http://localhost:4000/graphql",
-				headers: jwt ? {
-					"Authorization": `Bearer ${jwt}`
-				}: { }
-			}),
+				headers: jwt
+					? {
+							Authorization: `Bearer ${jwt}`
+						}
+					: {}
+			})
 		})
 	}).getClient
 }

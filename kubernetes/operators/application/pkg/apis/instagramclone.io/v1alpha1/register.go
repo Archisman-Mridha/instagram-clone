@@ -7,24 +7,24 @@ import (
 )
 
 var (
-	SchemeGroupVersion= schema.GroupVersion {
-		Group: "instagramclone.io",
+	SchemeGroupVersion = schema.GroupVersion{
+		Group:   "instagramclone.io",
 		Version: "v1alpha1",
 	}
 
 	SchemeBuilder runtime.SchemeBuilder
-	AddToScheme= SchemeBuilder.AddToScheme
+	AddToScheme   = SchemeBuilder.AddToScheme
 )
 
 func Resource(resource string) schema.GroupResource {
-	return SchemeGroupVersion.WithResource(resource).GroupResource( )
+	return SchemeGroupVersion.WithResource(resource).GroupResource()
 }
 
-func init( ) {
+func init() {
 	// Registering the custom resource types with the Kubernetes API server.
 	SchemeBuilder.Register(
 		func(s *runtime.Scheme) error {
-			s.AddKnownTypes(SchemeGroupVersion, &Application{ }, &ApplicationList{ })
+			s.AddKnownTypes(SchemeGroupVersion, &Application{}, &ApplicationList{})
 			metav1.AddToGroupVersion(s, SchemeGroupVersion)
 
 			return nil

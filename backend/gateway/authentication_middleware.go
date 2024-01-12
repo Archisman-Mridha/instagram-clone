@@ -21,20 +21,20 @@ func authenticationMiddleware(next http.Handler) http.Handler {
 
 		jwt, err := utils.ExtractJwtFromAuthorizationHeader(authorizationHeader)
 		if err != nil {
-			http.Error(w, err.Error( ), http.StatusBadRequest)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
 		// TODO: Add a timeout.
-		response, err := usersMicroserviceConnector.VerifyJwt(context.Background( ),
-																													&grpc_generated.VerifyJwtRequest{ Jwt: jwt })
+		response, err := usersMicroserviceConnector.VerifyJwt(context.Background(),
+			&grpc_generated.VerifyJwtRequest{Jwt: jwt})
 		if err != nil {
 			http.Error(w, "server error occurred", http.StatusInternalServerError)
 			return
 		}
 
 		// Add the user-id in context.
-		ctx := context.WithValue(r.Context( ), utils.USER_ID_CONTEXT_KEY, response.UserId)
+		ctx := context.WithValue(r.Context(), utils.USER_ID_CONTEXT_KEY, response.UserId)
 		r = r.WithContext(ctx)
 
 		next.ServeHTTP(w, r)

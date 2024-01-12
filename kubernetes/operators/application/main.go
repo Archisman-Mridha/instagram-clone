@@ -15,15 +15,15 @@ import (
 	"k8s.io/client-go/util/homedir"
 )
 
-func main( ) {
+func main() {
 	var kubeconfigFilepath *string
-	if homeDir := homedir.HomeDir( ); homeDir != "" {
-		kubeconfigFilepath= flag.String("kubeconfig", filepath.Join(homeDir, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
+	if homeDir := homedir.HomeDir(); homeDir != "" {
+		kubeconfigFilepath = flag.String("kubeconfig", filepath.Join(homeDir, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
 	} else {
-		kubeconfigFilepath= flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
+		kubeconfigFilepath = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
 	}
 
-	flag.Parse( )
+	flag.Parse()
 
 	kubeconfig, err := clientcmd.BuildConfigFromFlags("", *kubeconfigFilepath)
 	if err != nil {
@@ -33,27 +33,31 @@ func main( ) {
 		// In-cluster configuration allows applications running in a pod to automatically connect to the
 		// Kubernetes API using the service account (mounted on the pod) credentials and API server
 		// endpoint information injected by the cluster.
-		if kubeconfig, err= rest.InClusterConfig( ); err != nil {
-			log.Fatalf("Error building kubeconfig from in-cluster config : %v", err)}
+		if kubeconfig, err = rest.InClusterConfig(); err != nil {
+			log.Fatalf("Error building kubeconfig from in-cluster config : %v", err)
+		}
 	}
 
-	ctx := setupGracefullShutdownHandler( )
+	ctx := setupGracefullShutdownHandler()
 
 	kubeclient, err := kubernetes.NewForConfig(kubeconfig)
 	if err != nil {
-		log.Errorf("Error creating Kubernetes API server client : %v", err)}
+		log.Errorf("Error creating Kubernetes API server client : %v", err)
+	}
 
 	clientset, err := clientset.NewForConfig(kubeconfig)
 	if err != nil {
-		log.Errorf("Error creating Kubernetes API server client (for Application resource type) : %v", err)}
+		log.Errorf("Error creating Kubernetes API server client (for Application resource type) : %v", err)
+	}
 
-	informerFactory := informers.NewSharedInformerFactory(clientset, 20 * time.Second)
-	informer := informerFactory.Instagramclone( ).V1alpha1( ).Applications( )
+	informerFactory := informers.NewSharedInformerFactory(clientset, 20*time.Second)
+	informer := informerFactory.Instagramclone().V1alpha1().Applications()
 
 	controller := controller.NewController(kubeclient, clientset, informer)
 
-	informerFactory.Start(ctx.Done( ))
+	informerFactory.Start(ctx.Done())
 
 	if err := controller.Run(ctx); err != nil {
-		log.Errorf("Error running controller : %v", err)}
+		log.Errorf("Error running controller : %v", err)
+	}
 }
