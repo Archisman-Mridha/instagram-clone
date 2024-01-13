@@ -54,7 +54,7 @@ type (
 			3. Informers are built on top of listers and are responsible for watching changes to resources
 			in the cluster. They continuously synchronize the local cache with the cluster state.
 		*/
-		clientset clientset.Interface
+		clientset         clientset.Interface
 		applicationLister lister.ApplicationLister
 		// informerSynced is a function that can be used to determine if the informer has synced the
 		// lister cache.
@@ -71,7 +71,7 @@ type (
 
 	Operation struct {
 		_type int
-		key string
+		key   string
 	}
 )
 
@@ -80,11 +80,11 @@ func NewController(kubeclient *kubernetes.Clientset, clientset clientset.Interfa
 	runtime.Must(applicationScheme.AddToScheme(scheme.Scheme))
 
 	// An event broadcaster can broadcast events to multiple sinks like API server and standard log.
-	eventBroadcaster := record.NewBroadcaster( )
+	eventBroadcaster := record.NewBroadcaster()
 	// This starts recording events to the API server event sink. It uses the CoreV1 client to send
 	// events to the /events endpoint of the related Application resource.
 	eventBroadcaster.StartRecordingToSink(&typedCoreV1.EventSinkImpl{
-		Interface: kubeclient.CoreV1( ).Events(""),
+		Interface: kubeclient.CoreV1().Events(""),
 	})
 
 	controller := &Controller{
@@ -92,18 +92,18 @@ func NewController(kubeclient *kubernetes.Clientset, clientset clientset.Interfa
 
 		kubeclient: kubeclient,
 
-		clientset: clientset,
-		applicationLister: informer.Lister( ),
-		informerSynced: informer.Informer( ).HasSynced,
+		clientset:         clientset,
+		applicationLister: informer.Lister(),
+		informerSynced:    informer.Informer().HasSynced,
 
-		workQueue: workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter( ), "application"),
+		workQueue: workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter(), "application"),
 
-		eventRecorder: eventBroadcaster.NewRecorder(scheme.Scheme, coreV1.EventSource{ Component: "Application" }),
+		eventRecorder: eventBroadcaster.NewRecorder(scheme.Scheme, coreV1.EventSource{Component: "Application"}),
 	}
 
 	log.Info("Setting up event handlers in informer factory")
-	informer.Informer( ).AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: controller.handleObjectAdded,
+	informer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
+		AddFunc:    controller.handleObjectAdded,
 		UpdateFunc: controller.handleObjectUpdated,
 		DeleteFunc: controller.handleObjectDeleted,
 	})
@@ -113,20 +113,20 @@ func NewController(kubeclient *kubernetes.Clientset, clientset clientset.Interfa
 
 // handleObjectAdded is invoked when an Application object is created in the cluster. It takes the
 // Application object, constructs its 'namespace/name' key and puts the key into the work queue.
-func(c *Controller) handleObjectAdded(obj interface{}) {
+func (c *Controller) handleObjectAdded(obj interface{}) {
 	key, err := cache.MetaNamespaceKeyFunc(obj)
 	if err != nil {
 		runtime.HandleError(err)
 		return
 	}
 
-	c.workQueue.Add(Operation {
+	c.workQueue.Add(Operation{
 		_type: CREATE_OPERATION,
-		key: key,
+		key:   key,
 	})
 }
 
-func(c *Controller) handleObjectUpdated(oldObj interface{}, newObj interface{}) {
+func (c *Controller) handleObjectUpdated(oldObj interface{}, newObj interface{}) {
 	if oldObj == newObj {
 		return
 	}
@@ -137,24 +137,24 @@ func(c *Controller) handleObjectUpdated(oldObj interface{}, newObj interface{}) 
 		return
 	}
 
-	c.workQueue.Add(Operation {
+	c.workQueue.Add(Operation{
 		_type: UPDATE_OPERATION,
-		key: key,
+		key:   key,
 	})
 }
 
 // handleObjectDeleted is invoked when an Application object is deleted from the cluster. It adds
 // the object to the work-queue.
-func(c *Controller) handleObjectDeleted(obj interface{}) {
+func (c *Controller) handleObjectDeleted(obj interface{}) {
 	key, err := cache.MetaNamespaceKeyFunc(obj)
 	if err != nil {
 		runtime.HandleError(err)
 		return
 	}
 
-	c.workQueue.Add(Operation {
+	c.workQueue.Add(Operation{
 		_type: DELETE_OPERATION,
-		key: key,
+		key:   key,
 	})
 }
 
@@ -162,38 +162,40 @@ func(c *Controller) handleObjectDeleted(obj interface{}) {
 // caches and starting workers. It will block until stopCh (in the informerFactory) is closed, at
 // which point it will shutdown the workqueue and wait for workers to finish processing their
 // current work items.
-func(c *Controller) Run(ctx context.Context) error {
+func (c *Controller) Run(ctx context.Context) error {
 	log.Info("Starting Application controller")
 
-	defer runtime.HandleCrash( )
-	defer c.workQueue.ShutDown( )
+	defer runtime.HandleCrash()
+	defer c.workQueue.ShutDown()
 
 	// Start the informer factory to begin populating the informer cache. Wait for the cache to be
 	// synced before starting any workers.
 	log.Info("Waiting for informer caches to sync")
-	if ok := cache.WaitForCacheSync(ctx.Done( ), c.informerSynced); !ok {
-		return fmt.Errorf("failed waiting for informer cache to sync")}
+	if ok := cache.WaitForCacheSync(ctx.Done(), c.informerSynced); !ok {
+		return fmt.Errorf("failed waiting for informer cache to sync")
+	}
 
 	// Launch a worker to process Application resources.
 	log.Info("Starting worker to process Application resources")
 	go wait.UntilWithContext(ctx, c.processWorkQueueItems, time.Second)
 	log.Info("Worker started")
 
-	<-ctx.Done( )
+	<-ctx.Done()
 	log.Info("Shutting down worker")
 	return nil
 }
 
 // processWorkQueueItems is a long-running method that will continually call the
 // processNextWorkQueueItem function in order to read and process an event int the work-queue.
-func(c *Controller) processWorkQueueItems(ctx context.Context) {
-	for c.processNextWorkQueueItem(ctx) { }
+func (c *Controller) processWorkQueueItems(ctx context.Context) {
+	for c.processNextWorkQueueItem(ctx) {
+	}
 }
 
 // processNextWorkQueueItem will read a single work item off the work-queue and attempt to process
 // it, by calling the syncHandler method.
-func(c *Controller) processNextWorkQueueItem(ctx context.Context) bool {
-	obj, shutdown := c.workQueue.Get( )
+func (c *Controller) processNextWorkQueueItem(ctx context.Context) bool {
+	obj, shutdown := c.workQueue.Get()
 	if shutdown {
 		return false
 	}
@@ -215,7 +217,7 @@ func(c *Controller) processNextWorkQueueItem(ctx context.Context) bool {
 		if err := c.syncHandler(ctx, operation); err != nil {
 			// Put the item back in the work-queue to handle any transient errors.
 			c.workQueue.AddRateLimited(operation)
-			return fmt.Errorf("error syncing '%s': %s, requeuing", operation.key, err.Error( ))
+			return fmt.Errorf("error syncing '%s': %s, requeuing", operation.key, err.Error())
 		}
 
 		c.workQueue.Forget(obj)
@@ -224,14 +226,15 @@ func(c *Controller) processNextWorkQueueItem(ctx context.Context) bool {
 	}(obj)
 
 	if err != nil {
-		runtime.HandleError(err)}
+		runtime.HandleError(err)
+	}
 
 	return true
 }
 
 // syncHandler compares the actual state with the desired (for an Application resource), and
 // attempts to converge the two.
-func(c *Controller) syncHandler(ctx context.Context, operation Operation) error {
+func (c *Controller) syncHandler(ctx context.Context, operation Operation) error {
 	key := operation.key
 	logger := log.With("resourceKey", key)
 
@@ -242,21 +245,22 @@ func(c *Controller) syncHandler(ctx context.Context, operation Operation) error 
 	}
 
 	switch operation._type {
-		// If the Application resource is deleted.
-		case DELETE_OPERATION: {
-			if err := c.kubeclient.AppsV1( ).Deployments(namespace).Delete(ctx, name, metav1.DeleteOptions{ }); err != nil {
+	// If the Application resource is deleted.
+	case DELETE_OPERATION:
+		{
+			if err := c.kubeclient.AppsV1().Deployments(namespace).Delete(ctx, name, metav1.DeleteOptions{}); err != nil {
 				logger.Errorf("Error deleting Kubernetes Deployment : %v", err)
 				return err
 			}
 			logger.Info("Successfully deleted Kubernetes Deployment")
 
-			if err := c.kubeclient.AutoscalingV2( ).HorizontalPodAutoscalers(namespace).Delete(ctx, name, metav1.DeleteOptions{ }); err != nil {
+			if err := c.kubeclient.AutoscalingV2().HorizontalPodAutoscalers(namespace).Delete(ctx, name, metav1.DeleteOptions{}); err != nil {
 				logger.Errorf("Error deleting Kubernetes Horizontal Pod Autoscaler : %v", err)
 				return err
 			}
 			logger.Info("Successfully deleted Kubernetes Horizontal Pod Autoscaler")
 
-			if err := c.kubeclient.CoreV1( ).Services(namespace).Delete(ctx, name, metav1.DeleteOptions{ }); err != nil {
+			if err := c.kubeclient.CoreV1().Services(namespace).Delete(ctx, name, metav1.DeleteOptions{}); err != nil {
 				logger.Errorf("Error deleting Kubernetes Service : %v", err)
 				return err
 			}
@@ -265,10 +269,11 @@ func(c *Controller) syncHandler(ctx context.Context, operation Operation) error 
 			return nil
 		}
 
-		// If the Application resource is created / updated.
-		default: {
+	// If the Application resource is created / updated.
+	default:
+		{
 			var application *v1alpha1.Application
-			if application, err= c.applicationLister.Applications(namespace).Get(name); err != nil {
+			if application, err = c.applicationLister.Applications(namespace).Get(name); err != nil {
 				return err
 			}
 
@@ -276,16 +281,16 @@ func(c *Controller) syncHandler(ctx context.Context, operation Operation) error 
 
 			var operationName string
 			if operation._type == UPDATE_OPERATION {
-				operationName= "update"
+				operationName = "update"
 			} else {
-				operationName= "create"
+				operationName = "create"
 			}
 
 			// Create / update Kubernetes Deployment, Service and Horizontal Pod Autoscaler.
 
 			if err := c.createOrUpdateDeployment(ctx, application, update); err != nil {
 				logger.Errorf("Error trying to %s Kubernetes Deployment : %v", operationName, err)
-				c.eventRecorder.Event(application, coreV1.EventTypeWarning, err.Error( ), fmt.Sprintf("Error trying to %s Kubernetes Deployment", operationName))
+				c.eventRecorder.Event(application, coreV1.EventTypeWarning, err.Error(), fmt.Sprintf("Error trying to %s Kubernetes Deployment", operationName))
 				return err
 			}
 			logger.Infof("Succeeded to %s Kubernetes Deployment", operationName)
@@ -293,7 +298,7 @@ func(c *Controller) syncHandler(ctx context.Context, operation Operation) error 
 
 			if err := c.createOrUpdateHpa(ctx, application, update); err != nil {
 				logger.Errorf("Error trying to %s Horizontal Pod Autoscaler : %v", operationName, err)
-				c.eventRecorder.Event(application, coreV1.EventTypeWarning, err.Error( ), fmt.Sprintf("Error trying to %s Horizontal Pod Autoscaler", operationName))
+				c.eventRecorder.Event(application, coreV1.EventTypeWarning, err.Error(), fmt.Sprintf("Error trying to %s Horizontal Pod Autoscaler", operationName))
 				return err
 			}
 			logger.Infof("Succeeded to %s Horizontal Pod Autoscaler", operationName)
@@ -301,7 +306,7 @@ func(c *Controller) syncHandler(ctx context.Context, operation Operation) error 
 
 			if err := c.createOrUpdateService(ctx, application, update); err != nil {
 				logger.Errorf("Error trying to %s Kubernetes Service : %v", operationName, err)
-				c.eventRecorder.Event(application, coreV1.EventTypeWarning, err.Error( ), fmt.Sprintf("Error trying to %s Kubernetes Service", operationName))
+				c.eventRecorder.Event(application, coreV1.EventTypeWarning, err.Error(), fmt.Sprintf("Error trying to %s Kubernetes Service", operationName))
 				return err
 			}
 			logger.Infof("Succeeded to %s Kubernetes Service", operationName)
@@ -313,7 +318,7 @@ func(c *Controller) syncHandler(ctx context.Context, operation Operation) error 
 }
 
 // createOrUpdateDeployment creates / updates the Kubernetes Deployment for an Application resource.
-func(c *Controller) createOrUpdateDeployment(ctx context.Context, application *v1alpha1.Application, update bool) error {
+func (c *Controller) createOrUpdateDeployment(ctx context.Context, application *v1alpha1.Application, update bool) error {
 	name := application.Name
 	namespace := application.Namespace
 
@@ -329,12 +334,12 @@ func(c *Controller) createOrUpdateDeployment(ctx context.Context, application *v
 				{
 					Name: name,
 
-					Image: application.Spec.Image,
+					Image:           application.Spec.Image,
 					ImagePullPolicy: coreV1.PullIfNotPresent,
 
 					Resources: coreV1.ResourceRequirements{
 						Requests: application.Spec.Resources,
-						Limits: application.Spec.Resources,
+						Limits:   application.Spec.Resources,
 					},
 
 					EnvFrom: []coreV1.EnvFromSource{
@@ -349,9 +354,9 @@ func(c *Controller) createOrUpdateDeployment(ctx context.Context, application *v
 
 					Ports: []coreV1.ContainerPort{
 						{
-							Name: "grpc-server",
+							Name:          "grpc-server",
 							ContainerPort: application.Spec.Port,
-							Protocol: "TCP",
+							Protocol:      "TCP",
 						},
 					},
 				},
@@ -362,10 +367,10 @@ func(c *Controller) createOrUpdateDeployment(ctx context.Context, application *v
 	deploymentObject := &appsV1.Deployment{
 
 		ObjectMeta: metav1.ObjectMeta{
-			Name: name,
+			Name:      name,
 			Namespace: namespace,
 			Labels: map[string]string{
-				"app.kubernetes.io/part-of": name,
+				"app.kubernetes.io/part-of":    name,
 				"app.kubernetes.io/managed-by": c.name,
 			},
 		},
@@ -381,7 +386,7 @@ func(c *Controller) createOrUpdateDeployment(ctx context.Context, application *v
 
 					// Maximum number of pods that can be unavailable during the update.
 					MaxUnavailable: &intstr.IntOrString{
-						Type: intstr.Int,
+						Type:   intstr.Int,
 						IntVal: application.Spec.Replicas.Max - application.Spec.Replicas.Min,
 					},
 				},
@@ -397,35 +402,35 @@ func(c *Controller) createOrUpdateDeployment(ctx context.Context, application *v
 		},
 	}
 
-	deployments := c.kubeclient.AppsV1( ).Deployments(namespace)
+	deployments := c.kubeclient.AppsV1().Deployments(namespace)
 
 	var err error
 	if update {
-		_, err= deployments.Update(ctx, deploymentObject, metav1.UpdateOptions{ })
+		_, err = deployments.Update(ctx, deploymentObject, metav1.UpdateOptions{})
 	} else {
-		_, err= deployments.Create(ctx, deploymentObject, metav1.CreateOptions{ })
+		_, err = deployments.Create(ctx, deploymentObject, metav1.CreateOptions{})
 	}
 	return err
 }
 
 // createOrUpdateHpa creates / updates the Kubernetes Horizontal Pod Autoscaler for an Application
 // resource.
-func(c *Controller) createOrUpdateHpa(ctx context.Context, application *v1alpha1.Application, update bool) error {
+func (c *Controller) createOrUpdateHpa(ctx context.Context, application *v1alpha1.Application, update bool) error {
 	var (
-		name= application.Name
-		namespace= application.Namespace
+		name      = application.Name
+		namespace = application.Namespace
 
-		averageCpuUtilization int32= 80
-		averageMemoryUtilization int32= 80
+		averageCpuUtilization    int32 = 80
+		averageMemoryUtilization int32 = 80
 	)
 
 	hpaObject := &autoscalingV2.HorizontalPodAutoscaler{
 
 		ObjectMeta: metav1.ObjectMeta{
-			Name: name,
+			Name:      name,
 			Namespace: namespace,
 			Labels: map[string]string{
-				"app.kubernetes.io/part-of": name,
+				"app.kubernetes.io/part-of":    name,
 				"app.kubernetes.io/managed-by": c.name,
 			},
 		},
@@ -434,8 +439,8 @@ func(c *Controller) createOrUpdateHpa(ctx context.Context, application *v1alpha1
 
 			ScaleTargetRef: autoscalingV2.CrossVersionObjectReference{
 				APIVersion: "apps/v1",
-				Kind: "Deployments",
-				Name: name,
+				Kind:       "Deployments",
+				Name:       name,
 			},
 
 			MinReplicas: &application.Spec.Replicas.Min,
@@ -447,7 +452,7 @@ func(c *Controller) createOrUpdateHpa(ctx context.Context, application *v1alpha1
 					Resource: &autoscalingV2.ResourceMetricSource{
 						Name: "cpu",
 						Target: autoscalingV2.MetricTarget{
-							Type: autoscalingV2.UtilizationMetricType,
+							Type:               autoscalingV2.UtilizationMetricType,
 							AverageUtilization: &averageCpuUtilization,
 						},
 					},
@@ -457,7 +462,7 @@ func(c *Controller) createOrUpdateHpa(ctx context.Context, application *v1alpha1
 					Resource: &autoscalingV2.ResourceMetricSource{
 						Name: "memory",
 						Target: autoscalingV2.MetricTarget{
-							Type: autoscalingV2.UtilizationMetricType,
+							Type:               autoscalingV2.UtilizationMetricType,
 							AverageUtilization: &averageMemoryUtilization,
 						},
 					},
@@ -466,29 +471,29 @@ func(c *Controller) createOrUpdateHpa(ctx context.Context, application *v1alpha1
 		},
 	}
 
-	hpas := c.kubeclient.AutoscalingV2( ).HorizontalPodAutoscalers(namespace)
+	hpas := c.kubeclient.AutoscalingV2().HorizontalPodAutoscalers(namespace)
 
 	var err error
 	if update {
-		_, err= hpas.Update(ctx, hpaObject, metav1.UpdateOptions{ })
+		_, err = hpas.Update(ctx, hpaObject, metav1.UpdateOptions{})
 	} else {
-		_, err= hpas.Create(ctx, hpaObject, metav1.CreateOptions{ })
+		_, err = hpas.Create(ctx, hpaObject, metav1.CreateOptions{})
 	}
 	return err
 }
 
 // createOrUpdateService creates / updates the Kubernetes Service for an Application resource.
-func(c *Controller) createOrUpdateService(ctx context.Context, application *v1alpha1.Application, update bool) error {
+func (c *Controller) createOrUpdateService(ctx context.Context, application *v1alpha1.Application, update bool) error {
 	name := application.Name
 	namespace := application.Namespace
 
 	serviceObject := &coreV1.Service{
 
 		ObjectMeta: metav1.ObjectMeta{
-			Name: name,
+			Name:      name,
 			Namespace: namespace,
 			Labels: map[string]string{
-				"app.kubernetes.io/part-of": name,
+				"app.kubernetes.io/part-of":    name,
 				"app.kubernetes.io/managed-by": c.name,
 			},
 		},
@@ -500,21 +505,21 @@ func(c *Controller) createOrUpdateService(ctx context.Context, application *v1al
 
 			Ports: []coreV1.ServicePort{
 				{
-					Name: "grpc-server",
-					Port: application.Spec.Port,
+					Name:       "grpc-server",
+					Port:       application.Spec.Port,
 					TargetPort: intstr.FromInt32(application.Spec.Port),
 				},
 			},
 		},
 	}
 
-	services := c.kubeclient.CoreV1( ).Services(namespace)
+	services := c.kubeclient.CoreV1().Services(namespace)
 
 	var err error
 	if update {
-		_, err= services.Update(ctx, serviceObject, metav1.UpdateOptions{ })
+		_, err = services.Update(ctx, serviceObject, metav1.UpdateOptions{})
 	} else {
-		_, err= services.Create(ctx, serviceObject, metav1.CreateOptions{ })
+		_, err = services.Create(ctx, serviceObject, metav1.CreateOptions{})
 	}
 	return err
 }

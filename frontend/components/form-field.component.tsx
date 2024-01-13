@@ -10,16 +10,19 @@ interface FormFieldProps<T extends FieldValues> {
 	type?: HTMLInputTypeAttribute
 }
 
-export function FormField<T extends FieldValues>({ name, label, type="text" }: FormFieldProps<T>) {
-	const { control }= useFormContext( )
+export function FormField<T extends FieldValues>({
+	name,
+	label,
+	type = "text"
+}: FormFieldProps<T>) {
+	const { control } = useFormContext()
 
 	return (
 		<Fragment>
 			<Controller
 				name={name as never}
 				control={control}
-				render={({ field, fieldState: { error, invalid }}) => (
-
+				render={({ field, fieldState: { error, invalid } }) => (
 					<Input
 						label={label}
 						{...field}

@@ -15,14 +15,15 @@ import (
 )
 
 // startTracer initializes and returns a trace.TracerProvider for OpenTelemetry.
-func startTracer( ) *trace.TracerProvider {
-	traceExporter, err := otlptracegrpc.New(context.Background( ),
+func startTracer() *trace.TracerProvider {
+	traceExporter, err := otlptracegrpc.New(context.Background(),
 		otlptracegrpc.WithEndpoint(utils.Envs.JAEGER_COLLECTOR_URL),
 		otlptracegrpc.WithCompressor("gzip"),
-		otlptracegrpc.WithInsecure( ),
+		otlptracegrpc.WithInsecure(),
 	)
 	if err != nil {
-		log.Fatalf("Error creating trace exporter : %v", err)}
+		log.Fatalf("Error creating trace exporter : %v", err)
+	}
 
 	tracerProvider := trace.NewTracerProvider(
 		trace.WithBatcher(traceExporter),
@@ -40,12 +41,12 @@ func startTracer( ) *trace.TracerProvider {
 
 		// Trace context is a standardized format for representing trace and span information. It
 		// includes trace-id, span-id, trace state etc.
-		propagation.TraceContext{ },
+		propagation.TraceContext{},
 
 		// Baggage is a mechanism for carrying key-value pairs along with the trace context. These
 		// key-value pairs are known as baggage items. Baggage allows you to attach custom data to a
 		// request, and this data will be propagated along with the trace context.
-		propagation.Baggage{ },
+		propagation.Baggage{},
 	))
 
 	log.Debug("Created OpenTelemetry tracer provider")

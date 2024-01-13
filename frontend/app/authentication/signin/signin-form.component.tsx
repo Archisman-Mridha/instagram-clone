@@ -11,57 +11,54 @@ import toast from "react-hot-toast"
 import { useRouter } from "next/navigation"
 import { useCookies } from "react-cookie"
 
-const signinFormSchema= z.object({
-	
-	identifier: z.string( ),
-	password: z.string( ).min(4).max(25)
+const signinFormSchema = z.object({
+	identifier: z.string(),
+	password: z.string().min(4).max(25)
 })
 
-export type SigninFormSchema= z.infer<typeof signinFormSchema>
+export type SigninFormSchema = z.infer<typeof signinFormSchema>
 
-export const SigninForm: FunctionComponent= ({ }) => {
-	const router= useRouter( )
+export const SigninForm: FunctionComponent = ({}) => {
+	const router = useRouter()
 
-	const [cookies, setCookies]= useCookies( )
+	const [cookies, setCookies] = useCookies()
 
 	const submitHandler: SubmitHandler<SigninFormSchema> = async (data: SigninFormSchema) => {
-		const result= await signinHandler(data)
+		const result = await signinHandler(data)
 
-		if(result.Err) {
+		if (result.Err) {
 			toast(result.Err.message)
 			return
 		}
 
-		const jwt= result.Ok
+		const jwt = result.Ok
 		setCookies("jwt", jwt)
 
 		router.replace("/")
 	}
 
-	const formContext= useForm<SigninFormSchema>({
+	const formContext = useForm<SigninFormSchema>({
 		mode: "onChange",
-		resolver: zodResolver(signinFormSchema), reValidateMode: "onBlur"
+		resolver: zodResolver(signinFormSchema),
+		reValidateMode: "onBlur"
 	})
 
-	const { handleSubmit, formState: { isSubmitting }}= formContext
+	const {
+		handleSubmit,
+		formState: { isSubmitting }
+	} = formContext
 
 	return (
 		<Fragment>
 			<form onSubmit={handleSubmit(submitHandler)}>
 				<FormProvider {...formContext}>
+					<FormField name="identifier" label="Username / Email Address" />
 
-					<FormField
-						name="identifier"
-						label="Username / Email Address"
-					/>
-
-					<FormField
-						name="password"
-						type="password"
-						label="Password"
-					/>
+					<FormField name="password" type="password" label="Password" />
 				</FormProvider>
-				<Button type="submit" isLoading={isSubmitting}>Let's Gooo</Button>
+				<Button type="submit" isLoading={isSubmitting}>
+					Let's Gooo
+				</Button>
 			</form>
 		</Fragment>
 	)

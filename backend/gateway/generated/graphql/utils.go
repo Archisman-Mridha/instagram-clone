@@ -6,10 +6,10 @@ func ProfilePreviewsToGraphQL(grpcVersion []*grpc_generated.ProfilePreview) []*P
 	result := make([]*ProfilePreview, len(grpcVersion))
 
 	for index, item := range grpcVersion {
-		result[index]= &ProfilePreview{
+		result[index] = &ProfilePreview{
 			ID: int(item.Id),
 
-			Name: 		item.Name,
+			Name:     item.Name,
 			Username: item.Username,
 
 			ProfilePictureURI: nil,
@@ -23,12 +23,12 @@ func PostsToGraphQL(grpcVersion []*grpc_generated.Post) []*Post {
 	result := make([]*Post, len(grpcVersion))
 
 	for index, item := range grpcVersion {
-		result[index]= &Post{
-			ID: int(item.Id),
+		result[index] = &Post{
+			ID:      int(item.Id),
 			OwnerID: int(item.OwnerId),
 
 			Description: item.Description,
-			CreatedAt: item.CreatedAt,
+			CreatedAt:   item.CreatedAt,
 		}
 	}
 

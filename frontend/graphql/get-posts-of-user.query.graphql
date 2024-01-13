@@ -1,9 +1,9 @@
 query GetPostsOfUser($args: GetPostsOfUserArgs!) {
-  getPostsOfUser(args: $args) {
-    id
-    ownerId
+	getPostsOfUser(args: $args) {
+		id
+		ownerId
 
-    description
-    createdAt
-  }
+		description
+		createdAt
+	}
 }

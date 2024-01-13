@@ -16,7 +16,7 @@ export const Providers: FunctionComponent<PropsWithChildren> = ({ children }) =>
 		<Fragment>
 			<NextUIProvider>
 				<main className={poppins.className}>
-					{ children }
+					{children}
 
 					<Toaster position="bottom-right" />
 				</main>

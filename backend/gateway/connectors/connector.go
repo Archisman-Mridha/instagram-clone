@@ -8,18 +8,19 @@ import (
 )
 
 type Connector interface {
-	Healthcheck( ) error
+	Healthcheck() error
 
-	Disconnect( )
+	Disconnect()
 }
 
 func createGrpcConnection(serviceName, address string) *grpc.ClientConn {
 	connection, err := grpc.Dial(address,
-		grpc.WithTransportCredentials(insecure.NewCredentials( )),
-		grpc.WithStatsHandler(otelgrpc.NewClientHandler( )),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
 	)
 	if err != nil {
-		log.Fatalf("Couldn't connect to %s at %s : %v", serviceName, address, err)}
+		log.Fatalf("Couldn't connect to %s at %s : %v", serviceName, address, err)
+	}
 
 	return connection
 }
