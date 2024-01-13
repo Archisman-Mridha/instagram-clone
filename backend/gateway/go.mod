@@ -7,7 +7,7 @@ require (
 	github.com/autometrics-dev/autometrics-go v1.0.0
 	github.com/caarlos0/env/v9 v9.0.0
 	github.com/charmbracelet/log v0.3.1
-	github.com/go-chi/chi v1.5.5
+	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/joho/godotenv v1.5.1
 	github.com/prometheus/client_golang v1.17.0
 	github.com/vektah/gqlparser/v2 v2.5.10
