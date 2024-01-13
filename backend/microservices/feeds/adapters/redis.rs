@@ -33,7 +33,7 @@ impl FeedsRepository for RedisAdapter {
     let mut pipe = pipe();
 
     for userId in userIds {
-      pipe.lpush(userId, postId).ltrim(userId, 0, 1000);
+      pipe.lpush(userId, postId);
     }
 
     pipe.query(&mut *connection).map_err(toServerError)

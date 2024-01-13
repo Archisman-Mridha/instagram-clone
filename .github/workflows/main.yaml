@@ -5,16 +5,15 @@ name: Main
 ## In real world scenario, pushing directly to the main branch should be blocked.
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ dev, main ]
-    types: [ opened, edited ]
+    branches: [dev, main]
+    types: [opened, edited]
 
   ## Adding this allows us to trigger this workflow manually (Just for debugging purposes).
-  workflow_dispatch: { }
+  workflow_dispatch: {}
 
 jobs:
-
   scan_sourcecode:
     name: Scanning sourcecode to find vulberabilities, misconfigurations and exposed secrets
     runs-on: ubuntu-latest
@@ -22,7 +21,6 @@ jobs:
       contents: write
       security-events: write
     steps:
-
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -79,29 +77,68 @@ jobs:
     strategy:
       matrix:
         microservice:
-
           - name: users-microservice
             path: backend/microservices/users
             manifest: kubernetes/base/microservices/users-microservice.application.yaml
+            path_filters: |
+              changed:
+                - backend/microservices/users/**
+                - backend/lib.rs
+                - backend/sql/mod.rs
 
           - name: profiles-microservice
             path: backend/microservices/profiles
             manifest: kubernetes/base/microservices/profiles-microservice.application.yaml
+            path_filters: |
+              changed:
+                - backend/microservices/profiles/**
+                - backend/lib.rs
+                - backend/sql/mod.rs
 
           - name: followships-microservice
             path: backend/microservices/followships
             manifest: kubernetes/base/microservices/followships-microservice.application.yaml
+            path_filters: |
+              changed:
+                - backend/microservices/followships/**
+                - backend/lib.rs
+                - backend/sql/mod.rs
 
           - name: posts-microservice
             path: backend/microservices/posts
             manifest: kubernetes/base/microservices/posts-microservice.application.yaml
+            path_filters: |
+              changed:
+                - backend/microservices/posts/**
+                - backend/lib.rs
+                - backend/sql/mod.rs
 
           - name: feeds-microservice
             path: backend/microservices/feeds
             manifest: kubernetes/base/microservices/feeds-microservice.application.yaml
+            path_filters: |
+              changed:
+                - backend/microservices/feeds/**
+                - backend/lib.rs
+                - backend/sql/mod.rs
+
+          - name: gateway
+            path: backend/gateway
+            manifest: kubernetes/base/microservices/gateway.application.yaml
+            path_filters: |
+              changed:
+                - backend/gateway/**
+                - go.work.sum
+
+          - name: application-controller
+            path: backend/gateway
+            manifest: kubernetes/base/microservices/application-controller.application.yaml
+            path_filters: |
+              changed:
+                - kubernetes/operators/application/**
+                - go.work.sum
 
     steps:
-
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -112,11 +149,7 @@ jobs:
         id: path-filter
         with:
           base: ${{ github.ref }}
-          filters: |
-            changed:
-              - '${{ matrix.microservice.path }}/**'
-              - backend/lib.rs
-              - backend/sql/mod.rs
+          filters: ${{ matrix.microservice.path_filters }}
 
       - name: Set up QEMU
         if: steps.path-filter.outputs.changed == 'true'
@@ -170,6 +203,7 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ matrix.microservice.name }}-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Remove cached folders from local machine
+        if: steps.path-filter.outputs.changed == 'true'
         run: |
           rm -rf /usr/local/cargo/registry/ target/
 
