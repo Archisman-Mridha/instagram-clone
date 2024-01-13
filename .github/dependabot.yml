@@ -21,7 +21,7 @@ updates:
     schedule:
       interval: "weekly"
 
-  - package-ecosystem: "pnpm"
+  - package-ecosystem: "npm"
     directory: "/frontend"
     schedule:
       interval: "weekly"
