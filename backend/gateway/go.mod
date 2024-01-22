@@ -10,7 +10,7 @@ require (
 	github.com/go-chi/chi v1.5.5
 	github.com/joho/godotenv v1.5.1
 	github.com/prometheus/client_golang v1.17.0
-	github.com/vektah/gqlparser/v2 v2.5.10
+	github.com/vektah/gqlparser/v2 v2.5.11
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.46.1
 	go.opentelemetry.io/otel v1.21.0
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.21.0
