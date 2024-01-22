@@ -10,7 +10,7 @@
 		"codegen": "graphql-codegen"
 	},
 	"dependencies": {
-		"@apollo/client": "3.8.0-rc.2",
+		"@apollo/client": "3.8.10",
 		"@apollo/experimental-nextjs-app-support": "^0.5.2",
 		"@hookform/resolvers": "^3.3.3",
 		"@nextui-org/react": "^2.2.9",
