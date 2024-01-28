@@ -20,12 +20,12 @@
         }
       },
       "properties": {
-        "imageName": "ghcr.io/archisman-mridha/instagram-clone-application-controller:9574f877a5a231dbab94fa621fac97734ad5227e",
+        "imageName": "ghcr.io/archisman-mridha/instagram-clone-application-controller:5516c30f64f06c5cd86589ddb19e23e1d5b18cc7",
         "repoDigests": [
-          "ghcr.io/archisman-mridha/instagram-clone-application-controller@sha256:c3320ad65fe0f69d18a55c719ecfaecd0ae497e300254f3cefdf18bf19fc99da"
+          "ghcr.io/archisman-mridha/instagram-clone-application-controller@sha256:0573b02e49cb3dc49086342ef4e9f63dde082d442de2ca6558f380dfc23c4d5b"
         ],
         "repoTags": [
-          "ghcr.io/archisman-mridha/instagram-clone-application-controller:9574f877a5a231dbab94fa621fac97734ad5227e"
+          "ghcr.io/archisman-mridha/instagram-clone-application-controller:5516c30f64f06c5cd86589ddb19e23e1d5b18cc7"
         ]
       }
     }
