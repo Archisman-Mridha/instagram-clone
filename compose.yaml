@@ -1,7 +1,6 @@
-version: '3'
+version: "3"
 
 services:
-
   postgres:
     container_name: postgres
     image: postgres:alpine
@@ -13,9 +12,28 @@ services:
     ports:
       - 5432:5432
     ## 'wal_level = logical' is the highest level of WAL logging.
-    command: ["postgres", "-c", "wal_level=logical", "-c", "max_replication_slots=4", "-c", "max_wal_senders=4"]
+    command:
+      [
+        "postgres",
+        "-c",
+        "wal_level=logical",
+        "-c",
+        "max_replication_slots=4",
+        "-c",
+        "max_wal_senders=4",
+      ]
     healthcheck:
-      test: ["CMD", "psql", "-U", "default", "-d", "instagram_clone", "-c", "SELECT 1"]
+      test:
+        [
+          "CMD",
+          "psql",
+          "-U",
+          "default",
+          "-d",
+          "instagram_clone",
+          "-c",
+          "SELECT 1",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -25,7 +43,14 @@ services:
     image: migrate/migrate:latest
     volumes:
       - ./backend/sql/schema.sql:/migrations/000001_init.up.sql:ro
-    command:  ["-path", "/migrations", "-database",  "postgres://default:pass@postgres:5432/instagram_clone?sslmode=disable", "up"]
+    command:
+      [
+        "-path",
+        "/migrations",
+        "-database",
+        "postgres://default:pass@postgres:5432/instagram_clone?sslmode=disable",
+        "up",
+      ]
     depends_on:
       postgres:
         condition: service_healthy
@@ -65,7 +90,13 @@ services:
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
     healthcheck:
-      test: ["CMD", "kafka-topics.sh", "--bootstrap-server=localhost:9092", "--list"]
+      test:
+        [
+          "CMD",
+          "kafka-topics.sh",
+          "--bootstrap-server=localhost:9092",
+          "--list",
+        ]
       start_period: 15s
       interval: 10s
 
@@ -73,7 +104,7 @@ services:
     container_name: kafka-migrate
     image: bitnami/kafka
     working_dir: /opt/bitnami/kafka/bin
-    entrypoint: [ "/bin/sh", "-c" ]
+    entrypoint: ["/bin/sh", "-c"]
     depends_on:
       kafka:
         condition: service_healthy
@@ -133,7 +164,16 @@ services:
       VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
       ENABLE_DEBEZIUM_SCRIPTING: "true"
     healthcheck:
-      test: ["CMD", "curl", "--silent", "--fail", "-X", "GET", "http://localhost:8083/connectors"]
+      test:
+        [
+          "CMD",
+          "curl",
+          "--silent",
+          "--fail",
+          "-X",
+          "GET",
+          "http://localhost:8083/connectors",
+        ]
       start_period: 10s
       interval: 10s
       timeout: 5s
@@ -231,28 +271,28 @@ services:
     depends_on:
       - elasticsearch
 
-  ## prometheus:
-  ##   container_name: prometheus
-  ##   image: prom/prometheus
-  ##   ports:
-  ##     - 9090:9090
-  ##   volumes:
-  ##     - ./prometheus.dev-config.yaml:/etc/prometheus/prometheus.yml:ro
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus.dev-config.yaml:/etc/prometheus/prometheus.yml:ro
 
-  ## autometrics:
-  ##   container_name: autometrics
-  ##   image: autometrics/am-proxy
-  ##   environment:
-  ##     - PROMETHEUS_URL=http://prometheus:9090
-  ##   ports:
-  ##     - 6789:6789
+  autometrics:
+    container_name: autometrics
+    image: autometrics/am-proxy
+    environment:
+      - PROMETHEUS_URL=http://prometheus:9090
+    ports:
+      - 6789:6789
 
   jaeger:
     container_name: jaeger
     image: jaegertracing/all-in-one:latest
     hostname: jaeger
     ports:
-      - 4317:4317   ## gRPC endpoint
+      - 4317:4317 ## gRPC endpoint
       - 16686:16686 ## UI dashboard endpoint
     environment:
       - COLLECTOR_OTLP_ENABLED=true

@@ -6,9 +6,6 @@ name: Main
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [dev, main]
-    types: [opened, edited]
 
   ## Adding this allows us to trigger this workflow manually (Just for debugging purposes).
   workflow_dispatch: {}
@@ -131,8 +128,8 @@ jobs:
                 - go.work.sum
 
           - name: application-controller
-            path: backend/gateway
-            manifest: kubernetes/base/microservices/application-controller.application.yaml
+            path: kubernetes/operators/application
+            manifest: kubernetes/base/application-controller/deployment.yaml
             path_filters: |
               changed:
                 - kubernetes/operators/application/**
@@ -144,23 +141,23 @@ jobs:
 
       ## If sourcecode of the microservice has changed, only then we will rebuild, push, sign
       ## and scan the container image.
-      - name: Detect sourcecode change
-        uses: dorny/paths-filter@v2
-        id: path-filter
-        with:
-          base: ${{ github.ref }}
-          filters: ${{ matrix.microservice.path_filters }}
+      ## - name: Detect sourcecode change
+      ##   uses: dorny/paths-filter@v2
+      ##   id: path-filter
+      ##   with:
+      ##     base: ${{ github.ref }}
+      ##     filters: ${{ matrix.microservice.path_filters }}
 
       - name: Set up QEMU
-        if: steps.path-filter.outputs.changed == 'true'
+        ## if: steps.path-filter.outputs.changed == 'true'
         uses: docker/setup-qemu-action@v2
 
       - name: Set up Docker Buildx
-        if: steps.path-filter.outputs.changed == 'true'
+        ## if: steps.path-filter.outputs.changed == 'true'
         uses: docker/setup-buildx-action@v2
 
       - name: Login to GitHub Container Registry
-        if: steps.path-filter.outputs.changed == 'true'
+        ## if: steps.path-filter.outputs.changed == 'true'
         uses: docker/login-action@v2.1.0
         with:
           registry: ghcr.io
@@ -168,7 +165,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Restore cached Cargo dependencies (if exists)
-        if: steps.path-filter.outputs.changed == 'true'
+        ## if: steps.path-filter.outputs.changed == 'true'
         uses: actions/cache/restore@v3
         with:
           path: |
@@ -177,7 +174,7 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ matrix.microservice.name }}-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Build and push AMD64 container image
-        if: steps.path-filter.outputs.changed == 'true'
+        ## if: steps.path-filter.outputs.changed == 'true'
         uses: docker/build-push-action@v4
         with:
           context: .
@@ -194,7 +191,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Cache Cargo dependencies
-        if: steps.path-filter.outputs.changed == 'true'
+        ## if: steps.path-filter.outputs.changed == 'true'
         uses: actions/cache@v3
         with:
           path: |
@@ -203,20 +200,20 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ matrix.microservice.name }}-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Remove cached folders from local machine
-        if: steps.path-filter.outputs.changed == 'true'
+        ## if: steps.path-filter.outputs.changed == 'true'
         run: |
           rm -rf /usr/local/cargo/registry/ target/
 
       ## Cosign is a command line utility that can sign and verify software artifact, such as
       ## container images and blobs.
       - name: Install Cosign
-        if: steps.path-filter.outputs.changed == 'true'
+        ## if: steps.path-filter.outputs.changed == 'true'
         uses: sigstore/cosign-installer@v3.1.1
         with:
           cosign-release: v2.2.1
 
       - name: Sign the published container image
-        if: steps.path-filter.outputs.changed == 'true'
+        ## if: steps.path-filter.outputs.changed == 'true'
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
         run: |
@@ -228,11 +225,11 @@ jobs:
             ghcr.io/archisman-mridha/instagram-clone-${{ matrix.microservice.name }}:${{ github.sha }} -y
 
       - name: Create outputs directory
-        if: steps.path-filter.outputs.changed == 'true'
+        ## if: steps.path-filter.outputs.changed == 'true'
         run: mkdir -p ./outputs/trivy
 
       - name: Scan container image for vulnerabilities
-        if: steps.path-filter.outputs.changed == 'true'
+        ## if: steps.path-filter.outputs.changed == 'true'
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ghcr.io/archisman-mridha/instagram-clone-${{ matrix.microservice.name }}:${{ github.sha }}
@@ -243,23 +240,23 @@ jobs:
           output: ./outputs/trivy/${{ matrix.microservice.name }}.container-image-scan-result.sarif
 
       - name: Upload the scan result as Github artifact
-        if: steps.path-filter.outputs.changed == 'true'
+        ## if: steps.path-filter.outputs.changed == 'true'
         uses: actions/upload-artifact@v3
         with:
           name: trivy.${{ matrix.microservice.name }}-microservice.container-image-scan-result.sarif
           path: ./outputs/trivy/${{ matrix.microservice.name }}.container-image-scan-result.sarif
 
-      ## - name: Update container image tag in Kubernetes manifests
-      ##   if: steps.path-filter.outputs.changed == 'true'
-      ##   run: |
-      ##     git config --global user.name "Archisman-Mridha"
-      ##     git config --global user.email "archismanmridha12345@gmail.com"
-      ##     git config --global pull.rebase false
+      - name: Update container image tag in Kubernetes manifests
+        ## if: steps.path-filter.outputs.changed == 'true'
+        run: |
+          git config --global user.name "Archisman-Mridha"
+          git config --global user.email "archismanmridha12345@gmail.com"
+          git config --global pull.rebase false
 
-      ##     git pull origin main
+          git pull origin main -f
 
-      ##     sed -i 's/instagram-clone-\(.*\):[[:alnum:]]\+/instagram-clone-\1:${{ github.sha }}/g' ${{ matrix.microservice.manifest }}
+          sed -i 's/instagram-clone-\(.*\):[[:alnum:]]\+/instagram-clone-\1:${{ github.sha }}/g' ${{ matrix.microservice.manifest }}
 
-      ##     git add .
-      ##     git commit -m "🤖 Update container image tag for ${{ matrix.microservice.name }} to ${{ github.sha }}"
-      ##     git push --set-upstream origin main
+          git add .
+          git commit -m "🤖 Update container image tag for ${{ matrix.microservice.name }} to ${{ github.sha }}"
+          git push --set-upstream origin main

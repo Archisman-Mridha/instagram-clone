@@ -1,0 +1,33 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "fullName": "Trivy Vulnerability Scanner",
+          "informationUri": "https://github.com/aquasecurity/trivy",
+          "name": "Trivy",
+          "rules": [],
+          "version": "0.48.1"
+        }
+      },
+      "results": [],
+      "columnKind": "utf16CodeUnits",
+      "originalUriBaseIds": {
+        "ROOTPATH": {
+          "uri": "file:///"
+        }
+      },
+      "properties": {
+        "imageName": "ghcr.io/archisman-mridha/instagram-clone-followships-microservice:9574f877a5a231dbab94fa621fac97734ad5227e",
+        "repoDigests": [
+          "ghcr.io/archisman-mridha/instagram-clone-followships-microservice@sha256:7c781847d543a2117109e8529b1a45de3b26741e4398e3a9602a83e3b073ddcc"
+        ],
+        "repoTags": [
+          "ghcr.io/archisman-mridha/instagram-clone-followships-microservice:9574f877a5a231dbab94fa621fac97734ad5227e"
+        ]
+      }
+    }
+  ]
+}

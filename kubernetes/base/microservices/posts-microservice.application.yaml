@@ -1,0 +1,16 @@
+apiVersion: instagramclone.io/v1alpha1
+kind: Application
+metadata:
+  name: posts-microservice
+  namespace: microservices
+
+spec:
+  image: ghcr.io/archisman-mridha/instagram-clone-posts-microservice:e9d1accbc629521bfa484a252a1f563dfff831de
+  replicas:
+    min: 2
+    max: 3
+  resources:
+    cpu: 100m
+    memory: 100Mi
+  secretName: posts-microservice
+  port: 4000

@@ -5,7 +5,7 @@ metadata:
   namespace: microservices
 
 spec:
-  image: ghcr.io/archisman-mridha/instagram-clone-users-microservice:e9d1accbc629521bfa484a252a1f563dfff831de
+  image: ghcr.io/archisman-mridha/instagram-clone-users-microservice:9574f877a5a231dbab94fa621fac97734ad5227e
   replicas:
     min: 2
     max: 3

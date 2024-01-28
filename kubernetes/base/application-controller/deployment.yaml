@@ -16,7 +16,7 @@ spec:
       serviceAccountName: application-controller
       containers:
         - name: application-controller
-          image: ghcr.io/archisman-mridha/instagram-clone-application-controller:78cd2ead9ce9828ab6ec1265192df427eca05e90
+          image: ghcr.io/archisman-mridha/instagram-clone-application-controller:9574f877a5a231dbab94fa621fac97734ad5227e
           resources:
             requests:
               memory: 128Mi
