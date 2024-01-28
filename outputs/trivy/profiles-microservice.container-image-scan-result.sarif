@@ -20,12 +20,12 @@
         }
       },
       "properties": {
-        "imageName": "ghcr.io/archisman-mridha/instagram-clone-profiles-microservice:9574f877a5a231dbab94fa621fac97734ad5227e",
+        "imageName": "ghcr.io/archisman-mridha/instagram-clone-profiles-microservice:5516c30f64f06c5cd86589ddb19e23e1d5b18cc7",
         "repoDigests": [
-          "ghcr.io/archisman-mridha/instagram-clone-profiles-microservice@sha256:efe839615de92471dd8d5c02b53cbaf4e6a07e36679c7c9bada5b7d4b2923664"
+          "ghcr.io/archisman-mridha/instagram-clone-profiles-microservice@sha256:8110c72710bfaa1ee4d3fb8d01a71c614fced978d2cd7ba40be8aec0c8035450"
         ],
         "repoTags": [
-          "ghcr.io/archisman-mridha/instagram-clone-profiles-microservice:9574f877a5a231dbab94fa621fac97734ad5227e"
+          "ghcr.io/archisman-mridha/instagram-clone-profiles-microservice:5516c30f64f06c5cd86589ddb19e23e1d5b18cc7"
         ]
       }
     }
