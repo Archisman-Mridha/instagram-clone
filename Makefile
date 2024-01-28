@@ -32,3 +32,9 @@ gen-sealed-secrets:
 ## Generate a token using which we can signin into the Kiali dashboard.
 get-kiali-token:
 	kubectl -n istio-system create token kiali-service-account
+
+get-argocd-admin-password:
+	kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+
+show-argocd-ui:
+	kubectl port-forward svc/argocd-server -n argocd 8080:443

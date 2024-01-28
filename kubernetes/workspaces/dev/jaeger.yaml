@@ -19,7 +19,6 @@ spec:
     helm:
       releaseName: jaeger
       valuesObject:
-
         cassandra:
           persistence:
             enabled: false
@@ -31,7 +30,7 @@ spec:
           service:
             otlp:
               grpc:
-                name: otp-grpc
+                name: otlp-grpc
                 port: 4317
               http:
                 name: otlp-http

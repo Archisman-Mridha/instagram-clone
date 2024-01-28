@@ -68,12 +68,11 @@ impl KafkaAdapter {
         let consumeMessage: bool;
 
         match payload.op {
-          DbOperation::Create =>
           // TODO: For each message, spin up a new thread (or take a thread from a thread-pool)
-          // and do the processing in that separate thread parallaly.
+          // and do the processing in that separate thread parallely.
           //
           // TODO: If any error occurs, then send it to a central log management system.
-          {
+          DbOperation::Create => {
             consumeMessage = usecases
               .pushPostToFeeds(payload.after.unwrap())
               .await

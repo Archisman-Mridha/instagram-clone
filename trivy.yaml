@@ -10,11 +10,9 @@ scan:
     - kubernetes/users
     - kubernetes/workspaces/dev
   skip-files:
-    - cloud/modules/prepare-cluster/sealed-secrets.key
-    - cloud/terraform.tfstate
-    - cloud/terraform.tfstate.backup
-    - schema.surql
-    - '**/*.secret.yaml'
+    - terragrunt/modules/prepare-cluster/sealed-secrets.key
+    - "**/.terragrunt-cache"
+    - "**/*.secret.yaml"
 
 security-checks:
   - vuln

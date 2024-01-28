@@ -4,7 +4,7 @@ resource "kubernetes_secret" "sealed_secrets_key" {
   type = "kubernetes.io/tls"
 
   metadata {
-    name = "sealed-secrets-key"
+    name      = "sealed-secrets-key"
     namespace = "kube-system"
 
     labels = {
