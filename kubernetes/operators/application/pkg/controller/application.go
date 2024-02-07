@@ -5,17 +5,11 @@ import (
 	"fmt"
 	"time"
 
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
-	"github.com/Archisman-Mridha/instagram-clone/kubernetes/operators/application/pkg/apis/instagramclone.io/v1alpha1"
-	clientset "github.com/Archisman-Mridha/instagram-clone/kubernetes/operators/application/pkg/generated/clientset/versioned"
-	applicationScheme "github.com/Archisman-Mridha/instagram-clone/kubernetes/operators/application/pkg/generated/clientset/versioned/scheme"
-	informer "github.com/Archisman-Mridha/instagram-clone/kubernetes/operators/application/pkg/generated/informers/externalversions/instagramclone.io/v1alpha1"
-	lister "github.com/Archisman-Mridha/instagram-clone/kubernetes/operators/application/pkg/generated/listers/instagramclone.io/v1alpha1"
 	"github.com/charmbracelet/log"
 	appsV1 "k8s.io/api/apps/v1"
 	autoscalingV2 "k8s.io/api/autoscaling/v2"
 	coreV1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/apimachinery/pkg/util/wait"
@@ -25,6 +19,12 @@ import (
 	"k8s.io/client-go/tools/cache"
 	"k8s.io/client-go/tools/record"
 	"k8s.io/client-go/util/workqueue"
+
+	"github.com/Archisman-Mridha/instagram-clone/kubernetes/operators/application/pkg/apis/instagramclone.io/v1alpha1"
+	clientset "github.com/Archisman-Mridha/instagram-clone/kubernetes/operators/application/pkg/generated/clientset/versioned"
+	applicationScheme "github.com/Archisman-Mridha/instagram-clone/kubernetes/operators/application/pkg/generated/clientset/versioned/scheme"
+	informer "github.com/Archisman-Mridha/instagram-clone/kubernetes/operators/application/pkg/generated/informers/externalversions/instagramclone.io/v1alpha1"
+	lister "github.com/Archisman-Mridha/instagram-clone/kubernetes/operators/application/pkg/generated/listers/instagramclone.io/v1alpha1"
 )
 
 const (
@@ -370,6 +370,7 @@ func (c *Controller) createOrUpdateDeployment(ctx context.Context, application *
 			Name:      name,
 			Namespace: namespace,
 			Labels: map[string]string{
+				"app":                          name,
 				"app.kubernetes.io/part-of":    name,
 				"app.kubernetes.io/managed-by": c.name,
 			},

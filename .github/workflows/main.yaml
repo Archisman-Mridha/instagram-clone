@@ -76,7 +76,7 @@ jobs:
         microservice:
           - name: users-microservice
             path: backend/microservices/users
-            manifest: kubernetes/base/microservices/users-microservice.application.yaml
+            manifest: kubernetes/manifests/microservices/users/application.yaml
             path_filters: |
               changed:
                 - backend/microservices/users/**
@@ -85,7 +85,7 @@ jobs:
 
           - name: profiles-microservice
             path: backend/microservices/profiles
-            manifest: kubernetes/base/microservices/profiles-microservice.application.yaml
+            manifest: kubernetes/manifests/microservices/profiles/application.yaml
             path_filters: |
               changed:
                 - backend/microservices/profiles/**
@@ -94,7 +94,7 @@ jobs:
 
           - name: followships-microservice
             path: backend/microservices/followships
-            manifest: kubernetes/base/microservices/followships-microservice.application.yaml
+            manifest: kubernetes/manifests/microservices/followships/application.yaml
             path_filters: |
               changed:
                 - backend/microservices/followships/**
@@ -103,7 +103,7 @@ jobs:
 
           - name: posts-microservice
             path: backend/microservices/posts
-            manifest: kubernetes/base/microservices/posts-microservice.application.yaml
+            manifest: kubernetes/manifests/microservices/posts/application.yaml
             path_filters: |
               changed:
                 - backend/microservices/posts/**
@@ -112,7 +112,7 @@ jobs:
 
           - name: feeds-microservice
             path: backend/microservices/feeds
-            manifest: kubernetes/base/microservices/feeds-microservice.application.yaml
+            manifest: kubernetes/manifests/microservices/feeds/application.yaml
             path_filters: |
               changed:
                 - backend/microservices/feeds/**
@@ -121,7 +121,7 @@ jobs:
 
           - name: gateway
             path: backend/gateway
-            manifest: kubernetes/base/microservices/gateway.application.yaml
+            manifest: kubernetes/manifests/microservices/gateway/application.yaml
             path_filters: |
               changed:
                 - backend/gateway/**
@@ -129,7 +129,7 @@ jobs:
 
           - name: application-controller
             path: kubernetes/operators/application
-            manifest: kubernetes/base/application-controller/deployment.yaml
+            manifest: kubernetes/manifests/application-controller/deployment.yaml
             path_filters: |
               changed:
                 - kubernetes/operators/application/**

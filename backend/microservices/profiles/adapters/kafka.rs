@@ -71,14 +71,9 @@ impl KafkaAdapter {
         let consumeMessage: bool;
 
         match payload.op {
-          DbOperation::Create =>
-          // TODO: If any error occurs, then send it to a central log management system.
-          {
+          DbOperation::Create => {
             consumeMessage = usecases.createProfile(payload.after.unwrap()).await.is_ok()
           }
-
-          DbOperation::Update => todo!(),
-          DbOperation::Delete => todo!(),
 
           _ => consumeMessage = true,
         }

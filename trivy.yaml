@@ -8,7 +8,6 @@ cache-dir: $HOME/.cache/trivy
 scan:
   skip-dirs:
     - kubernetes/users
-    - kubernetes/workspaces/dev
   skip-files:
     - terragrunt/modules/prepare-cluster/sealed-secrets.key
     - "**/.terragrunt-cache"

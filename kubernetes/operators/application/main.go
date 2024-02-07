@@ -5,14 +5,15 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/Archisman-Mridha/instagram-clone/kubernetes/operators/application/pkg/controller"
-	clientset "github.com/Archisman-Mridha/instagram-clone/kubernetes/operators/application/pkg/generated/clientset/versioned"
-	informers "github.com/Archisman-Mridha/instagram-clone/kubernetes/operators/application/pkg/generated/informers/externalversions"
 	"github.com/charmbracelet/log"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/util/homedir"
+
+	"github.com/Archisman-Mridha/instagram-clone/kubernetes/operators/application/pkg/controller"
+	clientset "github.com/Archisman-Mridha/instagram-clone/kubernetes/operators/application/pkg/generated/clientset/versioned"
+	informers "github.com/Archisman-Mridha/instagram-clone/kubernetes/operators/application/pkg/generated/informers/externalversions"
 )
 
 func main() {
