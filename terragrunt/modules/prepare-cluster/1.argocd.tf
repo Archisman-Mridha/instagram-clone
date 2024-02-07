@@ -27,7 +27,7 @@ resource "helm_release" "argocd" {
 
 // Creating the ArgoCD Application Manager
 resource "kubernetes_manifest" "argocd_application_manager" {
-  manifest = yamldecode(templatefile("${path.module}/manifests/argocd-application-manager.yaml"))
+  manifest = yamldecode(file("${path.module}/manifests/argocd-application-manager.yaml"))
 
   depends_on = [helm_release.argocd]
 }

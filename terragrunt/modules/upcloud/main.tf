@@ -8,6 +8,16 @@ terraform {
       source  = "UpCloudLtd/upcloud"
       version = "4.0.0"
     }
+
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "2.23.0"
+    }
+
+    helm = {
+      source  = "hashicorp/helm"
+      version = "2.11.0"
+    }
   }
 }
 
@@ -16,13 +26,14 @@ provider "upcloud" {
   password = var.args.upcloud.password
 }
 
-module "prepare_cluster" {
-  source = "../prepare-cluster"
+provider "kubernetes" {
+  config_path    = local.kubeconfig_path
+  config_context = local.kubeconfig_context
+}
 
-  args = {
-    kubeconfig = {
-      path    = "${path.module}/outputs/kubeconfig.yaml"
-      context = "instagram-clone"
-    }
+provider "helm" {
+  kubernetes {
+    config_path    = local.kubeconfig_path
+    config_context = local.kubeconfig_context
   }
 }

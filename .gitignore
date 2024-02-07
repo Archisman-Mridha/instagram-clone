@@ -87,3 +87,4 @@ vendor/
 
 secret.yaml
 *.secret.yaml
+kubeconfig.yaml

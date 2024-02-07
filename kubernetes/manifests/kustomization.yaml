@@ -1,6 +1,6 @@
 resources:
   - application-controller.application.yaml
-  - binami-sealed-secrets.application.yaml
+  - bitnami-sealed-secrets.application.yaml
   - cloudnative-pg.application.yaml
   - cert-manager.application.yaml
   - debezium.application.yaml

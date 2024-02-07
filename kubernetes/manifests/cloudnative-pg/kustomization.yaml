@@ -13,9 +13,3 @@ helmCharts:
     releaseName: cloudnative-pg
     namespace: cloudnative-pg
     version: 0.20.0
-
-  - repo: oci://ghcr.io/ariga/charts
-    name: atlas-operator
-    releaseName: atlas
-    namespace: cloudnative-pg
-    version: 0.4.0
