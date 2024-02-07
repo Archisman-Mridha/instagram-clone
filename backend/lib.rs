@@ -87,11 +87,13 @@ pub mod utils {
     };
     use tokio::spawn;
     use tracing::{
-      debug, debug_span, level_filters::LevelFilter, subscriber::set_global_default, warn, Span,
+      debug, info_span, level_filters::LevelFilter, subscriber::set_global_default, warn, Span,
     };
     use tracing_opentelemetry::{OpenTelemetryLayer, OpenTelemetrySpanExt};
-    use tracing_subscriber::fmt;
-    use tracing_subscriber::{layer::SubscriberExt, EnvFilter, Layer, Registry};
+    use tracing_subscriber::{
+      layer::{Layered, SubscriberExt},
+      EnvFilter, Registry,
+    };
     use warp::Filter;
 
     pub fn setupObservability(serviceName: &'static str) {
@@ -102,8 +104,9 @@ pub mod utils {
 
       set_global_default(
         Registry::default()
+          .with(envFilter)
           .with(startTracer(serviceName))
-          .with(fmt::layer().with_filter(envFilter)),
+          .with(tracing_subscriber::fmt::layer()),
       )
       .expect("ERROR : Setting up global default tracing registry");
 
@@ -127,7 +130,9 @@ pub mod utils {
     }
 
     // startTracer creates an OpenTelemetry tracing pipeline and sets the global tracer.
-    pub fn startTracer(serviceName: &'static str) -> OpenTelemetryLayer<Registry, Tracer> {
+    pub fn startTracer(
+      serviceName: &'static str,
+    ) -> OpenTelemetryLayer<Layered<EnvFilter, Registry>, Tracer> {
       opentelemetry::global::set_text_map_propagator(TraceContextPropagator::new());
 
       let tracer = new_pipeline()
@@ -155,7 +160,7 @@ pub mod utils {
 
     pub fn makeSpan(request: &Request<Body>) -> Span {
       let headers = request.headers();
-      debug_span!(
+      info_span!(
         "Incoming Request",
         ?headers,
         trace_id = tracing::field::Empty

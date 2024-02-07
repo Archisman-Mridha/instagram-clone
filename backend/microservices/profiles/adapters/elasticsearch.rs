@@ -108,17 +108,17 @@ impl ElasticsearchAdapter {
 // deserializeQueryProfilesResponse takes in the response returned from Elasticsearch for the query
 // done in ElasticsearchAdapter.searchProfiles and tries to deserialize it to Vec<ProfilePreview>.
 async fn deserializeQueryProfilesResponse(response: Response) -> Result<Vec<ProfilePreview>> {
-  #[derive(Deserialize)]
+  #[derive(Debug, Deserialize)]
   struct Response {
     hits: Hits,
   }
 
-  #[derive(Deserialize)]
+  #[derive(Debug, Deserialize)]
   struct Hits {
     hits: Vec<Hit>,
   }
 
-  #[derive(Deserialize)]
+  #[derive(Debug, Deserialize)]
   struct Hit {
     _id: String,
     _source: Source,
@@ -133,7 +133,7 @@ async fn deserializeQueryProfilesResponse(response: Response) -> Result<Vec<Prof
   let response = response.bytes().await?.to_vec();
   let response = from_utf8(&response)?;
 
-  let response: Response = serde_json::from_str(response).unwrap();
+  let response: Response = serde_json::from_str(response)?;
 
   let profiles = response
     .hits
