@@ -1,0 +1,7 @@
+resources:
+  - https://raw.githubusercontent.com/dragonflydb/dragonfly-operator/main/manifests/dragonfly-operator.yaml
+  - namespace.yaml
+  - cluster.yaml
+  - default-credentials.sealed-secret.yaml
+  - pod-monitor.yaml
+  - grafana-dashboard.configmap.yaml

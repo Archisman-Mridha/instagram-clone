@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: dragonfly-cluster-metrics
+  namespace: prometheus
+
+spec:
+  namespaceSelector:
+    matchNames:
+      - dragonfly
+  selector:
+    matchLabels:
+      app: main
+  podTargetLabels:
+    - app
+  podMetricsEndpoints:
+    - port: admin

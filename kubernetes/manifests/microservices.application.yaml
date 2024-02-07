@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+
+metadata:
+  name: microservices
+  namespace: argocd
+
+spec:
+  project: default
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: microservices
+
+  source:
+    repoURL: https://github.com/Archisman-Mridha/instagram-clone
+    targetRevision: HEAD
+    path: kubernetes/manifests/microservices
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

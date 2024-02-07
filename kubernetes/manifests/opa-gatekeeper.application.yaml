@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+
+metadata:
+  name: opa-gatekeeper
+  namespace: argocd
+
+spec:
+  project: default
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: opa-gatekeeper
+
+  source:
+    repoURL: https://github.com/Archisman-Mridha/instagram-clone
+    targetRevision: HEAD
+    path: kubernetes/manifests/opa-gatekeeper
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

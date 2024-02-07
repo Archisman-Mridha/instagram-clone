@@ -1,0 +1,7 @@
+resources:
+  - postgres-credentials.sealed-secret.yaml
+  - postgres.kafka-connect-cluster.yaml
+  - postgres.kafka-connect-cluster.role.yaml
+  - kafka-connect-metrics.configmap.yaml
+  - users-table.source-connector.yaml
+  - posts-table.source-connector.yaml

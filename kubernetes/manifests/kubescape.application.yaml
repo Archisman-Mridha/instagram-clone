@@ -1,0 +1,43 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+
+metadata:
+  name: kubescape
+  namespace: argocd
+
+spec:
+  project: default
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubescape
+
+  source:
+    repoURL: https://kubescape.github.io/helm-charts/
+    chart: kubescape-operator
+    targetRevision: 1.16.1
+    helm:
+      releaseName: kubescape-operator
+      valuesObject:
+        clusterName: instagram-clone
+
+        server: api.armosec.io
+        account: 16af738b-23c4-43ec-8ae4-5ca9324173a
+
+        persistence:
+          storageClass: upcloud-block-storage-hdd
+          size:
+            backingStorage: 1Gi
+            kubevuln: 1Gi
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+---
+apiVersion: v1
+kind: Namespace
+
+metadata:
+  name: kubescape

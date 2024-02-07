@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+
+metadata:
+  name: application-controller
+  namespace: argocd
+
+spec:
+  project: default
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+
+  source:
+    repoURL: https://github.com/Archisman-Mridha/instagram-clone
+    targetRevision: HEAD
+    path: kubernetes/manifests/application-controller
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

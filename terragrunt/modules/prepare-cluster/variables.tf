@@ -5,7 +5,5 @@ variable "args" {
       path = string
       context = string
     })
-
-    workspace = string
   })
 }

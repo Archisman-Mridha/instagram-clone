@@ -1,0 +1,90 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: Kafka
+metadata:
+  name: main
+  namespace: strimzi
+  annotations: { }
+    # strimzi.io/node-pools: enabled
+    # strimzi.io/kraft: enabled
+
+spec:
+  kafka:
+    version: 3.6.1
+    metadataVersion: 3.6-IV2
+
+    replicas: 1
+
+    listeners:
+      - name: plain
+        port: 9092
+        type: internal
+        tls: false
+      - name: tls
+        port: 9093
+        type: internal
+        tls: true
+
+    config:
+
+      # Determines the replication factor for the internal Kafka topic where consumer group offsets
+      # are stored.
+      offsets.topic.replication.factor: 1
+
+      # Default replication factor for newly created topics when no replication factor is specified
+      # explicitly.
+      default.replication.factor: 1
+
+      # Minimum number of in-sync replicas that must acknowledge a write before it is considered
+      # successful.
+      min.insync.replicas: 1
+
+      # Similar to the offsets topic, Kafka uses an internal topic to store transaction state logs.
+      # This parameter sets the replication factor for that topic.
+      transaction.state.log.replication.factor: 1
+
+      # Minimum number of in-sync replicas (ISRs) that must acknowledge a write for the transaction
+      # state log topic.
+      transaction.state.log.min.isr: 1
+
+      inter.broker.protocol.version: "3.6"
+
+    # The storage field is required by the Kafka CRD schema while the KafkaNodePools feature gate is
+    # in alpha phase. But it will be ignored when Kafka Node Pools are used
+    storage:
+      type: ephemeral
+    #   type: jbod
+    #   volumes:
+    #     - id: 0
+    #       type: persistent-claim
+    #       size: 1Gi
+    #       deleteClaim: false
+
+    metricsConfig:
+      type: jmxPrometheusExporter
+      valueFrom:
+        configMapKeyRef:
+          name: cluster-metrics
+          key: kafka-metrics-config.yaml
+
+  # The ZooKeeper section is required by the Kafka CRD schema while the UseKRaft feature gate is
+  # in alpha phase. But it will be ignored when running in KRaft mode
+  zookeeper:
+    replicas: 1
+    storage:
+      type: ephemeral
+      # type: persistent-claim
+      # size: 100Gi
+      # deleteClaim: false
+    metricsConfig:
+      type: jmxPrometheusExporter
+      valueFrom:
+        configMapKeyRef:
+          name: cluster-metrics
+          key: zookeeper-metrics-config.yaml
+
+  entityOperator:
+    topicOperator: {}
+    userOperator: {}
+
+# NOTE : Use this command to get the list of Kafka topics :
+# kubectl -n strimzi exec main-kafka-0 -c kafka -i -t -- bin/kafka-topics.sh --bootstrap-server localhost:9092 --list

@@ -1,0 +1,16 @@
+apiVersion: instagramclone.io/v1alpha1
+kind: Application
+metadata:
+  name: gateway-microservice
+  namespace: microservices
+
+spec:
+  image: ghcr.io/archisman-mridha/instagram-clone-gateway:5516c30f64f06c5cd86589ddb19e23e1d5b18cc7
+  replicas:
+    min: 1
+    max: 3
+  resources:
+    cpu: 100m
+    memory: 100Mi
+  secretName: gateway-microservice
+  port: 4000

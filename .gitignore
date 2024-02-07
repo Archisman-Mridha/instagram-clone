@@ -82,3 +82,8 @@ target/
 
 # Dependency directories (remove the comment below to include it)
 vendor/
+
+# --- KUBERNETES ---
+
+secret.yaml
+*.secret.yaml

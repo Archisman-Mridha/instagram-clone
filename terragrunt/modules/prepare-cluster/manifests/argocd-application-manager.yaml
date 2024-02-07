@@ -10,8 +10,8 @@ spec:
 
   source:
     repoURL: https://github.com/Archisman-Mridha/instagram-clone
-    targetRevision: ${BRANCH}
-    path: kubernetes/workspaces/${WORKSPACE}
+    targetRevision: main
+    path: kubernetes/manifests
 
   destination:
     server: https://kubernetes.default.svc
@@ -21,7 +21,6 @@ spec:
   ## between the desired manifests in Git, and the live state in the cluster.
   syncPolicy:
     automated:
-
       ## By default (and as a safety mechanism), automated sync will not delete resources when Argo
       ## CD detects the resource is no longer defined in Git.
       ## Enable pruning.

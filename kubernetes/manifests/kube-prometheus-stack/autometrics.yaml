@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: autometrics
+  namespace: prometheus
+
+spec:
+  selector:
+    matchLabels:
+      app: autometrics
+  template:
+    metadata:
+      labels:
+        app: autometrics
+    spec:
+      containers:
+        - name: autometrics
+          image: autometrics/am-proxy
+          resources:
+            requests:
+              memory: 128Mi
+              cpu: 100m
+            limits:
+              memory: 256Mi
+              cpu: 200m
+          ports:
+            - containerPort: 6789
+          env:
+            - name: PROMETHEUS_URL
+              value: http://kube-prometheus-stack-prometheus:9090

@@ -1,6 +1,0 @@
-resources:
-  - ../../base
-  - kubernetes-dashboard
-  - istio.yaml
-  - jaeger.yaml
-  - kube-prometheus-stack.yaml

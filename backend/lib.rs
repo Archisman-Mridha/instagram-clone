@@ -202,7 +202,7 @@ pub mod utils {
     use anyhow::{anyhow, Result};
     use kafka::consumer::{Consumer, FetchOffset, GroupOffsetStorage};
     use serde::Deserialize;
-    use tracing::info;
+    use tracing::debug;
 
     pub fn createKafkaConsumer(hosts: Vec<String>, topic: String, group: String) -> Consumer {
       let consumer = Consumer::from_hosts(hosts)
@@ -216,7 +216,7 @@ pub mod utils {
           topic
         ));
 
-      info!("Created Kafka consumer for {} topic", topic);
+      debug!("Created Kafka consumer for {} topic", topic);
 
       consumer
     }

@@ -1,0 +1,20 @@
+resources:
+  - namespace.yaml
+
+  - users/application.yaml
+  - users/sealed-secret.yaml
+
+  - profiles/application.yaml
+  - profiles/sealed-secret.yaml
+
+  - followships/application.yaml
+  - followships/sealed-secret.yaml
+
+  - posts/application.yaml
+  - posts/sealed-secret.yaml
+
+  - feeds/application.yaml
+  - feeds/sealed-secret.yaml
+
+  - gateway/application.yaml
+  - gateway/sealed-secret.yaml

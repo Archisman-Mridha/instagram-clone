@@ -1,0 +1,31 @@
+apiVersion: dragonflydb.io/v1alpha1
+kind: Dragonfly
+metadata:
+  name: main
+  namespace: dragonfly
+
+spec:
+  replicas: 1
+
+  resources:
+    requests:
+      cpu: 200m
+      memory: 500Mi
+    limits:
+      cpu: 200m
+      memory: 500Mi
+
+  authentication:
+    passwordFromSecret:
+      name: default-credentials
+      key: password
+
+  # snapshot:
+  #   cron: "*/5 * * * *"
+  #   persistentVolumeClaimSpec:
+  #     storageClassName: upcloud-block-storage-hdd
+  #     accessModes:
+  #       - ReadWriteOnce
+  #     resources:
+  #       requests:
+  #         storage: 1Gi

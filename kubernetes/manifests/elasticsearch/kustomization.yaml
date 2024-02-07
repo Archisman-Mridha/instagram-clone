@@ -1,0 +1,8 @@
+resources:
+  - https://download.elastic.co/downloads/eck/2.11.1/crds.yaml
+  - https://download.elastic.co/downloads/eck/2.11.1/operator.yaml
+  - namespace.yaml
+  - admin-credentials.sealed-secret.yaml
+  - elasticsearch.yaml
+  - elasticsearch-master.service.yaml
+  - kibana.yaml

@@ -1,0 +1,45 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnector
+metadata:
+  name: posts-table-source-connector
+  namespace: strimzi
+  labels:
+    strimzi.io/cluster: postgres
+
+spec:
+  class: io.debezium.connector.postgresql.PostgresConnector
+
+  tasksMax: 1
+
+  config:
+    # connector.id: posts-table-source-connector
+    # connector.displayName: posts-table-source-connector
+
+    database.server.name: posts
+    database.hostname: main-rw.cloudnative-pg
+    database.port: 5432
+    database.dbname: instagram_clone
+    database.user: ${secrets:strimzi/postgres-credentials:username}
+    database.password: ${secrets:strimzi/postgres-credentials:password}
+
+    tombstones.on.delete: "false"
+
+    skip.messages.without.change: "true"
+
+    slot.name: posts_table_source_connector
+
+    schema.include.list: public
+    table.include.list: public.posts
+    column.include.list: public.posts.id,public.posts.owner_id
+
+    plugin.name: pgoutput
+    publication.autocreate.mode: all_tables
+
+    # the Debezium event flattening single message transformation (SMT).
+    # transforms: unwrap
+    # transforms.unwrap.type: io.debezium.transforms.ExtractNewRecordState
+    # transforms.unwrap.add.fields: op,
+    # transforms.unwrap.drop.tombstones: false
+    # transforms.unwrap.delete.handling.mode: rewrite
+
+    topic.prefix: db-events

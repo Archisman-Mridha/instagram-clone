@@ -1,0 +1,13 @@
+resources:
+  # CRDs
+  - https://raw.githubusercontent.com/debezium/debezium-operator/2.4/k8/debeziumservers.debezium.io-v1.yml
+
+  # Operator
+  - https://raw.githubusercontent.com/debezium/debezium-operator/2.4/k8/kubernetes.yml
+
+  - namespace.yaml
+
+  - postgres-credentials.sealed-secret.yaml
+
+  - users-table.debezium-server.yaml
+  - posts-table.debezium-server.yaml

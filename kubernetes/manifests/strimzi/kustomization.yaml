@@ -1,0 +1,15 @@
+resources:
+  - namespace.yaml
+  - cluster.yaml
+  - db-events.public.users.topic.yaml
+  - db-events.public.posts.topic.yaml
+  - cluster-metrics.configmap.yaml
+  - grafana-dashboards.configmap.yaml
+  - pod-monitors.yaml
+
+helmCharts:
+  - repo: oci://quay.io/strimzi-helm
+    name: strimzi-kafka-operator
+    releaseName: strimzi-kafka-operator
+    namespace: strimzi
+    version: 0.39.0

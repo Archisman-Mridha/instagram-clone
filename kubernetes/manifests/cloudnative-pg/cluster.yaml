@@ -1,0 +1,73 @@
+apiVersion: postgresql.cnpg.io/v1
+
+# Represents a PostgreSQL cluster made up of a single primary and an optional number of replicas
+# that co-exist in the same Kubernetes namespace for High Availability and offloading of read-only
+# queries.
+kind: Cluster
+
+metadata:
+  name: main
+  namespace: cloudnative-pg
+
+spec:
+  instances: 1
+
+  storage:
+    pvcTemplate:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+      storageClassName: upcloud-block-storage-hdd
+      volumeMode: Filesystem
+
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 200m
+    limits:
+      memory: 256Mi
+      cpu: 200m
+
+  primaryUpdateStrategy: unsupervised
+
+  postgresql:
+    parameters:
+      # Feature to manage the retention of WAL files on the primary server. When a standby server
+      # connects to a primary server for replication, the primary server keeps track of the WAL
+      # files that the standby server has successfully replicated. Replication slots (named
+      # positions in the WAL stream) ensure that the primary server retains the necessary WAL files
+      # until all standby servers have consumed them. This prevents the primary server from
+      # removing WAL files that are still needed by the standby servers for replication, thus
+      # avoiding potential data loss scenarios.
+      max_replication_slots: "4"
+
+      # WAL senders are PostgreSQL server processes responsible for streaming WAL data from the
+      # primary server to standby servers for replication. When a standby server establishes a
+      # streaming replication connection to the primary server, the primary server creates a WAL
+      # sender process dedicated to streaming WAL data to that specific standby server.
+      #
+      # Determines how many maximum standby servers can simultaneously replicate from the primary
+      # server.
+      max_wal_senders: "4"
+
+      # How much memory is dedicated to the PostgreSQL server for caching data.
+      shared_buffers: 64MB
+
+  bootstrap:
+    initdb:
+      database: instagram_clone
+
+      owner: admin
+      secret:
+        name: admin-credentials
+
+      postInitApplicationSQLRefs:
+        secretRefs:
+          - name: main-cluster-init-sql
+            key: create-debezium-user.sql
+
+  # Enabling integration with Prometheus and Grafana.
+  monitoring:
+    enablePodMonitor: true

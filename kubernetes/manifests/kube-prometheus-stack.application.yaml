@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+
+metadata:
+  name: kube-prometheus-stack
+  namespace: argocd
+
+spec:
+  project: default
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: prometheus
+
+  source:
+    repoURL: https://github.com/Archisman-Mridha/instagram-clone
+    targetRevision: HEAD
+    path: kubernetes/manifests/kube-prometheus-stack
+    plugin:
+      name: kustomize-enable-helm
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true

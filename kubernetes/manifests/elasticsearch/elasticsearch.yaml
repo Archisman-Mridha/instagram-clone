@@ -1,0 +1,44 @@
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: main
+  namespace: elasticsearch
+  annotations:
+    eck.k8s.elastic.co/license: basic
+
+spec:
+  version: 8.12.1
+
+  nodeSets:
+    - name: default
+      count: 1
+      config:
+        node.store.allow_mmap: false
+
+      podTemplate:
+        spec:
+          containers:
+            - name: elasticsearch
+              resources:
+                requests:
+                  cpu: 1000m
+                  memory: 1000Mi
+                limits:
+                  cpu: 1000m
+                  memory: 1000Mi
+
+      volumeClaimTemplates:
+        - metadata:
+            name: elasticsearch-data
+          spec:
+            resources:
+              requests:
+                storage: 1Gi
+            storageClassName: upcloud-block-storage-hdd
+            accessModes:
+              - ReadWriteOnce
+
+  http:
+    tls:
+      selfSignedCertificate:
+        disabled: true

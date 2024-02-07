@@ -1,0 +1,49 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnect
+metadata:
+  name: postgres
+  namespace: strimzi
+  annotations:
+    # enables KafkaConnectors to create, delete, and reconfigure connectors.
+    strimzi.io/use-connector-resources: "true"
+
+spec:
+  image: aarzak/debezium-connect-postgresql:latest
+
+  replicas: 1
+
+  resources:
+    requests:
+      cpu: 1
+      memory: 1Gi
+    limits:
+      cpu: 2
+      memory: 2Gi
+
+  bootstrapServers: main-kafka-bootstrap:9092
+
+  config:
+    group.id: postgres-kafka-connect-cluster
+
+    config.providers: secrets
+    config.providers.secrets.class: io.strimzi.kafka.KubernetesSecretConfigProvider
+
+    key.converter: org.apache.kafka.connect.json.JsonConverter
+    value.converter: org.apache.kafka.connect.json.JsonConverter
+    key.converter.schemas.enable: true
+    value.converter.schemas.enable: true
+
+    offset.storage.topic: postgres-kafka-connect-cluster-offsets
+    config.storage.topic: postgres-kafka-connect-cluster-configs
+    status.storage.topic: postgres-kafka-connect-cluster-status
+    # -1 means it will use the default replication factor configured in the broker
+    config.storage.replication.factor: -1
+    offset.storage.replication.factor: -1
+    status.storage.replication.factor: -1
+
+  metricsConfig:
+    type: jmxPrometheusExporter
+    valueFrom:
+      configMapKeyRef:
+        name: kafka-connect-metrics
+        key: config.yaml
