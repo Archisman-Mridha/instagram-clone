@@ -3,18 +3,24 @@ resources:
 
   - users/application.yaml
   - users/sealed-secret.yaml
+  - users/pod-monitor.yaml
 
   - profiles/application.yaml
   - profiles/sealed-secret.yaml
+  - profiles/pod-monitor.yaml
 
   - followships/application.yaml
   - followships/sealed-secret.yaml
+  - followships/pod-monitor.yaml
 
   - posts/application.yaml
   - posts/sealed-secret.yaml
+  - posts/pod-monitor.yaml
 
   - feeds/application.yaml
   - feeds/sealed-secret.yaml
+  - feeds/pod-monitor.yaml
 
   - gateway/application.yaml
   - gateway/sealed-secret.yaml
+  - gateway/pod-monitor.yaml

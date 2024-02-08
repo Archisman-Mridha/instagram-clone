@@ -1,0 +1,22 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: posts-microservice-metrics
+  namespace: prometheus
+
+spec:
+  namespaceSelector:
+    matchNames:
+      - microservices
+  selector:
+    matchLabels:
+      microservice: posts-microservice
+
+  # Defines the labels which are transferred from the associated Kubernetes Pod object onto the
+  # ingested metrics.
+  podTargetLabels:
+    - microservice
+
+  # List of endpoints part of this PodMonitor.
+  podMetricsEndpoints:
+    - port: metrics
