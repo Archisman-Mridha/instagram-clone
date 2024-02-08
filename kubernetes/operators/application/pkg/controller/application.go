@@ -352,13 +352,7 @@ func (c *Controller) createOrUpdateDeployment(ctx context.Context, application *
 						},
 					},
 
-					Ports: []coreV1.ContainerPort{
-						{
-							Name:          "grpc-server",
-							ContainerPort: application.Spec.Port,
-							Protocol:      "TCP",
-						},
-					},
+					Ports: application.Spec.Ports,
 				},
 			},
 		},
@@ -488,6 +482,16 @@ func (c *Controller) createOrUpdateService(ctx context.Context, application *v1a
 	name := application.Name
 	namespace := application.Namespace
 
+	var servicePorts []coreV1.ServicePort
+
+	for _, port := range application.Spec.Ports {
+		servicePorts = append(servicePorts, coreV1.ServicePort{
+			Name:       port.Name,
+			Port:       port.ContainerPort,
+			TargetPort: intstr.FromInt32(port.ContainerPort),
+		})
+	}
+
 	serviceObject := &coreV1.Service{
 
 		ObjectMeta: metav1.ObjectMeta{
@@ -504,13 +508,7 @@ func (c *Controller) createOrUpdateService(ctx context.Context, application *v1a
 				"microservice": name,
 			},
 
-			Ports: []coreV1.ServicePort{
-				{
-					Name:       "grpc-server",
-					Port:       application.Spec.Port,
-					TargetPort: intstr.FromInt32(application.Spec.Port),
-				},
-			},
+			Ports: servicePorts,
 		},
 	}
 

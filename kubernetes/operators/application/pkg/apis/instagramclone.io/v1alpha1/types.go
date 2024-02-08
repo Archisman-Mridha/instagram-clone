@@ -1,6 +1,7 @@
 package v1alpha1
 
 import (
+	coreV1 "k8s.io/api/core/v1"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -31,8 +32,8 @@ type (
 
 		Resources v1.ResourceList `json:"resources,omitempty"`
 
-		// gRPC server port to be exposed by each container.
-		Port int32 `json:"port,omitempty"`
+		// Container ports to be exposed.
+		Ports []coreV1.ContainerPort `json:"ports,omitempty"`
 
 		// Name of the Kubernetes Secret that the developer needs to create. It must contain all the
 		// environment variables required by each container. Those environment variables will be mounted

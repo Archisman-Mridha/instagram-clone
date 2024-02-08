@@ -24,8 +24,8 @@ rm -rf pkg/generated
 ## 3. Informers - are built on top of listers and are responsible for watching changes to resources
 ##                in the cluster. They continuously synchronize the local cache with the cluster state.
 hack/update-codegen.sh
-  mv github.com/Archisman-Mridha/instagram-clone/kubernetes/operators/application/pkg/apis/instagramclone.io/v1alpha1/zz_generated.deepcopy.go pkg/apis/instagramclone.io/v1alpha1/
-  mv github.com/Archisman-Mridha/instagram-clone/kubernetes/operators/application/pkg/generated pkg/generated
+mv github.com/Archisman-Mridha/instagram-clone/kubernetes/operators/application/pkg/apis/instagramclone.io/v1alpha1/zz_generated.deepcopy.go pkg/apis/instagramclone.io/v1alpha1/
+mv github.com/Archisman-Mridha/instagram-clone/kubernetes/operators/application/pkg/generated pkg/generated
 
 rm -rf github.com vendor
 
@@ -35,8 +35,8 @@ go mod tidy
 ## You can install controller-gen by running this command -
 ## go install sigs.k8s.io/controller-tools/cmd/controller-gen@latest.
 controller-gen \
-  paths=github.com/Archisman-Mridha/instagram-clone/kubernetes/operators/application/pkg/apis/instagramclone.io/v1alpha1 \
-  crd:crdVersions=v1 \
-  output:crd:artifacts:config=manifests
+	paths=github.com/Archisman-Mridha/instagram-clone/kubernetes/operators/application/pkg/apis/instagramclone.io/v1alpha1 \
+	crd:crdVersions=v1 \
+	output:crd:artifacts:config=manifests
 
-cp manifests/instagramclone.io_applications.yaml ../../base/application-controller
+cp manifests/instagramclone.io_applications.yaml ../../manifests/application-controller

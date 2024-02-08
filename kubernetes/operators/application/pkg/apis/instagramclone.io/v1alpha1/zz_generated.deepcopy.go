@@ -97,6 +97,11 @@ func (in *ApplicationSpec) DeepCopyInto(out *ApplicationSpec) {
 			(*out)[key] = val.DeepCopy()
 		}
 	}
+	if in.Ports != nil {
+		in, out := &in.Ports, &out.Ports
+		*out = make([]v1.ContainerPort, len(*in))
+		copy(*out, *in)
+	}
 	return
 }
 

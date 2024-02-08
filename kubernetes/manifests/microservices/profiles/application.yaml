@@ -13,4 +13,10 @@ spec:
     cpu: 100m
     memory: 100Mi
   secretName: profiles-microservice
-  port: 4000
+  ports:
+    - name: grpc
+      containerPort: 4000
+      protocol: tcp
+    - name: metrics
+      containerPort: 5000
+      protocol: http
