@@ -5,7 +5,7 @@ resource "helm_release" "atlas" {
 
   name = "atlas"
 
-  namespace        = "cloudative-pg"
+  namespace        = "cloudnative-pg"
   create_namespace = true
 
   wait = true
