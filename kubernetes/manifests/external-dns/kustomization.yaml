@@ -11,10 +11,17 @@ helmCharts:
     releaseName: external-dns
     namespace: external-dns
     valuesInline:
-
       ## K8s resources type to be observed for new DNS entries by ExternalDNS.
       sources:
-        - istio-gateway
+        - service
+        - ingress
+
+        # - istio-gateway
+
+        # - gateway-httproute
+        # - gateway-tlsroute
+        # - gateway-tcproute
+        # - gateway-udproute
 
       ## DNS provider where the DNS records will be created.
       provider: cloudflare

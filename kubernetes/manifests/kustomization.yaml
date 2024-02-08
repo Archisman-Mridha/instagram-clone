@@ -6,7 +6,7 @@ resources:
   - debezium.application.yaml
   - dragonfly.application.yaml
   - elasticsearch.application.yaml
-  # - external-dns.application.yaml
+  - external-dns.application.yaml
   # - falco.application.yaml
   # - istio.application.yaml
   - jaeger.application.yaml
