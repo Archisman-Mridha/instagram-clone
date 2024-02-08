@@ -13,5 +13,5 @@ resources:
   - kube-prometheus-stack.application.yaml
   - kubescape.application.yaml
   - microservices.application.yaml
-  # - opa-gatekeeper
+  - opa-gatekeeper.application.yaml
   - strimzi.application.yaml
