@@ -3,6 +3,9 @@ kind: Application
 metadata:
   name: gateway-microservice
   namespace: microservices
+  labels:
+    app: gateway-microservice
+    app.kubernetes.io/instance: gateway-microservice
 
 spec:
   image: ghcr.io/archisman-mridha/instagram-clone-gateway:2420c7e7f17085462ddce5bfe7eeb37f1b308c4a

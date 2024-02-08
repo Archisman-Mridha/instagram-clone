@@ -325,7 +325,10 @@ func (c *Controller) createOrUpdateDeployment(ctx context.Context, application *
 	podTemplateSpecObject := coreV1.PodTemplateSpec{
 		ObjectMeta: metav1.ObjectMeta{
 			Labels: map[string]string{
-				"microservice": name,
+				"app":                          name,
+				"app.kubernetes.io/instance":   name,
+				"app.kubernetes.io/part-of":    name,
+				"app.kubernetes.io/managed-by": c.name,
 			},
 		},
 
@@ -365,6 +368,7 @@ func (c *Controller) createOrUpdateDeployment(ctx context.Context, application *
 			Namespace: namespace,
 			Labels: map[string]string{
 				"app":                          name,
+				"app.kubernetes.io/instance":   name,
 				"app.kubernetes.io/part-of":    name,
 				"app.kubernetes.io/managed-by": c.name,
 			},
@@ -389,7 +393,7 @@ func (c *Controller) createOrUpdateDeployment(ctx context.Context, application *
 
 			Selector: &metav1.LabelSelector{
 				MatchLabels: map[string]string{
-					"microservice": name,
+					"app": name,
 				},
 			},
 
@@ -425,6 +429,8 @@ func (c *Controller) createOrUpdateHpa(ctx context.Context, application *v1alpha
 			Name:      name,
 			Namespace: namespace,
 			Labels: map[string]string{
+				"app":                          name,
+				"app.kubernetes.io/instance":   name,
 				"app.kubernetes.io/part-of":    name,
 				"app.kubernetes.io/managed-by": c.name,
 			},
@@ -498,6 +504,8 @@ func (c *Controller) createOrUpdateService(ctx context.Context, application *v1a
 			Name:      name,
 			Namespace: namespace,
 			Labels: map[string]string{
+				"app":                          name,
+				"app.kubernetes.io/instance":   name,
 				"app.kubernetes.io/part-of":    name,
 				"app.kubernetes.io/managed-by": c.name,
 			},
@@ -505,7 +513,7 @@ func (c *Controller) createOrUpdateService(ctx context.Context, application *v1a
 
 		Spec: coreV1.ServiceSpec{
 			Selector: map[string]string{
-				"microservice": name,
+				"app": name,
 			},
 
 			Ports: servicePorts,

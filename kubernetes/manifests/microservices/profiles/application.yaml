@@ -3,6 +3,9 @@ kind: Application
 metadata:
   name: profiles-microservice
   namespace: microservices
+  labels:
+    app: profiles-microservice
+    app.kubernetes.io/instance: profiles-microservice
 
 spec:
   image: ghcr.io/archisman-mridha/instagram-clone-profiles-microservice:07db74b3dd4888026a2e852c6fca860157aa910a
