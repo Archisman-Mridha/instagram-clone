@@ -27,7 +27,8 @@ message SigninRequest {
 }
 
 message AuthenticationResponse {
-  string jwt= 1;
+	int32 user_id= 1;
+  string jwt= 2;
 }
 
 message VerifyJwtRequest {

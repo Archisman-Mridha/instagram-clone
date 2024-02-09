@@ -27,7 +27,7 @@ impl RedisAdapter {
 }
 
 impl FeedsRepository for RedisAdapter {
-  #[instrument(skip(self), level = "debug")]
+  #[instrument(skip(self), level = "info")]
   fn pushPostToFeeds(&self, userIds: Vec<i32>, postId: i32) -> Result<()> {
     let mut connection = self.pool.get().map_err(toServerError)?;
     let mut pipe = pipe();
@@ -39,7 +39,7 @@ impl FeedsRepository for RedisAdapter {
     pipe.query(&mut *connection).map_err(toServerError)
   }
 
-  #[instrument(skip(self), level = "debug")]
+  #[instrument(skip(self), level = "info")]
   fn getFeed(&self, args: GetFeedRequest) -> Result<Vec<i32>> {
     let mut connection = self.pool.get().map_err(toServerError)?;
 
@@ -47,7 +47,7 @@ impl FeedsRepository for RedisAdapter {
       .lrange(
         args.user_id,
         args.offset as isize,
-        (args.offset + args.page_size) as isize,
+        (args.offset + args.page_size - 1) as isize,
       )
       .map_err(toServerError)
   }

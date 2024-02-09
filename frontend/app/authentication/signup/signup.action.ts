@@ -11,29 +11,31 @@
 import { getApolloClient } from "@/lib/apollo-client"
 import { SignupFormSchema } from "./signup-form.component"
 import {
-	MutationSignupArgs,
 	SignupDocument,
-	SignupMutation
+	SignupMutation,
+	SignupMutationVariables
 } from "@/graphql/__generated__/generated"
-import { Result } from "@/lib/utils"
+import { Result, ServerErrorMessage } from "@/lib/utils"
 
-export async function signupHandler(data: SignupFormSchema): Promise<Result<string>> {
+export async function signupHandler(
+	data: SignupFormSchema
+): Promise<Result<SignupMutation["signup"]>> {
 	const apolloClient = getApolloClient()()
 
 	try {
 		const { data: response, errors } = await apolloClient.mutate<
 			SignupMutation,
-			MutationSignupArgs
+			SignupMutationVariables
 		>({
 			mutation: SignupDocument,
 			variables: { args: data }
 		})
 
-		if (!response) return { Err: new Error("No data found in the response") }
-		else if (errors && errors.length > 0) return { Err: new Error(errors.join(" | ")) }
+		if (errors && errors.length > 0) return { Err: errors.join(" | ") }
+		else if (!response) throw new Error("No data found in the response")
 
-		return { Ok: response.signup.jwt }
+		return { Ok: response.signup }
 	} catch (error) {
-		return { Err: new Error("Server error occurred") }
+		return { Err: ServerErrorMessage }
 	}
 }

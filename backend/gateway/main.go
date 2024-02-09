@@ -29,14 +29,6 @@ var (
 	postsMicroserviceConnector       *connectors.PostsMicroserviceConnector
 	feedsMicroserviceConnector       *connectors.FeedsMicroserviceConnector
 
-	_connectors = []connectors.Connector{
-		usersMicroserviceConnector,
-		profilesMicroserviceConnector,
-		followshipsMicroserviceConnector,
-		postsMicroserviceConnector,
-		feedsMicroserviceConnector,
-	}
-
 	shutdownMetricsServer context.CancelCauseFunc
 
 	tracerProvider *trace.TracerProvider
@@ -121,11 +113,11 @@ func main() {
 
 func cleanup() {
 	// Disconnect microservices.
-	for _, connector := range _connectors {
-		if connector != nil {
-			connector.Disconnect()
-		}
-	}
+	usersMicroserviceConnector.Disconnect()
+	profilesMicroserviceConnector.Disconnect()
+	followshipsMicroserviceConnector.Disconnect()
+	postsMicroserviceConnector.Disconnect()
+	feedsMicroserviceConnector.Disconnect()
 
 	// Shutdown metrics server.
 	if shutdownMetricsServer != nil {

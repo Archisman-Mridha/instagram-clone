@@ -84,7 +84,12 @@ impl UsersService for UsersServiceImpl {
       .usecases
       .signup(&request)
       .await
-      .map(|value| Response::new(AuthenticationResponse { jwt: value.jwt }))
+      .map(|value| {
+        Response::new(AuthenticationResponse {
+          user_id: value.user_id,
+          jwt: value.jwt,
+        })
+      })
       .map_err(mapToGrpcError)
   }
 
@@ -99,7 +104,12 @@ impl UsersService for UsersServiceImpl {
       .usecases
       .signin(&request)
       .await
-      .map(|value| Response::new(AuthenticationResponse { jwt: value.jwt }))
+      .map(|value| {
+        Response::new(AuthenticationResponse {
+          user_id: value.user_id,
+          jwt: value.jwt,
+        })
+      })
       .map_err(mapToGrpcError)
   }
 

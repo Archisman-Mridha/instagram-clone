@@ -3,16 +3,12 @@
 package graphql_generated
 
 type AuthenticationOutput struct {
-	Jwt string `json:"jwt"`
+	UserID int    `json:"userId"`
+	Jwt    string `json:"jwt"`
 }
 
 type CreatePostArgs struct {
 	Description string `json:"description"`
-}
-
-type FollowshipOperationArgs struct {
-	FollowerID int `json:"followerId"`
-	FolloweeID int `json:"followeeId"`
 }
 
 type GetFeedArgs struct {

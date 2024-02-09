@@ -1,1 +1,3 @@
-export type Result<Ok, Err extends Error = Error> = { Ok: Ok; Err?: Err } | { Ok?: Ok; Err: Err }
+export type Result<Ok> = { Ok: Ok; Err?: string } | { Ok?: Ok; Err: string }
+
+export const ServerErrorMessage = "server error occurred"

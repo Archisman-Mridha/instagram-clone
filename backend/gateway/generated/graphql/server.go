@@ -46,7 +46,8 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	AuthenticationOutput struct {
-		Jwt func(childComplexity int) int
+		Jwt    func(childComplexity int) int
+		UserID func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -137,6 +138,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.AuthenticationOutput.Jwt(childComplexity), true
+
+	case "AuthenticationOutput.userId":
+		if e.complexity.AuthenticationOutput.UserID == nil {
+			break
+		}
+
+		return e.complexity.AuthenticationOutput.UserID(childComplexity), true
 
 	case "Mutation.createPost":
 		if e.complexity.Mutation.CreatePost == nil {
@@ -398,7 +406,6 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	ec := executionContext{rc, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputCreatePostArgs,
-		ec.unmarshalInputFollowshipOperationArgs,
 		ec.unmarshalInputGetFeedArgs,
 		ec.unmarshalInputGetFollowersArgs,
 		ec.unmarshalInputGetFollowingsArgs,
@@ -572,6 +579,7 @@ input SigninArgs {
 }
 
 type AuthenticationOutput {
+	userId: Int!
 	jwt: String!
 }
 
@@ -581,11 +589,6 @@ input SearchProfilesArgs {
 
 type SearchProfilesOutput {
 	profilePreviews: [ProfilePreview]!
-}
-
-input FollowshipOperationArgs {
-	followerId: Int!
-	followeeId: Int!
 }
 
 input CreatePostArgs {
@@ -621,7 +624,8 @@ input GetFollowingsArgs {
 input GetFeedArgs {
 	pageSize: Int! = 35
 	offset: Int!
-}`, BuiltIn: false},
+}
+`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
@@ -847,6 +851,50 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 
 // region    **************************** field.gotpl *****************************
 
+func (ec *executionContext) _AuthenticationOutput_userId(ctx context.Context, field graphql.CollectedField, obj *AuthenticationOutput) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AuthenticationOutput_userId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AuthenticationOutput_userId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AuthenticationOutput",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _AuthenticationOutput_jwt(ctx context.Context, field graphql.CollectedField, obj *AuthenticationOutput) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_AuthenticationOutput_jwt(ctx, field)
 	if err != nil {
@@ -930,6 +978,8 @@ func (ec *executionContext) fieldContext_Mutation_signup(ctx context.Context, fi
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
+			case "userId":
+				return ec.fieldContext_AuthenticationOutput_userId(ctx, field)
 			case "jwt":
 				return ec.fieldContext_AuthenticationOutput_jwt(ctx, field)
 			}
@@ -1856,6 +1906,8 @@ func (ec *executionContext) fieldContext_Query_signin(ctx context.Context, field
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
+			case "userId":
+				return ec.fieldContext_AuthenticationOutput_userId(ctx, field)
 			case "jwt":
 				return ec.fieldContext_AuthenticationOutput_jwt(ctx, field)
 			}
@@ -4248,40 +4300,6 @@ func (ec *executionContext) unmarshalInputCreatePostArgs(ctx context.Context, ob
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputFollowshipOperationArgs(ctx context.Context, obj interface{}) (FollowshipOperationArgs, error) {
-	var it FollowshipOperationArgs
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"followerId", "followeeId"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "followerId":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("followerId"))
-			data, err := ec.unmarshalNInt2int(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.FollowerID = data
-		case "followeeId":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("followeeId"))
-			data, err := ec.unmarshalNInt2int(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.FolloweeID = data
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputGetFeedArgs(ctx context.Context, obj interface{}) (GetFeedArgs, error) {
 	var it GetFeedArgs
 	asMap := map[string]interface{}{}
@@ -4621,6 +4639,11 @@ func (ec *executionContext) _AuthenticationOutput(ctx context.Context, sel ast.S
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("AuthenticationOutput")
+		case "userId":
+			out.Values[i] = ec._AuthenticationOutput_userId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "jwt":
 			out.Values[i] = ec._AuthenticationOutput_jwt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {

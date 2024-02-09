@@ -48,7 +48,7 @@ impl ProfilesRepository for PostgresAdapter {
     debug!("PostgreSQL database connection pool destroyed");
   }
 
-  #[instrument(skip(self), level = "debug")]
+  #[instrument(skip(self), level = "info")]
   async fn create(&self, args: &UserCreatedEvent) -> Result<()> {
     let client = self.getClient().await?;
 
@@ -81,7 +81,7 @@ impl ProfilesRepository for PostgresAdapter {
     }
   }
 
-  #[instrument(skip(self), level = "debug")]
+  #[instrument(skip(self), level = "info")]
   async fn getProfilePreviews(&self, ids: Vec<i32>) -> Result<Vec<ProfilePreview>> {
     let client = self.getClient().await?;
 

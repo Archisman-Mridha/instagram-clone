@@ -11,7 +11,7 @@ services:
       - POSTGRES_DB=instagram_clone
     ports:
       - 5432:5432
-    ## 'wal_level = logical' is the highest level of WAL logging.
+    # 'wal_level = logical' is the highest level of WAL logging.
     command:
       [
         "postgres",
@@ -79,11 +79,11 @@ services:
       - 29092:29092
     environment:
       - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
-      ## KRaft
+      # KRaft
       - KAFKA_CFG_NODE_ID=0
       - KAFKA_CFG_PROCESS_ROLES=controller,broker
       - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
-      ## Listeners
+      # Listeners
       - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,PLAINTEXT_HOST://:29092
       - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://:9092,PLAINTEXT_HOST://localhost:29092
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
@@ -110,41 +110,41 @@ services:
         condition: service_healthy
     command: |
       "
-      ## Wait until Kafka is reachable.
+      # Wait until Kafka is reachable.
       kafka-topics.sh --bootstrap-server kafka:9092 --list
 
       kafka-topics.sh --bootstrap-server kafka:9092 --create --if-not-exists --topic db-events.public.users --replication-factor 1 --partitions 2
       kafka-topics.sh --bootstrap-server kafka:9092 --create --if-not-exists --topic db-events.public.posts --replication-factor 1 --partitions 2
       "
 
-  ## Debezium is a set of distributed services to capture changes in your databases so that your
-  ## applications can see those changes and respond to them. Debezium is built on top of Apache
-  ## Kafka and provides a set of Kafka Connect compatible connectors. Connectors record the history
-  ## of data changes in the DBMS by detecting changes as they occur, and streaming a record of each
-  ## change event to a Kafka topic. Consuming applications can then read the resulting event records
-  ## from the Kafka topic.
-  ##
-  ## The first time it connects to a PostgreSQL server or cluster, the connector takes a consistent
-  ## snapshot of all schemas. After that snapshot is complete, the connector continuously captures
-  ## row-level changes that insert, update, and delete database content and that were committed to a
-  ## PostgreSQL database.
-  ##
-  ## The PostgreSQL connector contains two main parts that work together to read and process
-  ## database changes:
-  ##
-  ## 1. A logical decoding output plug-in. You might need to install the output plug-in that you
-  ##    choose to use. You must configure a replication slot that uses your chosen output plug-in
-  ##    before running the PostgreSQL server. The plug-in can be one of the following:
-  ##
-  ##    DECODERBUFS - based on Protobuf and maintained by the Debezium community.
-  ##
-  ##    PGOUTPUT - the standard logical decoding output plug-in in PostgreSQL 10+. It is maintained
-  ##    by the PostgreSQL community, and used by PostgreSQL itself for logical replication. This
-  ##    plug-in is always present so no additional libraries need to be installed.
-  ##
-  ## 2. Java code (the actual Kafka Connect connector) that reads the changes produced by the
-  ##    chosen logical decoding output plug-in. It uses PostgreSQL’s streaming replication protocol
-  ##    by means of the PostgreSQL JDBC driver.
+  # Debezium is a set of distributed services to capture changes in your databases so that your
+  # applications can see those changes and respond to them. Debezium is built on top of Apache
+  # Kafka and provides a set of Kafka Connect compatible connectors. Connectors record the history
+  # of data changes in the DBMS by detecting changes as they occur, and streaming a record of each
+  # change event to a Kafka topic. Consuming applications can then read the resulting event records
+  # from the Kafka topic.
+  #
+  # The first time it connects to a PostgreSQL server or cluster, the connector takes a consistent
+  # snapshot of all schemas. After that snapshot is complete, the connector continuously captures
+  # row-level changes that insert, update, and delete database content and that were committed to a
+  # PostgreSQL database.
+  #
+  # The PostgreSQL connector contains two main parts that work together to read and process
+  # database changes:
+  #
+  # 1. A logical decoding output plug-in. You might need to install the output plug-in that you
+  #    choose to use. You must configure a replication slot that uses your chosen output plug-in
+  #    before running the PostgreSQL server. The plug-in can be one of the following:
+  #
+  #    DECODERBUFS - based on Protobuf and maintained by the Debezium community.
+  #
+  #    PGOUTPUT - the standard logical decoding output plug-in in PostgreSQL 10+. It is maintained
+  #    by the PostgreSQL community, and used by PostgreSQL itself for logical replication. This
+  #    plug-in is always present so no additional libraries need to be installed.
+  #
+  # 2. Java code (the actual Kafka Connect connector) that reads the changes produced by the
+  #    chosen logical decoding output plug-in. It uses PostgreSQL’s streaming replication protocol
+  #    by means of the PostgreSQL JDBC driver.
   debezium:
     container_name: debezium
     image: debezium/connect:2.4
@@ -191,37 +191,37 @@ services:
       - debezium
       - postgres-migrate
 
-  ## flink-jobmanager:
-  ##   container_name: flink-jobmanager
-  ##   image: flink:latest
-  ##   ports:
-  ##     - "8081:8081"
-  ##   command: standalone-job --job-classname jobs.feeds_updater.Job
-  ##   environment:
-  ##     - |
-  ##       FLINK_PROPERTIES=
-  ##       jobmanager.rpc.address: flink-jobmanager
-  ##   volumes:
-  ##     - ./backend/flink/build/libs:/opt/flink/usrlib
-  ##   depends_on:
-  ##     - kafka-migrate
-  ##     - redis
+  # flink-jobmanager:
+  #   container_name: flink-jobmanager
+  #   image: flink:latest
+  #   ports:
+  #     - "8081:8081"
+  #   command: standalone-job --job-classname jobs.feeds_updater.Job
+  #   environment:
+  #     - |
+  #       FLINK_PROPERTIES=
+  #       jobmanager.rpc.address: flink-jobmanager
+  #   volumes:
+  #     - ./backend/flink/build/libs:/opt/flink/usrlib
+  #   depends_on:
+  #     - kafka-migrate
+  #     - redis
 
-  ## flink-taskmanager:
-  ##   container_name: flink-taskmanager
-  ##   image: flink:latest
-  ##   depends_on:
-  ##     - flink-jobmanager
-  ##   command: taskmanager
-  ##   scale: 1
-  ##   environment:
-  ##     - |
-  ##       FLINK_PROPERTIES=
-  ##       jobmanager.rpc.address: flink-jobmanager
-  ##       taskmanager.numberOfTaskSlots: 2
-  ##       parallelism.default: 2
-  ##   volumes:
-  ##     - ./backend/flink/build/libs:/opt/flink/usrlib
+  # flink-taskmanager:
+  #   container_name: flink-taskmanager
+  #   image: flink:latest
+  #   depends_on:
+  #     - flink-jobmanager
+  #   command: taskmanager
+  #   scale: 1
+  #   environment:
+  #     - |
+  #       FLINK_PROPERTIES=
+  #       jobmanager.rpc.address: flink-jobmanager
+  #       taskmanager.numberOfTaskSlots: 2
+  #       parallelism.default: 2
+  #   volumes:
+  #     - ./backend/flink/build/libs:/opt/flink/usrlib
 
   redis:
     container_name: redis
@@ -232,273 +232,273 @@ services:
     ports:
       - 6379:6379
 
-  ## --- OBSERVABILITY TOOLS ---
+  # --- OBSERVABILITY TOOLS ---
 
-  ## kafka-ui:
-  ##   container_name: kafka-ui
-  ##   image: provectuslabs/kafka-ui:latest
-  ##   ports:
-  ##     - 8080:8080
-  ##   depends_on:
-  ##     - kafka
-  ##   environment:
-  ##     KAFKA_CLUSTERS_0_NAME: default
-  ##     KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+  # kafka-ui:
+  #   container_name: kafka-ui
+  #   image: provectuslabs/kafka-ui:latest
+  #   ports:
+  #     - 8080:8080
+  #   depends_on:
+  #     - kafka
+  #   environment:
+  #     KAFKA_CLUSTERS_0_NAME: default
+  #     KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
 
-  ## debezium-ui:
-  ##   container_name: debezium-ui
-  ##   image: debezium/debezium-ui:2.1
-  ##   depends_on:
-  ##     debezium:
-  ##       condition: service_healthy
-  ##   ports:
-  ##     - 7080:8080
-  ##   environment:
-  ##     KAFKA_CONNECT_URIS: http://debezium:8083
+  # debezium-ui:
+  #   container_name: debezium-ui
+  #   image: debezium/debezium-ui:2.1
+  #   depends_on:
+  #     debezium:
+  #       condition: service_healthy
+  #   ports:
+  #     - 7080:8080
+  #   environment:
+  #     KAFKA_CONNECT_URIS: http://debezium:8083
 
-  kibana:
-    container_name: kibana
-    image: docker.elastic.co/kibana/kibana:8.11.1
-    ports:
-      - 5601:5601
-    environment:
-      - node.name=kibana
-      - cluster.name=main
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-      - ELASTICSEARCH_USERNAME=kibana_system
-      - ELASTICSEARCH_PASSWORD=pass
-      - discovery.type=single-node
-    depends_on:
-      - elasticsearch
+  # kibana:
+  #   container_name: kibana
+  #   image: docker.elastic.co/kibana/kibana:8.11.1
+  #   ports:
+  #     - 5601:5601
+  #   environment:
+  #     - node.name=kibana
+  #     - cluster.name=main
+  #     - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+  #     - ELASTICSEARCH_USERNAME=kibana_system
+  #     - ELASTICSEARCH_PASSWORD=pass
+  #     - discovery.type=single-node
+  #   depends_on:
+  #     - elasticsearch
 
-  prometheus:
-    container_name: prometheus
-    image: prom/prometheus
-    ports:
-      - 9090:9090
-    volumes:
-      - ./prometheus.dev-config.yaml:/etc/prometheus/prometheus.yml:ro
+  # prometheus:
+  #   container_name: prometheus
+  #   image: prom/prometheus
+  #   ports:
+  #     - 9090:9090
+  #   volumes:
+  #     - ./prometheus.dev-config.yaml:/etc/prometheus/prometheus.yml:ro
 
-  autometrics:
-    container_name: autometrics
-    image: autometrics/am-proxy
-    environment:
-      - PROMETHEUS_URL=http://prometheus:9090
-    ports:
-      - 6789:6789
+  # autometrics:
+  #   container_name: autometrics
+  #   image: autometrics/am-proxy
+  #   environment:
+  #     - PROMETHEUS_URL=http://prometheus:9090
+  #   ports:
+  #     - 6789:6789
 
   jaeger:
     container_name: jaeger
     image: jaegertracing/all-in-one:latest
     hostname: jaeger
     ports:
-      - 4317:4317 ## gRPC endpoint
-      - 16686:16686 ## UI dashboard endpoint
+      - 4317:4317 # gRPC endpoint
+      - 16686:16686 # UI dashboard endpoint
     environment:
       - COLLECTOR_OTLP_ENABLED=true
 
-  fluentd:
-    container_name: fluentd
-    hostname: fluentd
-    build:
-      context: ./backend/fluentd
-    platform: linux/amd64
-    volumes:
-      - ./backend/fluentd/fluent.conf:/fluentd/etc/fluent.conf:ro
-    depends_on:
-      - elasticsearch
-    ports:
-      - 24224:24224
-      - 24224:24224/udp
-    healthcheck:
-      test: curl --fail -s http://localhost:24224 || exit 1
-      interval: 30s
-      timeout: 30s
-      retries: 5
-      start_period: 30s
+  # fluentd:
+  #   container_name: fluentd
+  #   hostname: fluentd
+  #   build:
+  #     context: ./backend/fluentd
+  #   platform: linux/amd64
+  #   volumes:
+  #     - ./backend/fluentd/fluent.conf:/fluentd/etc/fluent.conf:ro
+  #   depends_on:
+  #     - elasticsearch
+  #   ports:
+  #     - 24224:24224
+  #     - 24224:24224/udp
+  #   healthcheck:
+  #     test: curl --fail -s http://localhost:24224 || exit 1
+  #     interval: 30s
+  #     timeout: 30s
+  #     retries: 5
+  #     start_period: 30s
 
-  ## --- MICROSERVICES ---
+  # --- MICROSERVICES ---
 
-  users-microservice:
-    container_name: users-microservice
-    build:
-      context: .
-      dockerfile: ./backend/microservices/users/Dockerfile
-    environment:
-      - JWT_SECRET=secret
-      ## gRPC
-      - GRPC_SERVER_PORT=4001
-      ## PostgreSQL
-      - POSTGRES_HOST=postgres
-      - POSTGRES_PORT=5432
-      - POSTGRES_USER=default
-      - POSTGRES_PASSWORD=pass
-      - POSTGRES_CONNECTION_POOL_SIZE=300
-      ## Prometheus
-      - METRICS_SERVER_PORT=5000
-      ## Jaeger
-      - JAEGER_COLLECTOR_URL=http://jaeger:4317
-    depends_on:
-      - postgres-migrate
-      - fluentd
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: localhost:24224
-        tag: users-microservice
+  # users-microservice:
+  #   container_name: users-microservice
+  #   build:
+  #     context: .
+  #     dockerfile: ./backend/microservices/users/Dockerfile
+  #   environment:
+  #     - JWT_SECRET=secret
+  #     # gRPC
+  #     - GRPC_SERVER_PORT=4001
+  #     # PostgreSQL
+  #     - POSTGRES_HOST=postgres
+  #     - POSTGRES_PORT=5432
+  #     - POSTGRES_USER=default
+  #     - POSTGRES_PASSWORD=pass
+  #     - POSTGRES_CONNECTION_POOL_SIZE=300
+  #     # Prometheus
+  #     - METRICS_SERVER_PORT=5000
+  #     # Jaeger
+  #     - JAEGER_COLLECTOR_URL=http://jaeger:4317
+  #   depends_on:
+  #     - postgres-migrate
+  #     - fluentd
+  #   logging:
+  #     driver: fluentd
+  #     options:
+  #       fluentd-address: localhost:24224
+  #       tag: users-microservice
 
-  profiles-microservice:
-    container_name: profiles-microservice
-    build:
-      context: .
-      dockerfile: ./backend/microservices/profiles/Dockerfile
-    environment:
-      ## gRPC
-      - GRPC_SERVER_PORT=4002
-      ## Elasticsearch
-      - ELASTICSEARCH_URL=http://elasticsearch:9200
-      - ELASTICSEARCH_USERNAME=kibana_system
-      - ELASTICSEARCH_PASSWORD=pass
-      ## Apache Kafka
-      - KAFKA_HOSTS=kafka:9092
-      ## PostgreSQL
-      - POSTGRES_HOST=postgres
-      - POSTGRES_PORT=5432
-      - POSTGRES_USER=default
-      - POSTGRES_PASSWORD=pass
-      - POSTGRES_CONNECTION_POOL_SIZE=300
-      ## Prometheus
-      - METRICS_SERVER_PORT=5000
-      ## Jaeger
-      - JAEGER_COLLECTOR_URL=http://jaeger:4317
-    depends_on:
-      - postgres-migrate
-      - kafka-migrate
-      - elasticsearch
-      - fluentd
-    restart: on-failure
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: localhost:24224
-        tag: profiles-microservice
+  # profiles-microservice:
+  #   container_name: profiles-microservice
+  #   build:
+  #     context: .
+  #     dockerfile: ./backend/microservices/profiles/Dockerfile
+  #   environment:
+  #     # gRPC
+  #     - GRPC_SERVER_PORT=4002
+  #     # Elasticsearch
+  #     - ELASTICSEARCH_URL=http://elasticsearch:9200
+  #     - ELASTICSEARCH_USERNAME=kibana_system
+  #     - ELASTICSEARCH_PASSWORD=pass
+  #     # Apache Kafka
+  #     - KAFKA_HOSTS=kafka:9092
+  #     # PostgreSQL
+  #     - POSTGRES_HOST=postgres
+  #     - POSTGRES_PORT=5432
+  #     - POSTGRES_USER=default
+  #     - POSTGRES_PASSWORD=pass
+  #     - POSTGRES_CONNECTION_POOL_SIZE=300
+  #     # Prometheus
+  #     - METRICS_SERVER_PORT=5000
+  #     # Jaeger
+  #     - JAEGER_COLLECTOR_URL=http://jaeger:4317
+  #   depends_on:
+  #     - postgres-migrate
+  #     - kafka-migrate
+  #     - elasticsearch
+  #     - fluentd
+  #   restart: on-failure
+  #   logging:
+  #     driver: fluentd
+  #     options:
+  #       fluentd-address: localhost:24224
+  #       tag: profiles-microservice
 
-  followships-microservice:
-    container_name: followships-microservice
-    build:
-      context: .
-      dockerfile: ./backend/microservices/followships/Dockerfile
-    environment:
-      ## gRPC
-      - GRPC_SERVER_PORT=4003
-      ## PostgreSQL
-      - POSTGRES_HOST=postgres
-      - POSTGRES_PORT=5432
-      - POSTGRES_USER=default
-      - POSTGRES_PASSWORD=pass
-      - POSTGRES_CONNECTION_POOL_SIZE=300
-      ## Prometheus
-      - METRICS_SERVER_PORT=5000
-      ## Jaeger
-      - JAEGER_COLLECTOR_URL=http://jaeger:4317
-    depends_on:
-      - postgres-migrate
-      - fluentd
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: localhost:24224
-        tag: followships-microservice
+  # followships-microservice:
+  #   container_name: followships-microservice
+  #   build:
+  #     context: .
+  #     dockerfile: ./backend/microservices/followships/Dockerfile
+  #   environment:
+  #     # gRPC
+  #     - GRPC_SERVER_PORT=4003
+  #     # PostgreSQL
+  #     - POSTGRES_HOST=postgres
+  #     - POSTGRES_PORT=5432
+  #     - POSTGRES_USER=default
+  #     - POSTGRES_PASSWORD=pass
+  #     - POSTGRES_CONNECTION_POOL_SIZE=300
+  #     # Prometheus
+  #     - METRICS_SERVER_PORT=5000
+  #     # Jaeger
+  #     - JAEGER_COLLECTOR_URL=http://jaeger:4317
+  #   depends_on:
+  #     - postgres-migrate
+  #     - fluentd
+  #   logging:
+  #     driver: fluentd
+  #     options:
+  #       fluentd-address: localhost:24224
+  #       tag: followships-microservice
 
-  posts-microservice:
-    container_name: posts-microservice
-    build:
-      context: .
-      dockerfile: ./backend/microservices/posts/Dockerfile
-    environment:
-      ## gRPC
-      - GRPC_SERVER_PORT=4004
-      ## PostgreSQL
-      - POSTGRES_HOST=postgres
-      - POSTGRES_PORT=5432
-      - POSTGRES_USER=default
-      - POSTGRES_PASSWORD=pass
-      - POSTGRES_CONNECTION_POOL_SIZE=300
-      ## Prometheus
-      - METRICS_SERVER_PORT=5000
-      ## Jaeger
-      - JAEGER_COLLECTOR_URL=http://jaeger:4317
-    depends_on:
-      - postgres-migrate
-      - fluentd
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: localhost:24224
-        tag: posts-microservice
+  # posts-microservice:
+  #   container_name: posts-microservice
+  #   build:
+  #     context: .
+  #     dockerfile: ./backend/microservices/posts/Dockerfile
+  #   environment:
+  #     # gRPC
+  #     - GRPC_SERVER_PORT=4004
+  #     # PostgreSQL
+  #     - POSTGRES_HOST=postgres
+  #     - POSTGRES_PORT=5432
+  #     - POSTGRES_USER=default
+  #     - POSTGRES_PASSWORD=pass
+  #     - POSTGRES_CONNECTION_POOL_SIZE=300
+  #     # Prometheus
+  #     - METRICS_SERVER_PORT=5000
+  #     # Jaeger
+  #     - JAEGER_COLLECTOR_URL=http://jaeger:4317
+  #   depends_on:
+  #     - postgres-migrate
+  #     - fluentd
+  #   logging:
+  #     driver: fluentd
+  #     options:
+  #       fluentd-address: localhost:24224
+  #       tag: posts-microservice
 
-  feeds-microservice:
-    container_name: feeds-microservice
-    build:
-      context: .
-      dockerfile: ./backend/microservices/feeds/Dockerfile
-    environment:
-      ## gRPC
-      - GRPC_SERVER_PORT=4005
-      ## PostgreSQL
-      - POSTGRES_HOST=postgres
-      - POSTGRES_PORT=5432
-      - POSTGRES_USER=default
-      - POSTGRES_PASSWORD=pass
-      - POSTGRES_CONNECTION_POOL_SIZE=300
-      ## Apache Kafka
-      - KAFKA_HOSTS=kafka:9092
-      ## Redis
-      - REDIS_URL=redis://:pass@redis:6379
-      ## Prometheus
-      - METRICS_SERVER_PORT=5000
-      ## Jaeger
-      - JAEGER_COLLECTOR_URL=http://jaeger:4317
-    depends_on:
-      - postgres-migrate
-      - kafka-migrate
-      - redis
-      - fluentd
-    restart: on-failure
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: localhost:24224
-        tag: feeds-microservice
+  # feeds-microservice:
+  #   container_name: feeds-microservice
+  #   build:
+  #     context: .
+  #     dockerfile: ./backend/microservices/feeds/Dockerfile
+  #   environment:
+  #     # gRPC
+  #     - GRPC_SERVER_PORT=4005
+  #     # PostgreSQL
+  #     - POSTGRES_HOST=postgres
+  #     - POSTGRES_PORT=5432
+  #     - POSTGRES_USER=default
+  #     - POSTGRES_PASSWORD=pass
+  #     - POSTGRES_CONNECTION_POOL_SIZE=300
+  #     # Apache Kafka
+  #     - KAFKA_HOSTS=kafka:9092
+  #     # Redis
+  #     - REDIS_URL=redis://:pass@redis:6379
+  #     # Prometheus
+  #     - METRICS_SERVER_PORT=5000
+  #     # Jaeger
+  #     - JAEGER_COLLECTOR_URL=http://jaeger:4317
+  #   depends_on:
+  #     - postgres-migrate
+  #     - kafka-migrate
+  #     - redis
+  #     - fluentd
+  #   restart: on-failure
+  #   logging:
+  #     driver: fluentd
+  #     options:
+  #       fluentd-address: localhost:24224
+  #       tag: feeds-microservice
 
-  gateway:
-    container_name: gateway
-    build:
-      context: .
-      dockerfile: ./backend/gateway/Dockerfile
-    environment:
-      - GRAPHQL_SERVER_PORT=4000
-      ## Microservices
-      - USERS_MICROSERVICE_URL=users-microservice:4001
-      - PROFILES_MICROSERVICE_URL=profiles-microservice:4002
-      - FOLLOWSHIPS_MICROSERVICE_URL=followships-microservice:4003
-      - POSTS_MICROSERVICE_URL=posts-microservice:4004
-      - FEEDS_MICROSERVICE_URL=feeds-microservice:4005
-      ## Prometheus
-      - METRICS_SERVER_PORT=5000
-      ## Jaeger
-      - JAEGER_COLLECTOR_URL=jaeger:4317
-    depends_on:
-      - users-microservice
-      - profiles-microservice
-      - followships-microservice
-      - posts-microservice
-      - feeds-microservice
-    ports:
-      - 4000:4000
-    restart: on-failure
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: localhost:24224
-        tag: gateway
+  # gateway:
+  #   container_name: gateway
+  #   build:
+  #     context: .
+  #     dockerfile: ./backend/gateway/Dockerfile
+  #   environment:
+  #     - GRAPHQL_SERVER_PORT=4000
+  #     # Microservices
+  #     - USERS_MICROSERVICE_URL=users-microservice:4001
+  #     - PROFILES_MICROSERVICE_URL=profiles-microservice:4002
+  #     - FOLLOWSHIPS_MICROSERVICE_URL=followships-microservice:4003
+  #     - POSTS_MICROSERVICE_URL=posts-microservice:4004
+  #     - FEEDS_MICROSERVICE_URL=feeds-microservice:4005
+  #     # Prometheus
+  #     - METRICS_SERVER_PORT=5000
+  #     # Jaeger
+  #     - JAEGER_COLLECTOR_URL=jaeger:4317
+  #   depends_on:
+  #     - users-microservice
+  #     - profiles-microservice
+  #     - followships-microservice
+  #     - posts-microservice
+  #     - feeds-microservice
+  #   ports:
+  #     - 4000:4000
+  #   restart: on-failure
+  #   logging:
+  #     driver: fluentd
+  #     options:
+  #       fluentd-address: localhost:24224
+  #       tag: gateway

@@ -19,6 +19,8 @@ import { registerApolloClient } from "@apollo/experimental-nextjs-app-support/rs
 export const getApolloClient = (jwt?: string) => {
 	return registerApolloClient(() => {
 		return new ApolloClient({
+			ssrMode: true,
+
 			/*
 				Apollo Client stores the results of your GraphQL queries in a local, normalized, in-memory
 				cache.
@@ -48,9 +50,24 @@ export const getApolloClient = (jwt?: string) => {
 				headers: jwt
 					? {
 							Authorization: `Bearer ${jwt}`
-						}
+					  }
 					: {}
-			})
+			}),
+
+			defaultOptions: {
+				query: {
+					fetchPolicy: "no-cache",
+					errorPolicy: "ignore"
+				},
+				watchQuery: {
+					fetchPolicy: "no-cache",
+					errorPolicy: "ignore"
+				},
+				mutate: {
+					fetchPolicy: "no-cache",
+					errorPolicy: "ignore"
+				}
+			}
 		})
 	}).getClient
 }

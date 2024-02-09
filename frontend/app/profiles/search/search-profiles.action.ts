@@ -3,11 +3,11 @@
 import { getApolloClient } from "@/lib/apollo-client"
 import {
 	ProfilePreview,
-	QuerySearchProfilesArgs,
 	SearchProfilesDocument,
-	SearchProfilesQuery
+	SearchProfilesQuery,
+	SearchProfilesQueryVariables
 } from "@/graphql/__generated__/generated"
-import { Result } from "@/lib/utils"
+import { Result, ServerErrorMessage } from "@/lib/utils"
 
 export async function searchProfilesHandler(
 	searchQuery: string,
@@ -18,17 +18,17 @@ export async function searchProfilesHandler(
 	try {
 		const { data: response, errors } = await apolloClient.query<
 			SearchProfilesQuery,
-			QuerySearchProfilesArgs
+			SearchProfilesQueryVariables
 		>({
 			query: SearchProfilesDocument,
 			variables: { args: { query: searchQuery } }
 		})
 
-		if (!response) return { Err: new Error("No data found in the response") }
-		else if (errors && errors.length > 0) return { Err: new Error(errors.join(" | ")) }
+		if (errors && errors.length > 0) return { Err: errors.join(" | ") }
+		else if (!response) throw new Error("No data found in the response")
 
 		return { Ok: response.searchProfiles.profilePreviews as ProfilePreview[] }
 	} catch (error) {
-		return { Err: new Error("Server error occurred") }
+		return { Err: ServerErrorMessage }
 	}
 }

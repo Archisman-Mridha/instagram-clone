@@ -52,7 +52,7 @@ impl FollowshipsRepository for PostgresAdapter {
     debug!("PostgreSQL database connection pool destroyed");
   }
 
-  #[instrument(skip(self), level = "debug")]
+  #[instrument(skip(self), level = "info")]
   async fn create(&self, args: &FollowshipOperationRequest) -> Result<()> {
     let client = self.getClient().await?;
 
@@ -63,9 +63,11 @@ impl FollowshipsRepository for PostgresAdapter {
       .map_err(toServerError)
   }
 
-  #[instrument(skip(self), level = "debug")]
+  #[instrument(skip(self), level = "info")]
   async fn delete(&self, args: &FollowshipOperationRequest) -> Result<()> {
     let client = self.getClient().await?;
+
+    println!("{:#?}", args);
 
     delete()
       .bind(&client, &args.follower_id, &args.followee_id)
@@ -74,7 +76,7 @@ impl FollowshipsRepository for PostgresAdapter {
       .map_err(toServerError)
   }
 
-  #[instrument(skip(self), level = "debug")]
+  #[instrument(skip(self), level = "info")]
   async fn exists(&self, args: &DoesFollowshipExistRequest) -> Result<bool> {
     let client = self.getClient().await?;
 
@@ -97,7 +99,7 @@ impl FollowshipsRepository for PostgresAdapter {
     }
   }
 
-  #[instrument(skip(self), level = "debug")]
+  #[instrument(skip(self), level = "info")]
   async fn getFollowers(&self, args: &GetFollowersRequest) -> Result<Vec<i32>> {
     let client = self.getClient().await?;
 
@@ -108,7 +110,7 @@ impl FollowshipsRepository for PostgresAdapter {
       .map_err(toServerError)
   }
 
-  #[instrument(skip(self), level = "debug")]
+  #[instrument(skip(self), level = "info")]
   async fn getFollowings(&self, args: &GetFollowingsRequest) -> Result<Vec<i32>> {
     let client = self.getClient().await?;
 
@@ -119,7 +121,7 @@ impl FollowshipsRepository for PostgresAdapter {
       .map_err(toServerError)
   }
 
-  #[instrument(skip(self), level = "debug")]
+  #[instrument(skip(self), level = "info")]
   async fn getFollowshipCounts(&self, userId: i32) -> Result<GetFollowshipCountsResponse> {
     let client = self.getClient().await?;
 

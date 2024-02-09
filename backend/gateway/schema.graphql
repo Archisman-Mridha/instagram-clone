@@ -66,6 +66,7 @@ input SigninArgs {
 }
 
 type AuthenticationOutput {
+	userId: Int!
 	jwt: String!
 }
 
@@ -75,11 +76,6 @@ input SearchProfilesArgs {
 
 type SearchProfilesOutput {
 	profilePreviews: [ProfilePreview]!
-}
-
-input FollowshipOperationArgs {
-	followerId: Int!
-	followeeId: Int!
 }
 
 input CreatePostArgs {

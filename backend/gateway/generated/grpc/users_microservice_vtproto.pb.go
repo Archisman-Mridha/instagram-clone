@@ -68,7 +68,8 @@ func (m *AuthenticationResponse) CloneVT() *AuthenticationResponse {
 		return (*AuthenticationResponse)(nil)
 	}
 	r := &AuthenticationResponse{
-		Jwt: m.Jwt,
+		UserId: m.UserId,
+		Jwt:    m.Jwt,
 	}
 	if len(m.unknownFields) > 0 {
 		r.unknownFields = make([]byte, len(m.unknownFields))
@@ -171,6 +172,9 @@ func (this *AuthenticationResponse) EqualVT(that *AuthenticationResponse) bool {
 	if this == that {
 		return true
 	} else if this == nil || that == nil {
+		return false
+	}
+	if this.UserId != that.UserId {
 		return false
 	}
 	if this.Jwt != that.Jwt {
@@ -567,7 +571,12 @@ func (m *AuthenticationResponse) MarshalToSizedBufferVT(dAtA []byte) (int, error
 		copy(dAtA[i:], m.Jwt)
 		i = encodeVarint(dAtA, i, uint64(len(m.Jwt)))
 		i--
-		dAtA[i] = 0xa
+		dAtA[i] = 0x12
+	}
+	if m.UserId != 0 {
+		i = encodeVarint(dAtA, i, uint64(m.UserId))
+		i--
+		dAtA[i] = 0x8
 	}
 	return len(dAtA) - i, nil
 }
@@ -793,7 +802,12 @@ func (m *AuthenticationResponse) MarshalToSizedBufferVTStrict(dAtA []byte) (int,
 		copy(dAtA[i:], m.Jwt)
 		i = encodeVarint(dAtA, i, uint64(len(m.Jwt)))
 		i--
-		dAtA[i] = 0xa
+		dAtA[i] = 0x12
+	}
+	if m.UserId != 0 {
+		i = encodeVarint(dAtA, i, uint64(m.UserId))
+		i--
+		dAtA[i] = 0x8
 	}
 	return len(dAtA) - i, nil
 }
@@ -926,6 +940,9 @@ func (m *AuthenticationResponse) SizeVT() (n int) {
 	}
 	var l int
 	_ = l
+	if m.UserId != 0 {
+		n += 1 + sov(uint64(m.UserId))
+	}
 	l = len(m.Jwt)
 	if l > 0 {
 		n += 1 + l + sov(uint64(l))
@@ -1285,6 +1302,25 @@ func (m *AuthenticationResponse) UnmarshalVT(dAtA []byte) error {
 		}
 		switch fieldNum {
 		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UserId", wireType)
+			}
+			m.UserId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.UserId |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Jwt", wireType)
 			}

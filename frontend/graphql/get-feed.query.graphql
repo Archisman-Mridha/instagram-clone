@@ -1,0 +1,8 @@
+query GetFeed($args: GetFeedArgs!) {
+	getFeed(args: $args) {
+		id
+		ownerId
+		description
+		createdAt
+	}
+}

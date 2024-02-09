@@ -7,6 +7,8 @@ query GetProfile($args: GetProfileArgs!) {
 		followerCount
 		followingCount
 
+		isFollowee
+
 		recentPosts {
 			id
 

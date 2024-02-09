@@ -20,7 +20,7 @@ pub struct Usecases {
 
 impl Usecases {
   pub async fn signup(&self, args: &SignupRequest) -> Result<AuthenticationResponse> {
-    let id = self
+    let userId = self
       .usersRepository
       .create(CreateArgs {
         name: &args.name,
@@ -30,8 +30,11 @@ impl Usecases {
       })
       .await?;
 
-    let jwt = createJwt(id)?;
-    Ok(AuthenticationResponse { jwt })
+    let jwt = createJwt(userId.to_string())?;
+    Ok(AuthenticationResponse {
+      user_id: userId,
+      jwt,
+    })
   }
 
   pub async fn signin(&self, args: &SigninRequest) -> Result<AuthenticationResponse> {
@@ -53,8 +56,13 @@ impl Usecases {
       return Err(anyhow!(WRONG_PASSWORD_ERROR));
     }
 
-    let jwt = createJwt(userDetails.id)?;
-    Ok(AuthenticationResponse { jwt })
+    let userId = userDetails.id;
+
+    let jwt = createJwt(userId.to_string())?;
+    Ok(AuthenticationResponse {
+      user_id: userId,
+      jwt,
+    })
   }
 
   pub async fn verifyJwt(&self, jwt: &str) -> Result<i32> {
@@ -62,8 +70,6 @@ impl Usecases {
       .parse()
       .map_err(|_| anyhow!("Jwt is invalid"))?;
 
-    // TODO: When creating a JWT, include the user's hashed password in it. So here, during JWT
-    // verification, we can also verify the user's hashed password.
     let _ = self.usersRepository.findById(userId).await?;
 
     Ok(userId)

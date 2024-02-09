@@ -49,8 +49,8 @@ impl UsersRepository for PostgresAdapter {
     debug!("PostgreSQL database connection pool destroyed");
   }
 
-  #[instrument(skip(self), level = "debug")]
-  async fn create<'create>(&self, args: CreateArgs<'create>) -> Result<String> {
+  #[instrument(skip(self), level = "info")]
+  async fn create<'create>(&self, args: CreateArgs<'create>) -> Result<i32> {
     let client = self.getClient().await?;
 
     let result = create()
@@ -69,7 +69,7 @@ impl UsersRepository for PostgresAdapter {
     result
       .map(|id| {
         info!("New user created with id {} and details : {:?}", id, args);
-        id.to_string()
+        id
       })
       .map_err(|error| {
         let error = error.to_string();
@@ -92,7 +92,7 @@ impl UsersRepository for PostgresAdapter {
       })
   }
 
-  #[instrument(skip(self), level = "debug")]
+  #[instrument(skip(self), level = "info")]
   async fn findByEmail(&self, email: &str) -> Result<FindByOutput> {
     let client = self.getClient().await?;
 
@@ -100,7 +100,7 @@ impl UsersRepository for PostgresAdapter {
 
     result
       .map(|value| FindByOutput {
-        id: value.id.to_string(),
+        id: value.id,
         hashedPassword: value.password.to_string(),
       })
       .map_err(|error| {
@@ -115,7 +115,7 @@ impl UsersRepository for PostgresAdapter {
       })
   }
 
-  #[instrument(skip(self), level = "debug")]
+  #[instrument(skip(self), level = "info")]
   async fn findByUsername(&self, username: &str) -> Result<FindByOutput> {
     let client = self.getClient().await?;
 
@@ -123,7 +123,7 @@ impl UsersRepository for PostgresAdapter {
 
     result
       .map(|value| FindByOutput {
-        id: value.id.to_string(),
+        id: value.id,
         hashedPassword: value.password.to_string(),
       })
       .map_err(|error| {
@@ -138,7 +138,7 @@ impl UsersRepository for PostgresAdapter {
       })
   }
 
-  #[instrument(skip(self), level = "debug")]
+  #[instrument(skip(self), level = "info")]
   async fn findById(&self, id: i32) -> Result<FindByOutput> {
     let client = self.getClient().await?;
 
@@ -146,7 +146,7 @@ impl UsersRepository for PostgresAdapter {
 
     result
       .map(|value| FindByOutput {
-        id: value.id.to_string(),
+        id: value.id,
         hashedPassword: value.password.to_string(),
       })
       .map_err(|error| {

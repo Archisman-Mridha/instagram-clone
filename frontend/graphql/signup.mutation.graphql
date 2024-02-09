@@ -1,5 +1,6 @@
 mutation Signup($args: SignupArgs!) {
 	signup(args: $args) {
+		userId
 		jwt
 	}
 }

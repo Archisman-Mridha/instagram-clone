@@ -44,7 +44,7 @@ impl FollowshipsRepository for PostgresAdapter {
     debug!("PostgreSQL database connection pool destroyed");
   }
 
-  #[instrument(skip(self), level = "debug")]
+  #[instrument(skip(self), level = "info")]
   async fn getAllFollowers(&self, userId: i32) -> Result<Vec<i32>> {
     let client = self.getClient().await?;
 

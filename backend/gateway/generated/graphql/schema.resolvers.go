@@ -7,9 +7,10 @@ package graphql_generated
 import (
 	"context"
 
+	"golang.org/x/sync/errgroup"
+
 	grpc_generated "github.com/Archisman-Mridha/instagram-clone/backend/gateway/generated/grpc"
 	"github.com/Archisman-Mridha/instagram-clone/backend/gateway/utils"
-	"golang.org/x/sync/errgroup"
 )
 
 func (r *mutationResolver) Signup(ctx context.Context, args SignupArgs) (*AuthenticationOutput, error) {
@@ -27,7 +28,7 @@ func (r *mutationResolver) Signup(ctx context.Context, args SignupArgs) (*Authen
 		return nil, err
 	}
 
-	return &AuthenticationOutput{Jwt: response.Jwt}, nil
+	return &AuthenticationOutput{UserID: int(response.UserId), Jwt: response.Jwt}, nil
 }
 
 func (r *mutationResolver) Follow(ctx context.Context, followeeID int) (*bool, error) {
@@ -37,6 +38,10 @@ func (r *mutationResolver) Follow(ctx context.Context, followeeID int) (*bool, e
 	userId, isUserAuthenticated := ctx.Value(utils.USER_ID_CONTEXT_KEY).(int32)
 	if !isUserAuthenticated {
 		return nil, utils.ErrUnauthenticated
+	}
+
+	if userId == int32(followeeID) {
+		return nil, nil
 	}
 
 	_, err := r.FollowshipsMicroservice.Follow(ctx, &grpc_generated.FollowshipOperationRequest{
@@ -107,7 +112,7 @@ func (r *queryResolver) Signin(ctx context.Context, args SigninArgs) (*Authentic
 		return nil, err
 	}
 
-	return &AuthenticationOutput{Jwt: response.Jwt}, nil
+	return &AuthenticationOutput{UserID: int(response.UserId), Jwt: response.Jwt}, nil
 }
 
 func (r *queryResolver) SearchProfiles(ctx context.Context, args SearchProfilesArgs) (*SearchProfilesOutput, error) {
@@ -309,6 +314,10 @@ func (r *queryResolver) GetFeed(ctx context.Context, args GetFeedArgs) ([]*Post,
 	userId, isUserAuthenticated := ctx.Value(utils.USER_ID_CONTEXT_KEY).(int32)
 	if !isUserAuthenticated {
 		return nil, utils.ErrUnauthenticated
+	}
+
+	if args.PageSize == 0 {
+		return []*Post{}, nil
 	}
 
 	getFeedResponse, err := r.FeedsMicroservice.GetFeed(ctx, &grpc_generated.GetFeedRequest{

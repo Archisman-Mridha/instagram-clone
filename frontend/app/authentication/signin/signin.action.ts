@@ -2,23 +2,29 @@
 
 import { getApolloClient } from "@/lib/apollo-client"
 import { SigninFormSchema } from "./signin-form.component"
-import { QuerySigninArgs, SigninDocument, SigninQuery } from "@/graphql/__generated__/generated"
-import { Result } from "@/lib/utils"
+import {
+	SigninDocument,
+	SigninQuery,
+	SigninQueryVariables
+} from "@/graphql/__generated__/generated"
+import { Result, ServerErrorMessage } from "@/lib/utils"
 
-export async function signinHandler(data: SigninFormSchema): Promise<Result<string>> {
+export async function signinHandler(
+	data: SigninFormSchema
+): Promise<Result<SigninQuery["signin"]>> {
 	const apolloClient = getApolloClient()()
 
 	try {
-		const { data: response, errors } = await apolloClient.query<SigninQuery, QuerySigninArgs>({
+		const { data: response, errors } = await apolloClient.query<SigninQuery, SigninQueryVariables>({
 			query: SigninDocument,
 			variables: { args: data }
 		})
 
-		if (!response) return { Err: new Error("No data found in the response") }
-		else if (errors && errors.length > 0) return { Err: new Error(errors.join(" | ")) }
+		if (errors && errors.length > 0) return { Err: errors.join(" | ") }
+		else if (!response) throw new Error("No data found in the response")
 
-		return { Ok: response.signin.jwt }
+		return { Ok: response.signin }
 	} catch (error) {
-		return { Err: new Error("Server error occurred") }
+		return { Err: ServerErrorMessage }
 	}
 }

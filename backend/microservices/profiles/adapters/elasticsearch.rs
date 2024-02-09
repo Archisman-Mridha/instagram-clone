@@ -56,7 +56,7 @@ impl ElasticsearchAdapter {
     Self { client }
   }
 
-  #[instrument(skip(self), level = "debug")]
+  #[instrument(skip(self), level = "info")]
   pub async fn indexProfile(&self, args: UserCreatedEvent) -> Result<()> {
     let id = &args.id.to_string();
 
@@ -76,7 +76,7 @@ impl ElasticsearchAdapter {
       .map_err(toServerError)
   }
 
-  #[instrument(skip(self), level = "debug")]
+  #[instrument(skip(self), level = "info")]
   pub async fn searchProfiles(&self, query: &str) -> Result<Vec<ProfilePreview>> {
     let response = self
       .client

@@ -47,7 +47,7 @@ impl PostsRepository for PostgresAdapter {
     debug!("PostgreSQL database connection pool destroyed");
   }
 
-  #[instrument(skip(self), level = "debug")]
+  #[instrument(skip(self), level = "info")]
   async fn create(&self, args: &CreatePostRequest) -> Result<i32> {
     let client = self.getClient().await?;
 
@@ -62,7 +62,7 @@ impl PostsRepository for PostgresAdapter {
       .map_err(toServerError)
   }
 
-  #[instrument(skip(self), level = "debug")]
+  #[instrument(skip(self), level = "info")]
   async fn getPostsOfUser(&self, args: &GetPostsOfUserRequest) -> Result<Vec<Post>> {
     let client = self.getClient().await?;
 
@@ -84,7 +84,7 @@ impl PostsRepository for PostgresAdapter {
     )
   }
 
-  #[instrument(skip(self), level = "debug")]
+  #[instrument(skip(self), level = "info")]
   async fn getPosts(&self, postIds: Vec<i32>) -> Result<Vec<Post>> {
     let client = self.getClient().await?;
 

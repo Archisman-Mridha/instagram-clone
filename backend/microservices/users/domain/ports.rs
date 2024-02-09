@@ -3,7 +3,7 @@ use async_trait::async_trait;
 
 #[async_trait]
 pub trait UsersRepository: Sync + Send {
-  async fn create<'create>(&self, args: CreateArgs<'create>) -> Result<String>;
+  async fn create<'create>(&self, args: CreateArgs<'create>) -> Result<i32>;
 
   async fn findByEmail(&self, email: &str) -> Result<FindByOutput>;
   async fn findByUsername(&self, username: &str) -> Result<FindByOutput>;
@@ -22,6 +22,6 @@ pub struct CreateArgs<'createArgs> {
 
 #[derive(Debug)]
 pub struct FindByOutput {
-  pub id: String,
+  pub id: i32,
   pub hashedPassword: String,
 }
