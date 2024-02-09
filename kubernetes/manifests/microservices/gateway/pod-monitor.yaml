@@ -10,12 +10,12 @@ spec:
       - microservices
   selector:
     matchLabels:
-      microservice: gateway-microservice
+      app: gateway-microservice
 
   # Defines the labels which are transferred from the associated Kubernetes Pod object onto the
   # ingested metrics.
   podTargetLabels:
-    - microservice
+    - app
 
   # List of endpoints part of this PodMonitor.
   podMetricsEndpoints:

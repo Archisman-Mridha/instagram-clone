@@ -24,3 +24,7 @@ resources:
   - gateway/application.yaml
   - gateway/sealed-secret.yaml
   - gateway/pod-monitor.yaml
+
+  - frontend/application.yaml
+  - frontend/sealed-secret.yaml
+  - frontend/pod-monitor.yaml

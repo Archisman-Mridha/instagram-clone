@@ -127,6 +127,13 @@ jobs:
                 - backend/gateway/**
                 - go.work.sum
 
+          - name: frontend
+            path: frontend
+            manifest: kubernetes/manifests/microservices/frontend/application.yaml
+            path_filters: |
+              changed:
+                - frontend/**
+
           - name: application-controller
             path: kubernetes/operators/application
             manifest: kubernetes/manifests/application-controller/deployment.yaml
