@@ -34,7 +34,7 @@ anyhow = "1.0.78"
 argon2 = "0.5.2"
 async-trait = "0.1.76"
 autometrics = { version = "1.0.0", features = ["prometheus-exporter"] }
-axum = { version = "0.6", features = ["http2"], default-features = false }
+axum = { version = "0.7", features = ["http2"], default-features = false }
 chrono = "0.4.31"
 cornucopia_async = "0.4.0"
 deadpool-postgres = "0.10.0"
