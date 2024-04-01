@@ -37,7 +37,7 @@ autometrics = { version = "1.0.0", features = ["prometheus-exporter"] }
 axum = { version = "0.6", features = ["http2"], default-features = false }
 chrono = "0.4.31"
 cornucopia_async = "0.4.0"
-deadpool-postgres = "0.10.0"
+deadpool-postgres = "0.13.0"
 derive_more = { version = "0.99.17", default-features = false, features = ["constructor"] }
 dotenv = "0.15.0"
 elasticsearch = { version = "8.5.0-alpha.1", default-features = false }
