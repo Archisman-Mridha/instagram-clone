@@ -332,6 +332,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "console"
+version = "0.15.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0e1f83fc076bd6dd27517eacdf25fef6c4dfe5f1d7448bafaaf3a26f13b5e4eb"
+dependencies = [
+ "encode_unicode",
+ "lazy_static",
+ "libc",
+ "unicode-width",
+ "windows-sys 0.52.0",
+]
+
+[[package]]
 name = "core-foundation"
 version = "0.9.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -355,7 +368,7 @@ checksum = "38063b8553edf452cccc674f07b3b5e3144a24712e46647bfc357040f25fdc12"
 dependencies = [
  "async-trait",
  "cornucopia_client_core",
- "deadpool-postgres",
+ "deadpool-postgres 0.10.5",
  "tokio-postgres",
 ]
 
@@ -499,15 +512,39 @@ dependencies = [
 ]
 
 [[package]]
+name = "deadpool"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8c380a837cb8cb747898b1be7fa5ba5b871eb1210f8881d6512946c132617f80"
+dependencies = [
+ "console",
+ "deadpool-runtime",
+ "num_cpus",
+ "tokio",
+]
+
+[[package]]
 name = "deadpool-postgres"
 version = "0.10.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "836a24a9d49deefe610b8b60c767a7412e9a931d79a89415cd2d2d71630ca8d7"
 dependencies = [
- "deadpool",
+ "deadpool 0.9.5",
  "log",
  "tokio",
  "tokio-postgres",
+]
+
+[[package]]
+name = "deadpool-postgres"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4aa08f5c838496cbabb672e3614534444145fc6632995f102e13d30a29a25a13"
+dependencies = [
+ "deadpool 0.11.0",
+ "tokio",
+ "tokio-postgres",
+ "tracing",
 ]
 
 [[package]]
@@ -599,6 +636,12 @@ dependencies = [
  "url",
  "void",
 ]
+
+[[package]]
+name = "encode_unicode"
+version = "0.3.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a357d28ed41a50f9c765dbfe56cbc04a64e53e5fc58ba79fbc34c10ef3df831f"
 
 [[package]]
 name = "encoding_rs"
@@ -1038,7 +1081,7 @@ dependencies = [
  "axum",
  "chrono",
  "cornucopia_async",
- "deadpool-postgres",
+ "deadpool-postgres 0.13.0",
  "derive_more",
  "dotenv",
  "elasticsearch",
@@ -2867,6 +2910,12 @@ checksum = "5c5713f0fc4b5db668a2ac63cdb7bb4469d8c9fed047b1d0292cc7b0ce2ba921"
 dependencies = [
  "tinyvec",
 ]
+
+[[package]]
+name = "unicode-width"
+version = "0.1.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e51733f11c9c4f72aa0c160008246859e340b00807569a0da0e7a1079b27ba85"
 
 [[package]]
 name = "untrusted"
