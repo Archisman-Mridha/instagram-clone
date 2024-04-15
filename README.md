@@ -6,16 +6,16 @@ Welcome to the `Instagram Clone` project, which aims to replicate the core funct
 
 > How to build and deploy fault tolerant distributed systems.
 
-## Future Plans
+# Future Plans
 
 - [ ] Write tests for the backend.
   > A blog by SemaphoreCI on `Testing Strategies For Microservices` - https://semaphoreci.com/blog/test-microservices
 
-## Getting involved
+# Getting involved
 
 If you encounter any bugs, have feature requests, or just want to discuss about the project, please open an issue.
 
-## References
+# References
 
 - [Microservices Patterns](https://www.oreilly.com/library/view/microservices-patterns/9781617294549/) book by Chris Richardson
 - [Jordan has no life](https://www.youtube.com/@jordanhasnolife5163)'s Youtube video on [how to design a social media platform like Instagram](https://www.youtube.com/watch?v=S2y9_XYOZsg&pp=ygUqam9yZGFuIGhhcyBubyBsaWZlIGluc3RhZ3JhbSBzeXN0ZW0gZGVzaWdu)

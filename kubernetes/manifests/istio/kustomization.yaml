@@ -1,83 +1,83 @@
 resources:
   - namespace.yaml
 
-  ## Grafana dashboards for integration with Istio. Istio offers a set of preconfigured dashboards
-  ## for all of the most important metrics for the mesh and for the control plane.
+  # Grafana dashboards for integration with Istio. Istio offers a set of preconfigured dashboards
+  # for all of the most important metrics for the mesh and for the control plane.
   - https://raw.githubusercontent.com/Archisman-Mridha/istio-grafana-dashboards/main/dashboards.configmaps.yaml
 
 helmCharts:
 
-  ## The Istio base helm chart installs all the CRDs.
+  # The Istio base helm chart installs all the CRDs.
   - repo: https://istio-release.storage.googleapis.com/charts
     name: base
     releaseName: istio-base
     version: 1.20.0-rc.0
     namespace: istio-system
 
-  ## An Istio service mesh is logically split into a data plane and a control plane.
-  ## The data plane is composed of a set of intelligent Envoy proxies deployed as sidecars. These
-  ## proxies mediate and control all network communication between microservices. They also collect
-  ## and report telemetry on all mesh traffic.
-  ## The control plane manages and configures the proxies to route traffic.
+  # An Istio service mesh is logically split into a data plane and a control plane.
+  # The data plane is composed of a set of intelligent Envoy proxies deployed as sidecars. These
+  # proxies mediate and control all network communication between microservices. They also collect
+  # and report telemetry on all mesh traffic.
+  # The control plane manages and configures the proxies to route traffic.
 
-  ## Istiod provides service discovery, configuration and certificate management.
-  ##
-  ## Istiod converts high level routing rules that control traffic behavior into Envoy-specific
-  ## configurations, and propagates them to the sidecars at runtime. Pilot (a component inside
-  ## Istiod) abstracts platform-specific service discovery mechanisms and synthesizes them into a
-  ## standard format that any sidecar conforming with the Envoy API can consume.
-  ##
-  ## Istiod security enables strong service-to-service and end-user authentication with built-in
-  ## identity and credential management. You can use Istio to upgrade unencrypted traffic in the
-  ## service mesh. Using Istio, operators can enforce policies based on service identity rather than
-  ## on relatively unstable layer 3 or layer 4 network identifiers. Additionally, you can use
-  ## Istio’s authorization feature to control who can access your services.
-  ##
-  ## Istiod acts as a Certificate Authority (CA) and generates certificates to allow secure mTLS
-  ## communication in the data plane.
+  # Istiod provides service discovery, configuration and certificate management.
+  #
+  # Istiod converts high level routing rules that control traffic behavior into Envoy-specific
+  # configurations, and propagates them to the sidecars at runtime. Pilot (a component inside
+  # Istiod) abstracts platform-specific service discovery mechanisms and synthesizes them into a
+  # standard format that any sidecar conforming with the Envoy API can consume.
+  #
+  # Istiod security enables strong service-to-service and end-user authentication with built-in
+  # identity and credential management. You can use Istio to upgrade unencrypted traffic in the
+  # service mesh. Using Istio, operators can enforce policies based on service identity rather than
+  # on relatively unstable layer 3 or layer 4 network identifiers. Additionally, you can use
+  # Istio’s authorization feature to control who can access your services.
+  #
+  # Istiod acts as a Certificate Authority (CA) and generates certificates to allow secure mTLS
+  # communication in the data plane.
   - repo: https://istio-release.storage.googleapis.com/charts
     name: istiod
     releaseName: istiod
     version: 1.20.0-rc.0
     namespace: istio-system
 
-  ## In order to take advantage of all of Istio’s features, pods in the mesh must be running an
-  ## Istio sidecar proxy. We can enable automatic Istio sidecar injection in a namespace. Automatic
-  ## injection injects the proxy configuration at pod creation time using an admission controller.
-  ## When you set the 'istio-injection=enabled' label on a namespace and the injection webhook is
-  ## enabled, any new pods that are created in that namespace will automatically have a sidecar
-  ## added to them.
+  # In order to take advantage of all of Istio’s features, pods in the mesh must be running an
+  # Istio sidecar proxy. We can enable automatic Istio sidecar injection in a namespace. Automatic
+  # injection injects the proxy configuration at pod creation time using an admission controller.
+  # When you set the 'istio-injection=enabled' label on a namespace and the injection webhook is
+  # enabled, any new pods that are created in that namespace will automatically have a sidecar
+  # added to them.
 
-  ## METRICS MONITORING
-  ##
-  ## In an Istio mesh, each component exposes an endpoint that emits metrics. Prometheus works by
-  ## scraping these endpoints and collecting the results. This is configured through the Prometheus
-  ## configuration file which controls settings for which endpoints to query, the port and path to
-  ## query, TLS settings, and more.
-  ## To simplify configuration, Istio has the ability to control scraping entirely by 'prometheus.io'
-  ## annotations. This allows Istio scraping to work out of the box with standard configurations (
-  ## enabled by default). Appropriate prometheus.io annotations will be added to all data plane pods
-  ## to set up scraping. With this option, the Envoy sidecar will merge Istio’s metrics with the
-  ## application metrics. The merged metrics will be scraped from ':15020/stats/prometheus'.
-  ## The control plane, gateway, and Envoy sidecar metrics will all be scraped over cleartext.
-  ## However, the application metrics will follow whatever Istio configuration has been configured
-  ## for the workload. In particular, if Strict mTLS is enabled, then Prometheus will need to be
-  ## configured to scrape using Istio certificates.
-  ##
-  ## Istio offers a set of preconfigured Grafana dashboards for all of the most important metrics
-  ## for the mesh and for the control plane.
+  # METRICS MONITORING
+  #
+  # In an Istio mesh, each component exposes an endpoint that emits metrics. Prometheus works by
+  # scraping these endpoints and collecting the results. This is configured through the Prometheus
+  # configuration file which controls settings for which endpoints to query, the port and path to
+  # query, TLS settings, and more.
+  # To simplify configuration, Istio has the ability to control scraping entirely by 'prometheus.io'
+  # annotations. This allows Istio scraping to work out of the box with standard configurations (
+  # enabled by default). Appropriate prometheus.io annotations will be added to all data plane pods
+  # to set up scraping. With this option, the Envoy sidecar will merge Istio’s metrics with the
+  # application metrics. The merged metrics will be scraped from ':15020/stats/prometheus'.
+  # The control plane, gateway, and Envoy sidecar metrics will all be scraped over cleartext.
+  # However, the application metrics will follow whatever Istio configuration has been configured
+  # for the workload. In particular, if Strict mTLS is enabled, then Prometheus will need to be
+  # configured to scrape using Istio certificates.
+  #
+  # Istio offers a set of preconfigured Grafana dashboards for all of the most important metrics
+  # for the mesh and for the control plane.
 
-  ## DISTRIBUTED TRACING
-  ##
-  ## Istio leverages Envoy’s distributed tracing feature to provide tracing integration out of the
-  ## box. Specifically, Istio provides options to install various tracing backends and configure
-  ## proxies to send trace spans to them automatically. Although Istio proxies can automatically
-  ## send spans, extra information is needed to join those spans into a single trace. Applications
-  ## must propagate this information in HTTP headers, so that when proxies send spans, the backend
-  ## can join them together into a single trace.
+  # DISTRIBUTED TRACING
+  #
+  # Istio leverages Envoy’s distributed tracing feature to provide tracing integration out of the
+  # box. Specifically, Istio provides options to install various tracing backends and configure
+  # proxies to send trace spans to them automatically. Although Istio proxies can automatically
+  # send spans, extra information is needed to join those spans into a single trace. Applications
+  # must propagate this information in HTTP headers, so that when proxies send spans, the backend
+  # can join them together into a single trace.
 
-  ## Kiali is an observability console for Istio. It helps you understand the structure and health
-  ## of your service mesh by monitoring traffic flow to infer the topology and report errors.
+  # Kiali is an observability console for Istio. It helps you understand the structure and health
+  # of your service mesh by monitoring traffic flow to infer the topology and report errors.
   - repo: https://kiali.org/helm-charts
     name: kiali-operator
     version: 1.76.0
@@ -86,8 +86,8 @@ helmCharts:
     valuesInline:
       watchNamespace: istio-system
 
-      ## A Kiali CR is used to tell the Kiali Operator how and where to install a Kiali Server in
-      ## your cluster.
+      # A Kiali CR is used to tell the Kiali Operator how and where to install a Kiali Server in
+      # your cluster.
       cr:
         create: true
         namespace: istio-system

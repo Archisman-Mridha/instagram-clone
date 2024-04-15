@@ -1,13 +1,13 @@
 name: Main
 
-## This Github Action workflow is triggered, if code is pushed to the main branch or a Pull Request
-## (PR) is opened / edited from the dev branch.
-## In real world scenario, pushing directly to the main branch should be blocked.
+# This Github Action workflow is triggered, if code is pushed to the main branch or a Pull Request
+# (PR) is opened / edited from the dev branch.
+# In real world scenario, pushing directly to the main branch should be blocked.
 on:
   push:
     branches: [main]
 
-  ## Adding this allows us to trigger this workflow manually (Just for debugging purposes).
+  # Adding this allows us to trigger this workflow manually (Just for debugging purposes).
   workflow_dispatch: {}
 
 jobs:
@@ -54,8 +54,8 @@ jobs:
           name: trivy.config-scan-result.sarif
           path: ./outputs/trivy/config-scan-result.sarif
 
-      ## The Trivy scan results will be uploaded to Github CodeQL only when code is being pushed to
-      ## the main branch.
+      # The Trivy scan results will be uploaded to Github CodeQL only when code is being pushed to
+      # the main branch.
       - name: Upload the scan results to Github CodeQL
         if: github.ref == 'refs/heads/main'
         uses: github/codeql-action/upload-sarif@v2
@@ -146,8 +146,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      ## If sourcecode of the microservice has changed, only then we will rebuild, push, sign
-      ## and scan the container image.
+      # If sourcecode of the microservice has changed, only then we will rebuild, push, sign
+      # and scan the container image.
       - name: Detect sourcecode change
         uses: dorny/paths-filter@v2
         id: path-filter
@@ -186,14 +186,14 @@ jobs:
         with:
           context: .
           file: ${{ matrix.microservice.path }}/Dockerfile
-          ## It takes pretty long to build container images for the ARM64 platform (even when using
-          ## QEMU). So skipping it !
+          # It takes pretty long to build container images for the ARM64 platform (even when using
+          # QEMU). So skipping it !
           platforms: linux/amd64
           push: true
           tags: ghcr.io/archisman-mridha/instagram-clone-${{ matrix.microservice.name }}:${{ github.sha }}
-          ## Experimental cache exporter for GitHub Actions provided by buildx and BuildKit.
-          ## It uses the GitHub Cache API to fetch and load the Docker layer cache blobs across
-          ## builds.
+          # Experimental cache exporter for GitHub Actions provided by buildx and BuildKit.
+          # It uses the GitHub Cache API to fetch and load the Docker layer cache blobs across
+          # builds.
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -211,8 +211,8 @@ jobs:
         run: |
           rm -rf /usr/local/cargo/registry/ target/
 
-      ## Cosign is a command line utility that can sign and verify software artifact, such as
-      ## container images and blobs.
+      # Cosign is a command line utility that can sign and verify software artifact, such as
+      # container images and blobs.
       - name: Install Cosign
         if: steps.path-filter.outputs.changed == 'true'
         uses: sigstore/cosign-installer@v3.1.1

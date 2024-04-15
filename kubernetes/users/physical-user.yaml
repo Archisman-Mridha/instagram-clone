@@ -5,7 +5,7 @@ metadata:
   name: physical-user
 
 rules:
-  ## Allow a physical user to create his/her own CertificateSigningRequest.
+  # Allow a physical user to create his/her own CertificateSigningRequest.
   - apiGroups:
       - certificates.k8s.io
     resources:

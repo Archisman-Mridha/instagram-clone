@@ -12,7 +12,7 @@ data:
       name: kustomize-enable-helm
 
     spec:
-      ## Command to generate Kubernetes Objects in either YAML or JSON
+      # Command to generate Kubernetes Objects in either YAML or JSON
       generate:
         command: [ "sh", "-c" ]
         args: [ "kustomize build --enable-helm" ]

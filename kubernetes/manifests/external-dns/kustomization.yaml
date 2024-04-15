@@ -11,7 +11,7 @@ helmCharts:
     releaseName: external-dns
     namespace: external-dns
     valuesInline:
-      ## K8s resources type to be observed for new DNS entries by ExternalDNS.
+      # K8s resources type to be observed for new DNS entries by ExternalDNS.
       sources:
         - service
         - ingress
@@ -23,7 +23,7 @@ helmCharts:
         # - gateway-tcproute
         # - gateway-udproute
 
-      ## DNS provider where the DNS records will be created.
+      # DNS provider where the DNS records will be created.
       provider: cloudflare
 
       cloudflare:

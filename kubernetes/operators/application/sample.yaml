@@ -1,5 +1,5 @@
-## Sample Kubernetes Deployment, Service, Secret and HorizontalPodAutoscaler object definitions
-## to deploy a microservice application to Kubernetes.
+# Sample Kubernetes Deployment, Service, Secret and HorizontalPodAutoscaler object definitions
+# to deploy a microservice application to Kubernetes.
 
 apiVersion: apps/v1
 kind: Deployment

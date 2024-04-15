@@ -1,4 +1,4 @@
-## Managing physical users (Authentication and Authorization)
+# Managing physical users (Authentication and Authorization)
 
 Let's say, our database engineering team consists of 1 person - Adam.
 

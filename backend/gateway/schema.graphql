@@ -31,11 +31,11 @@ type Profile {
 type Mutation {
 	signup(args: SignupArgs!): AuthenticationOutput!
 
-	## Id of the follower is extracted from the JWT.
+	# Id of the follower is extracted from the JWT.
 	follow(followeeId: Int!): Boolean
 	unfollow(followeeId: Int!): Boolean
 
-	## Id of the post owner is extracted from the JWT.
+	# Id of the post owner is extracted from the JWT.
 	createPost(args: CreatePostArgs!): Int!
 }
 

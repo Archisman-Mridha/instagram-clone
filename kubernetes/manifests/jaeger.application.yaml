@@ -19,7 +19,7 @@ spec:
     helm:
       releaseName: jaeger
       valuesObject:
-        ## Jaeger provisions a Cassandra datastore to store distributed traces.
+        # Jaeger provisions a Cassandra datastore to store distributed traces.
         cassandra:
           persistence:
             enabled: false

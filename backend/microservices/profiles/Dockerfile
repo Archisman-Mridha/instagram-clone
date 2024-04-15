@@ -6,7 +6,7 @@ ARG APP_NAME
 ARG PORT=4000
 ARG PORT
 
-### --- STAGE 1 - Building the application --- ###
+## --- STAGE 1 - Building the application --- ##
 
 FROM rust:1.70.0-slim-bullseye AS build
 WORKDIR /app
@@ -21,10 +21,10 @@ ENV CC='gcc'
 ENV CC_x86_64_unknown_linux_musl=x86_64-linux-gnu-gcc
 ENV CC_x86_64-unknown-linux-musl=x86_64-linux-gnu-gcc
 
-## Build the application.
-## Leverage a cache mount to /usr/local/cargo/registry/ for downloaded dependencies and a cache mount
-## to /app/target/ for compiled dependencies which will speed up subsequent builds. Once built, copy
-## the executable to an output directory before the cache mounted at /app/target is unmounted.
+# Build the application.
+# Leverage a cache mount to /usr/local/cargo/registry/ for downloaded dependencies and a cache mount
+# to /app/target/ for compiled dependencies which will speed up subsequent builds. Once built, copy
+# the executable to an output directory before the cache mounted at /app/target is unmounted.
 RUN --mount=type=bind,source=backend/microservices/profiles,target=backend/microservices/profiles \
 	--mount=type=bind,source=backend/lib.rs,target=backend/lib.rs \
 	--mount=type=bind,source=backend/sql/mod.rs,target=backend/sql/mod.rs \
@@ -40,15 +40,15 @@ cargo build --bin profiles-microservice --locked --release --target x86_64-unkno
 cp ./target/x86_64-unknown-linux-musl/release/profiles-microservice /bin/server
 EOF
 
-### --- STAGE 2 - Running the application --- ###
+## --- STAGE 2 - Running the application --- ##
 
 FROM scratch
 
-## Copy the executable from the "build" stage.
+# Copy the executable from the "build" stage.
 COPY --from=build /bin/server /bin/
 
-## Expose the port that the application listens on.
+# Expose the port that the application listens on.
 EXPOSE ${PORT}
 
-## What the container should run when it is started.
+# What the container should run when it is started.
 CMD ["/bin/server"]
