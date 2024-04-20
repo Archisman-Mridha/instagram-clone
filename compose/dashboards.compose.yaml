@@ -1,0 +1,30 @@
+services:
+  redpanda-console:
+    image: docker.redpanda.com/redpandadata/console:v2.4.6
+    container_name: redpanda-console
+    environment:
+      CONFIG_FILEPATH: /tmp/config.yaml
+    volumes:
+      - ./configs/redpanda.yaml:/tmp/config.yaml:ro
+    ports:
+      - 8080:8080
+    depends_on:
+      - redpanda-node-0
+
+  debezium-ui:
+    container_name: debezium-ui
+    image: debezium/debezium-ui:2.1
+    depends_on:
+      - debezium
+    ports:
+      - 7080:8080
+    environment:
+      KAFKA_CONNECT_URIS: http://debezium:8083
+
+  autometrics:
+    container_name: autometrics
+    image: autometrics/am-proxy
+    environment:
+      - PROMETHEUS_URL=http://prometheus:9090
+    ports:
+      - 6789:6789

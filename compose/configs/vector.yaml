@@ -1,0 +1,18 @@
+data_dir: /var/lib/vector
+
+sources:
+  docker-compose:
+    type: docker_logs
+    exclude_containers:
+      - vector
+
+sinks:
+  siglens:
+    type: elasticsearch
+    inputs:
+      - docker-compose
+    endpoints:
+      - http://siglens:8081/elastic
+    mode: bulk
+    healthcheck:
+      enabled: false
