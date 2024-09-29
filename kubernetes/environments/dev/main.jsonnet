@@ -1,0 +1,2 @@
+(import "argocd.libsonnet") +
+{}

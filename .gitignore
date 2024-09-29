@@ -1,0 +1,4 @@
+# Jsonnet and Grafana Tanka
+kubernetes/vendor/
+kubernetes/charts/
+kubernetes/outputs/
