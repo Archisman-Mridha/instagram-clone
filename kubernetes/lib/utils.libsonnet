@@ -8,8 +8,8 @@ local ArgoCD = import 'github.com/jsonnet-libs/argo-cd-libsonnet/2.11/main.libso
   // the 'outputs' directory.
   // For example, if the underlying Grafana Tanka environment name is 'environments/dev', then the
   // corresponding folder will be kubernetes/outputs/environments-dev.
-  outputsEnvironmentFolder: std.format('kubernetes/outputs/%s/',
-                                       [std.strReplace(Runtime.env.metadata.name, '/', '-')]),
+  outputsEnvironmentFolder:: std.format('kubernetes/outputs/%s/',
+                                        [std.strReplace(Runtime.env.metadata.name, '/', '-')]),
 
   /*
     You can visualize and manage Kubernetes objects with more tools than kubectl and the dashboard.
