@@ -1,19 +1,25 @@
-local tanka = import "github.com/grafana/jsonnet-libs/tanka-util/main.libsonnet";
-local helm = tanka.helm.new(std.thisFile);
+local Tanka = import 'github.com/grafana/jsonnet-libs/tanka-util/main.libsonnet',
+      Helm = Tanka.helm.new(std.thisFile);
 
-local rootDir = "../";
+local Utils = import './utils.libsonnet';
+
+local app = 'argocd';
 
 {
-  local argoCDHelmChartDir = (rootDir + "charts/argo-cd"),
+  local rootDir = '../',
+  local argoCDHelmChartDir = (rootDir + 'charts/argo-cd'),
 
-  argocd: helm.template("argocd", argoCDHelmChartDir, {
-    namespace: "argocd",
+  argocd: Helm.template(app, argoCDHelmChartDir, {
+    namespace: app,
+    version: '7.6.5',
     values: {
 
       crds: {
-        // Keep CRDs on chart uninstall.
-        keep: false
-      }
-    }
-  })
+        // Don't keep CRDs on chart uninstall.
+        keep: false,
+      },
+    },
+  }),
+
+  argoCDApp: Utils.argoCDApp(name=app, destinationNamespace=app),
 }
