@@ -1,9 +1,0 @@
-query GetFollowers($args: GetFollowersArgs!) {
-	getFollowers(args: $args) {
-		id
-
-		name
-		username
-		profilePictureUri
-	}
-}

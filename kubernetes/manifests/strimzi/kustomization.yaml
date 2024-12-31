@@ -1,8 +1,0 @@
-resources:
-  - namespace.yaml
-  - cluster.yaml
-  - db-events.public.users.topic.yaml
-  - db-events.public.posts.topic.yaml
-  - cluster-metrics.configmap.yaml
-  - grafana-dashboards.configmap.yaml
-  - pod-monitors.yaml
