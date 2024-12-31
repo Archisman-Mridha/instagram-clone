@@ -4,7 +4,27 @@ repositories:
     url: https://charts.helm.sh/stable
   - name: argo
     url: https://argoproj.github.io/argo-helm
+  - name: cert_manager
+    url: https://charts.jetstack.io
+  - name: external_dns
+    url: https://kubernetes-sigs.github.io/external-dns/
+  - name: prometheus_community
+    url: https://prometheus-community.github.io/helm-charts
+  - name: aws_cloud_controller_manager
+    url: https://kubernetes.github.io/cloud-provider-aws
+  - name: cilium
+    url: https://helm.cilium.io/
 requires:
-  - chart: argo/argo-cd
+  - chart: argo/argocd
     version: 7.6.5
+  - chart: cert_manager/cert-manager
+    version: 1.15.3
+  - chart: external_dns/external-dns
+    version: 1.15.0
+  - chart: prometheus_community/kube-prometheus-stack
+    version: 65.0.0
+  - chart: aws_cloud_controller_manager/aws-cloud-controller-manager
+    version: 0.0.8
+  - chart: cilium/cilium
+    version: 1.16.0
 version: 1

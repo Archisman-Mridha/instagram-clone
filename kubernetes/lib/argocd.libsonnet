@@ -1,53 +1,46 @@
-local Tanka = import 'github.com/grafana/jsonnet-libs/tanka-util/main.libsonnet',
-      Helm = Tanka.helm.new(std.thisFile);
-
-local ArgoCD = import 'github.com/jsonnet-libs/argo-cd-libsonnet/2.11/main.libsonnet',
-      AppProject = ArgoCD.argoproj.v1alpha1.appProject;
-
-local Utils = import './utils.libsonnet';
+local Kubernetes = import 'github.com/jsonnet-libs/k8s-libsonnet/1.30/main.libsonnet',
+      Tanka = import 'github.com/grafana/jsonnet-libs/tanka-util/main.libsonnet',
+      Helm = Tanka.helm.new(std.thisFile),
+      ArgoCD = import 'github.com/jsonnet-libs/argo-cd-libsonnet/2.11/main.libsonnet',
+      AppProject = ArgoCD.argoproj.v1alpha1.appProject,
+      Utils = import './utils.libsonnet';
 
 local app = 'argocd';
 
-{
-  local rootDir = '../',
-  local argoCDHelmChartDir = (rootDir + 'charts/argo-cd'),
-
-  local serviceMonitorEnabled = {
-    metrics+: {
-      serviceMonitor+: {
-        enabled: true,
-      },
+local serviceMonitorEnabled = {
+  metrics+: {
+    serviceMonitor+: {
+      enabled: true,
     },
   },
+};
 
-  argocd: Helm.template(app, argoCDHelmChartDir, {
-    namespace: app,
+{
+  argoCDNamespace: Utils.namespace(app),
+
+  argoCDApp: Utils.argoCDApp(name=app),
+
+  argoCD: std.mapWithKey(Utils.withToolLabel(app), Helm.template(app, Utils.chartDir(app), {
     version: '7.6.5',
+
+    namespace: app,
+    createNamespace: true,
+
     values: {
-
-      crds: {
-        // Don't keep CRDs on chart uninstall.
-        keep: false,
-      },
-
-      // Enable HA (High Availability) mode.
-      'redis-ha': {
-        enabled: true,
-      },
       server: {
         autoscaling: {
           enabled: true,
         },
       } + serviceMonitorEnabled,
 
-      // Enable monitoring for components.
+      // Enable monitoring for other components.
       controller: serviceMonitorEnabled,
       dex: serviceMonitorEnabled,
       redis: serviceMonitorEnabled,
       repoServer: serviceMonitorEnabled,
       notifications: serviceMonitorEnabled,
     },
-  }),
+  })),
 
   defaultProject:
     AppProject.new('default')
@@ -72,6 +65,4 @@ local app = 'argocd';
       },
     }
     + Utils.recommendedLables(parentAppName=app, component='default-project'),
-
-  argoCDApp: Utils.argoCDApp(name=app, destinationNamespace=app),
 }
