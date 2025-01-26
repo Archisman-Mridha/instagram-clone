@@ -2,7 +2,6 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    pre-commit-hooks.url = "github:cachix/git-hooks.nix";
   };
 
   outputs =
@@ -10,7 +9,6 @@
       self,
       nixpkgs,
       flake-utils,
-      pre-commit-hooks,
     }:
     flake-utils.lib.eachDefaultSystem (
       system:
@@ -27,35 +25,26 @@
           buildInputs = [
             go
             golangci-lint
+            golines
+
+            protobuf
+            buf
+
+            /*
+              llvm
+              wasmedge
+            */
 
             nixfmt-rfc-style
 
             gnumake
-          ] ++ self.checks.${system}.pre-commit-check.enabledPackages;
-
-          inherit (self.checks.${system}.pre-commit-check) shellHook;
-        };
-
-        checks = {
-          pre-commit-check = pre-commit-hooks.lib.${system}.run {
-            src = ./.;
-            hooks = {
-              gofmt.enable = true;
-              golangci-lint = {
-                enable = true;
-                extraPackages = [ go ];
-              };
-              gotest.enable = true;
-
-              nixfmt-rfc-style.enable = true;
-            };
-          };
+          ];
         };
 
         packages =
           let
             version = "v1.0.0";
-            microservices = [ "auth" ];
+            microservices = [ "users" ];
           in
           {
             microservices = lib.listToAttrs (

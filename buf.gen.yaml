@@ -1,0 +1,14 @@
+version: v2
+
+plugins:
+  # Base types for Go. Generates message and enum types.
+  - remote: buf.build/protocolbuffers/go:v1.36.4
+    out: .
+
+  # Generates optimized marshalling & unmarshalling code for ProtoBuf APIv2.
+  - remote: buf.build/community/planetscale-vtprotobuf:v0.6.0
+    out: .
+
+  # Generates Go code to validate Protobuf messages using protoc-gen-validate constraints.
+  - remote: buf.build/bufbuild/validate-go:v1.2.1
+    out: .

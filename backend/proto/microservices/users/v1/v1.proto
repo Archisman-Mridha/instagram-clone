@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package users.v1;
+
+option go_package = "backend/proto/pkg/generated;generated";
+
+import "google/protobuf/empty.proto";
+import "buf/validate/validate.proto";
+
+service UsersServiceV1 {
+  rpc Ping(google.protobuf.Empty) returns (google.protobuf.Empty);
+}

@@ -22,7 +22,7 @@ lib.listToAttrs (
           pname = microservice;
           inherit version;
           src = rootPath + /backend/microservices/auth;
-          subPackages = [ "cmd/server" ];
+          subPackages = [ "cmd/server/grpc" ];
           env = {
             CGO_ENABLED = 0;
             GOOS = "linux";

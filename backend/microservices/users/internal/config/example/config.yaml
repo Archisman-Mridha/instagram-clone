@@ -1,0 +1,11 @@
+# debugLogging: False
+
+# devMode: False
+
+# gRPCServerPort: 4000
+
+# httpMetricsServerPort: 9090
+
+flagsmithAPIKey: ""
+
+jaegerURL: ""
