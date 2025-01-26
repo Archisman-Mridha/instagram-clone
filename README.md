@@ -66,7 +66,7 @@
 ![CMake Badge](https://img.shields.io/badge/CMake-064F8C?logo=cmake&logoColor=fff&style=for-the-badge)
 ![GitHub Actions Badge](https://img.shields.io/badge/GitHub%20Actions-2088FF?logo=githubactions&logoColor=fff&style=for-the-badge)
 
-**Continuous Deployment** :
+**Continuous Deployment**
 
 ![Open Containers Initiative Badge](https://img.shields.io/badge/Open%20Containers%20Initiative-262261?logo=opencontainersinitiative&logoColor=fff&style=for-the-badge)
 ![Kubernetes Badge](https://img.shields.io/badge/Kubernetes-326CE5?logo=kubernetes&logoColor=fff&style=for-the-badge)
