@@ -11,7 +11,7 @@ version: v2
 #
 # Both the path and any includes/excludes fields are relative to the root of the workspace.
 modules:
-  - path: backend/proto
+  - path: backend/microservices
 
 # A list of dependencies on modules outside of the workspace.
 # They're shared by all modules, and the manifest is stored in the buf.lock file.

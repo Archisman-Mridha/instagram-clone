@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package events.users;
+
+option go_package = "backend/shared/pkg/events/proto/generated/users";
+
+message UserCreatedEvent {
+  int32 id = 1;
+
+  string name     = 2;
+  string username = 3;
+}

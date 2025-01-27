@@ -1,7 +1,13 @@
 go 1.23.4
 
 use (
+	./backend/microservices/feeds
+	./backend/microservices/followships
+	./backend/microservices/posts
+	./backend/microservices/profiles
 	./backend/microservices/users
-	./backend/proto
+
 	./backend/shared
+
+	./tools/kue
 )

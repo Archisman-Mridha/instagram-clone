@@ -1,0 +1,11 @@
+group_imports = "One"
+imports_granularity = "One"
+
+tab_spaces = 2
+
+max_width = 100
+comment_width = 100
+
+use_field_init_shorthand = true
+
+control_brace_style = "ClosingNextLine"

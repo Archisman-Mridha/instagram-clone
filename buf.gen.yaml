@@ -12,3 +12,10 @@ plugins:
   # Generates Go code to validate Protobuf messages using protoc-gen-validate constraints.
   - remote: buf.build/bufbuild/validate-go:v1.2.1
     out: .
+#
+# When set to true, buf generate deletes all directories, zip files, and/or jar files specified by
+# the out field for each plugin before running code generation.
+#
+# Getting error : Failure: cannot use --clean if your plugin will output to the current directory.
+#
+# clean: true

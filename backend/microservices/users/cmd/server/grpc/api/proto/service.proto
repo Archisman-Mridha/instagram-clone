@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package microservices.users;
+
+import "google/protobuf/empty.proto";
+import "buf/validate/validate.proto";
+
+option go_package = "backend/microservices/users/cmd/server/grpc/api/proto/generated";
+
+service UsersService {
+  rpc Ping(google.protobuf.Empty) returns (google.protobuf.Empty);
+
+  rpc Signup(SignupRequest) returns (SigninResponse);
+  rpc Signin(SigninRequest) returns (SigninResponse);
+
+  rpc GetUserIDFromJWT(GetUserIDFromJWTRequest) returns (GetUserIDFromJWTResponse);
+}
+
+message SignupRequest {
+  string name     = 1;
+  string email    = 2;
+  string username = 3;
+  string password = 4;
+}
+
+message SigninRequest {
+  string identifier = 1;
+  string password   = 2;
+}
+
+message SigninResponse {
+  int32  user_id = 1;
+  string jwt     = 2;
+}
+
+message GetUserIDFromJWTRequest {
+  string jwt = 1;
+}
+
+message GetUserIDFromJWTResponse {
+  int32 user_id = 1;
+}

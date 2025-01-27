@@ -3,12 +3,12 @@ package api
 import (
 	"context"
 
-	"github.com/Archisman-Mridha/instagram-clone/backend/proto/pkg/generated"
+	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/cmd/server/grpc/api/proto/generated"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type GRPCAPI struct {
-	generated.UnimplementedUsersServiceV1Server
+	generated.UnimplementedUsersServiceServer
 }
 
 func (*GRPCAPI) Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {

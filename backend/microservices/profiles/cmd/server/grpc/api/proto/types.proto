@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package microservices.profiles;
+
+option go_package = "backend/microservices/profiles/cmd/server/grpc/api/proto/generated";
+
+message ProfilePreview {
+  int32 id = 1;
+
+  string name     = 2;
+  string username = 3;
+}

@@ -2,6 +2,14 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
+
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-utils.follows = "flake-utils";
+      };
+    };
   };
 
   outputs =
@@ -9,18 +17,24 @@
       self,
       nixpkgs,
       flake-utils,
+      rust-overlay,
     }:
     flake-utils.lib.eachDefaultSystem (
       system:
       let
+        overlays = [ (import rust-overlay) ];
         pkgs = import nixpkgs {
-          inherit system;
+          inherit system overlays;
           config.allowUnfree = true;
         };
         rootPath = ./.;
       in
       with pkgs;
       {
+        nativeBuildInputs = [
+          (rust-bin.fromRustupToolchainFile ./rust-toolchain.toml)
+        ];
+
         devShells.default = mkShell {
           buildInputs = [
             go
@@ -30,10 +44,9 @@
             protobuf
             buf
 
-            /*
-              llvm
-              wasmedge
-            */
+            llvm
+            rustup
+            (rust-bin.fromRustupToolchainFile ./rust-toolchain.toml)
 
             nixfmt-rfc-style
 
@@ -44,7 +57,10 @@
         packages =
           let
             version = "v1.0.0";
-            microservices = [ "users" ];
+            microservices = [
+              "users"
+              "posts"
+            ];
           in
           {
             microservices = lib.listToAttrs (

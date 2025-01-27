@@ -9,9 +9,9 @@ import (
 	"time"
 
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/cmd/server/grpc/api"
+	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/cmd/server/grpc/api/proto/generated"
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/config"
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/constants"
-	"github.com/Archisman-Mridha/instagram-clone/backend/proto/pkg/generated"
 	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/grpc"
 	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/healthcheck"
 	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/observability/logger"
@@ -75,7 +75,7 @@ func run(ctx context.Context, config *config.Config) error {
 			Healthcheckables:     []healthcheck.Healthcheckable{},
 		})
 
-		generated.RegisterUsersServiceV1Server(gRPCServer, &api.GRPCAPI{})
+		generated.RegisterUsersServiceServer(gRPCServer, &api.GRPCAPI{})
 
 		waitGroup.Go(func() error {
 			return gRPCServer.Run(ctx, config.GRPCServerPort)
