@@ -60,11 +60,11 @@
 
 **Continuous Integration** :
 
-- [Buf](https://the-guild.dev/graphql/codegen)
-
 ![NixOS Badge](https://img.shields.io/badge/NixOS-5277C3?logo=nixos&logoColor=fff&style=for-the-badge)
 ![CMake Badge](https://img.shields.io/badge/CMake-064F8C?logo=cmake&logoColor=fff&style=for-the-badge)
 ![GitHub Actions Badge](https://img.shields.io/badge/GitHub%20Actions-2088FF?logo=githubactions&logoColor=fff&style=for-the-badge)
+
+- [Buf](https://the-guild.dev/graphql/codegen)
 
 **Continuous Deployment**
 
@@ -74,7 +74,6 @@
 ![Helm Badge](https://img.shields.io/badge/Helm-0F1689?logo=helm&logoColor=fff&style=for-the-badge)
 ![Cilium Badge](https://img.shields.io/badge/Cilium-F8C517?logo=cilium&logoColor=000&style=for-the-badge)
 ![ContainerD Badge](https://img.shields.io/badge/containerd-575757?logo=containerd&logoColor=fff&style=for-the-badge)
-![Keycloak Badge](https://img.shields.io/badge/Keycloak-4D4D4D?logo=keycloak&logoColor=fff&style=for-the-badge)
 ![Harbor Badge](https://img.shields.io/badge/Harbor-60B932?logo=harbor&logoColor=fff&style=for-the-badge)
 ![Argo Badge](https://img.shields.io/badge/Argo-EF7B4D?logo=argo&logoColor=fff&style=for-the-badge)
 ![Vault Badge](https://img.shields.io/badge/Vault-FFEC6E?logo=vault&logoColor=000&style=for-the-badge)
@@ -93,23 +92,21 @@
 **Observability** :
 
 ![OpenTelemetry Badge](https://img.shields.io/badge/OpenTelemetry-000?logo=opentelemetry&logoColor=fff&style=for-the-badge)
-![Jaeger Badge](https://img.shields.io/badge/Jaeger-66CFE3?logo=jaeger&logoColor=fff&style=for-the-badge)
 ![Prometheus Badge](https://img.shields.io/badge/Prometheus-E6522C?logo=prometheus&logoColor=fff&style=for-the-badge)
-![Grafana Badge](https://img.shields.io/badge/Grafana-F46800?logo=grafana&logoColor=fff&style=for-the-badge)
-![Kibana Badge](https://img.shields.io/badge/Kibana-005571?logo=kibana&logoColor=fff&style=for-the-badge)
 ![Slack Badge](https://img.shields.io/badge/Slack-4A154B?logo=slack&logoColor=fff&style=for-the-badge)
 
-- [Vector](https://github.com/vectordotdev/vector)
+- [OpenObserve](https://www.openobserve.ai)
 - [OpenClarity](https://openclarity.io)
 - [OpenCost](https://www.opencost.io)
 
 **Security** :
 
+![Trivy Badge](https://img.shields.io/badge/Trivy-1904DA?logo=trivy&logoColor=fff&style=for-the-badge)
+
+- [Cosign](https://github.com/sigstore/cosign)
 - [Zitadel](https://zitadel.com)
 - [Open Policy Agent](https://www.openpolicyagent.org)
 - [Tetragon](https://tetragon.io)
-
-![Trivy Badge](https://img.shields.io/badge/Trivy-1904DA?logo=trivy&logoColor=fff&style=for-the-badge)
 
 **Disaster Recovery** :
 
