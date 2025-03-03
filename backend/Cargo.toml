@@ -1,0 +1,7 @@
+[workspace]
+resolver = "2"
+members = ["microservices/users"]
+
+[workspace.dependencies]
+validator = "0.20.0"
+wit-bindgen = "0.39.0"

@@ -1,6 +1,8 @@
 .DS_Store
 .direnv
 
+backend/target/
+
 contracts/dependencies
 
 deploy/compose/out/

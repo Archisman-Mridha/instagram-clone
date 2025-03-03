@@ -4,8 +4,6 @@ import "time"
 
 const SERVICE_NAME = "users-microservice"
 
-const MIN_PASSWORD_ENTROPY = 60
-
 // Flags.
 const (
 	FLAG_CONFIG_FILE         = "config-file"

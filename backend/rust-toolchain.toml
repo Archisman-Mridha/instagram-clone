@@ -1,0 +1,5 @@
+[toolchain]
+channel = "stable"
+profile = "default"
+components = []
+targets = ["wasm32-unknown-unknown"]

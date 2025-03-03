@@ -2,8 +2,8 @@ package usecases
 
 import (
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/core/types/repositories"
+	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/core/validators"
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/token"
-	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/validators"
 	sharedTypes "github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/types"
 	sharedUtils "github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/utils"
 	"github.com/go-playground/validator/v10"
@@ -25,10 +25,11 @@ func NewUsecases(
 	usersRespository repositories.UsersRepository,
 	tokenService token.TokenService,
 ) *Usecases {
-	sharedUtils.RegisterCustomValidators(validator, map[string]goValidator.Func{
-		"name":     validators.NameValidation,
-		"username": validators.UsernameValidation,
-		"password": validators.PasswordValidation,
+	sharedUtils.RegisterCustomFieldValidators(validator, map[string]goValidator.Func{
+		"name":     validators.NameFieldValidator,
+		"email":    validators.EmailFieldValidator,
+		"username": validators.UsernameFieldValidator,
+		"password": validators.PasswordFieldValidator,
 	})
 
 	return &Usecases{

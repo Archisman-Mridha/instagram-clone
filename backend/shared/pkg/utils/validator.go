@@ -2,6 +2,7 @@ package utils
 
 import (
 	"context"
+	"log/slog"
 
 	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/assert"
 	"github.com/go-playground/validator/v10"
@@ -17,10 +18,16 @@ func NewValidator(ctx context.Context) *validator.Validate {
 	return validator
 }
 
-type CustomValidators = map[string]validator.Func
+type CustomFieldValidators = map[string]validator.Func
 
-func RegisterCustomValidators(validator *validator.Validate, customValidators CustomValidators) {
-	for id, validatorFn := range customValidators {
-		validator.RegisterValidation(id, validatorFn, false)
+func RegisterCustomFieldValidators(
+	validator *validator.Validate,
+	customFieldValidators CustomFieldValidators,
+) {
+	ctx := context.Background()
+
+	for id, customFieldValidator := range customFieldValidators {
+		err := validator.RegisterValidation(id, customFieldValidator, false)
+		assert.AssertErrNil(ctx, err, "Failed registering custom field validator", slog.String("id", id))
 	}
 }
