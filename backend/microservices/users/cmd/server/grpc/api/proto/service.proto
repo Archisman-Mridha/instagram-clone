@@ -5,7 +5,7 @@ package microservices.users;
 import "google/protobuf/empty.proto";
 import "buf/validate/validate.proto";
 
-option go_package = "backend/microservices/users/cmd/server/grpc/api/proto/generated";
+option go_package = "microservices/users/cmd/server/grpc/api/proto/generated";
 
 service UsersService {
   rpc Ping(google.protobuf.Empty) returns (google.protobuf.Empty);
@@ -17,20 +17,23 @@ service UsersService {
 }
 
 message SignupRequest {
-  string name     = 1;
-  string email    = 2;
+  string name = 1;
+  string email = 2;
   string username = 3;
   string password = 4;
 }
 
 message SigninRequest {
-  string identifier = 1;
-  string password   = 2;
+  oneof identifier {
+    string email = 1;
+    string username = 2;
+  }
+
+  string password = 3;
 }
 
 message SigninResponse {
-  int32  user_id = 1;
-  string jwt     = 2;
+  string jwt = 1;
 }
 
 message GetUserIDFromJWTRequest {

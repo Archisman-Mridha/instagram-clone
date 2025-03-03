@@ -13,7 +13,7 @@ type KVStore interface {
 
 	// Get the value of key. An error is returned if the value stored at key is not a string,
 	// because GET only handles string values.
-	Get(ctx context.Context, key string) (*string, error)
+	Get(ctx context.Context, key string) (string, error)
 
 	// Removes the specified keys. A key is ignored if it does not exist.
 	Del(ctx context.Context, keys ...string) error

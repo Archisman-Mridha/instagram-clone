@@ -4,9 +4,9 @@ package microservices.profiles;
 
 import "google/protobuf/empty.proto";
 import "buf/validate/validate.proto";
-import "profiles/cmd/server/grpc/api/proto/types.proto";
+import "microservices/profiles/cmd/server/grpc/api/proto/types.proto";
 
-option go_package = "backend/microservices/profiles/cmd/server/grpc/api/proto/generated";
+option go_package = "microservices/profiles/cmd/server/grpc/api/proto/generated";
 
 service ProfilesService {
   rpc Ping(google.protobuf.Empty) returns (google.protobuf.Empty);

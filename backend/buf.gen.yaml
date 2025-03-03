@@ -1,0 +1,16 @@
+version: v2
+
+# When set to true, buf generate deletes all directories, zip files, and/or jar files specified by
+# the out field for each plugin before running code generation.
+#
+# Getting error : Failure: cannot use --clean if your plugin will output to the current directory.
+# clean: true
+
+plugins:
+  # Base types for Go. Generates message and enum types.
+  - remote: buf.build/protocolbuffers/go:v1.36.4
+    out: .
+
+  # Generates optimized marshalling & unmarshalling code for ProtoBuf APIv2.
+  - remote: buf.build/community/planetscale-vtprotobuf:v0.6.0
+    out: .

@@ -1,0 +1,22 @@
+devMode: True
+debugLogging: True
+
+gRPCServerPort: 4000
+
+jwtSigningKey: XHwjzpbA3d32UGYT
+
+postgres:
+  url: postgres://default:XHwjzpbA3d32UGYT@localhost:5432/instagram_clone?sslmode=disable
+
+redis:
+  nodeAddresses:
+    - localhost:6379
+  username: default
+  password: XHwjzpbA3d32UGYT
+
+openTelemetryCollectorURL: localhost:4317
+
+flagsmith:
+  url: https://edge.api.flagsmith.com/api/v1/identities/?identifier=default
+  apiKey: S44DpTum6rRUsDp4GTiEwh
+  clientName: users-microservice

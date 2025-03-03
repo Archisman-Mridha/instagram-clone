@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/assert"
-	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/observability/logger"
+	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/observability/logs/logger"
 )
 
 type GetFlagOrEnvFn = func(f *flag.Flag)

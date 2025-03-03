@@ -15,25 +15,25 @@ import (
 // The parsed config is then returned.
 //
 // Panics if any error occurs.
-func MustParseConfigFile[T any](ctx context.Context, configFilePath string) *T {
+func MustParseConfigFile[T any](ctx context.Context, configFilePath string, validator *validator.Validate) *T {
 	configFileContents, err := os.ReadFile(configFilePath)
 	assert.AssertErrNil(ctx, err, "Failed reading config file", slog.String("path", configFilePath))
 
-	return MustParseConfig[T](ctx, configFileContents)
+	return MustParseConfig[T](ctx, configFileContents, validator)
 }
 
 // Parses and validates the given unmarshalled config.
 // The parsed config is then returned.
 //
 // Panics if any error occurs.
-func MustParseConfig[T any](ctx context.Context, unparsedConfig []byte) *T {
+func MustParseConfig[T any](ctx context.Context, unparsedConfig []byte, validator *validator.Validate) *T {
 	config := new(T)
 
 	err := yaml.Unmarshal(unparsedConfig, config)
 	assert.AssertErrNil(ctx, err, "Failed YAML unmarshalling config")
 
-	// Required fields must be set.
-	err = validator.New(validator.WithRequiredStructEnabled()).Struct(config)
+	// Validate based on struct tags.
+	err = validator.Struct(config)
 	assert.AssertErrNil(ctx, err, "Config validation failed")
 
 	// Populate optional fields with corresponding default values.

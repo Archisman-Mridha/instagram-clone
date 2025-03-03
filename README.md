@@ -160,3 +160,21 @@ While going through the above resources, I discovered some nice tools and concep
 - [Ambiguous import error with opentelemetry collector builder](https://github.com/open-telemetry/opentelemetry-collector/issues/10476)
 
 - [Introduction to exemplars](https://grafana.com/docs/grafana/latest/fundamentals/exemplars/)
+
+**GoLang** :
+
+- [Go Microservice with Clean Architecture: Application Logging](https://medium.com/@jfeng45/go-microservice-with-clean-architecture-application-logging-b43dc5839bce)
+
+- [How to get stacktraces from errors in Golang with go-errors/errors](https://www.bugsnag.com/blog/go-errors/)
+
+- [A Beautiful Way To Deal With ERRORS in Golang HTTP Handlers](https://www.youtube.com/watch?v=aS1cJfQ-LrQ)
+
+**Security** :
+
+- [How to Correctly Validate Passwords - Most Websites Do It Wrong](https://blog.boot.dev/open-source/how-to-validate-passwords/)
+
+**Web3** :
+
+- [How are NFTs Integrated into Social Platforms?](https://www.solulab.com/nft-in-social-media/)
+
+- [Most popular open source NFT projects on Github in 2023](https://www.dappros.com/202206/top-nft-non-fungible-token-open-source-projects-on-github/)

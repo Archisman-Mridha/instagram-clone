@@ -1,4 +1,8 @@
+.DS_Store
 .direnv
-.pre-commit-config.yaml
 
-target/
+contracts/dependencies
+
+deploy/compose/out/
+
+node_modules/

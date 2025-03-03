@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log/slog"
 	"net"
-	"time"
 
 	"github.com/bufbuild/protovalidate-go"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -14,14 +13,16 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	_ "google.golang.org/grpc/encoding/gzip"
+	"google.golang.org/grpc/health/grpc_health_v1"
 
 	"google.golang.org/grpc/reflection"
 
 	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/assert"
 	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/healthcheck"
-	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/observability/logger"
-	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/utils"
+	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/observability/logs/logger"
+	sharedUtils "github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/utils"
 	gRPCMetricsMiddleware "github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus"
 
 	// This is necessary to avoid ambiguous import error.
@@ -50,23 +51,31 @@ type GRPCServer struct {
 	*grpc.Server
 }
 
-type NewGRPCServerArgs struct {
-	DevModeEnabled bool
+type (
+	NewGRPCServerArgs struct {
+		DevModeEnabled bool
 
-	HealthcheckFrequency time.Duration
-	Healthcheckables     []healthcheck.Healthcheckable
-}
+		Healthcheckables []healthcheck.Healthcheckable
+
+		ToGRPCErrorStatusCodeFn ToGRPCErrorStatusCodeFn
+	}
+
+	ToGRPCErrorStatusCodeFn = func(error) codes.Code
+)
 
 // Creates and returns a gRPC server.
 func NewGRPCServer(ctx context.Context, args NewGRPCServerArgs) *GRPCServer {
 	var (
-		requestLogger = NewGRPCRequestLogger(slog.Default())
+		requestLogger = newGRPCRequestLogger(slog.Default())
 
 		serverMetrics     = gRPCMetricsMiddleware.NewServerMetrics()
-		metricsMiddleware = gRPCMetricsMiddleware.WithExemplarFromContext(ExtractExemplarFromContext)
+		metricsMiddleware = gRPCMetricsMiddleware.WithExemplarFromContext(extractExemplarFromContext)
 	)
 
-	protoValidator, err := protovalidate.New()
+	protoValidator, err := protovalidate.New(
+		protovalidate.WithAllowUnknownFields(true),
+		protovalidate.WithUTC(true),
+	)
 	assert.AssertErrNil(ctx, err, "Failed creating proto validator")
 
 	server := grpc.NewServer(
@@ -75,18 +84,22 @@ func NewGRPCServer(ctx context.Context, args NewGRPCServerArgs) *GRPCServer {
 		grpc.ChainUnaryInterceptor(
 			gRPCProtovalidateMiddleware.UnaryServerInterceptor(protoValidator),
 
-			logging.UnaryServerInterceptor(requestLogger),
 			serverMetrics.UnaryServerInterceptor(metricsMiddleware),
+			logging.UnaryServerInterceptor(requestLogger),
 
-			recovery.UnaryServerInterceptor(recovery.WithRecoveryHandlerContext(PanicRecoveryHandler)),
+			errorHandlerUnaryServerInterceptor(args.ToGRPCErrorStatusCodeFn),
+
+			recovery.UnaryServerInterceptor(recovery.WithRecoveryHandlerContext(panicRecoveryHandler)),
 		),
 		grpc.ChainStreamInterceptor(
 			gRPCProtovalidateMiddleware.StreamServerInterceptor(protoValidator),
 
-			logging.StreamServerInterceptor(requestLogger),
 			serverMetrics.StreamServerInterceptor(metricsMiddleware),
+			logging.StreamServerInterceptor(requestLogger),
 
-			recovery.StreamServerInterceptor(recovery.WithRecoveryHandlerContext(PanicRecoveryHandler)),
+			errorHandlerStreamServerInterceptor(args.ToGRPCErrorStatusCodeFn),
+
+			recovery.StreamServerInterceptor(recovery.WithRecoveryHandlerContext(panicRecoveryHandler)),
 		),
 	)
 
@@ -97,10 +110,8 @@ func NewGRPCServer(ctx context.Context, args NewGRPCServerArgs) *GRPCServer {
 		reflection.Register(server)
 	}
 
-	SetupHealthcheck(ctx, SetupHealthcheckArgs{
-		Server:               server,
-		HealthcheckFrequency: args.HealthcheckFrequency,
-		Healthcheckables:     args.Healthcheckables,
+	grpc_health_v1.RegisterHealthServer(server, &HealthcheckService{
+		healthcheckables: args.Healthcheckables,
 	})
 
 	return &GRPCServer{server}
@@ -119,9 +130,9 @@ func (server *GRPCServer) Run(ctx context.Context, port int) error {
 	tcpListener, err := net.Listen("tcp", address)
 	assert.AssertErrNil(ctx, err, "Failed creating TCP listener")
 
-	slog.InfoContext(ctx, "Running gRPC server....")
+	slog.DebugContext(ctx, "Running gRPC server....")
 	if err := server.Serve(tcpListener); err != nil {
-		return utils.WrapError("gRPC server error occurred", err)
+		return sharedUtils.WrapErrorWithPrefix("Failed running gRPC server", err)
 	}
 
 	return nil
@@ -129,7 +140,7 @@ func (server *GRPCServer) Run(ctx context.Context, port int) error {
 
 // Stops the gRPC server from accepting new connections and RPC requests.
 // Then, waits for the RPCs which are currently being processed, to finish.
-func (server *GRPCServer) GracefulShutdown(ctx context.Context) {
+func (server *GRPCServer) GracefulShutdown() {
 	server.GracefulStop()
-	slog.InfoContext(ctx, "Shut down gRPC server")
+	slog.Debug("Shut down gRPC server")
 }

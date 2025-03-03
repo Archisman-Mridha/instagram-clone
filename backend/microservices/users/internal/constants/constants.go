@@ -2,17 +2,14 @@ package constants
 
 import "time"
 
-// Environment variables.
+const SERVICE_NAME = "users-microservice"
+
+const MIN_PASSWORD_ENTROPY = 60
+
+// Flags.
 const (
-	ENV_CONFIG_FILE = "CONFIG_FILE"
+	FLAG_CONFIG_FILE         = "config-file"
+	FLAG_CONFIG_FILE_DEFAULT = "/var/users-microservice/config.yaml"
 )
 
-// Miscellaneous
-const (
-	SERVICE_NAME    = "users-microservice"
-	SERVICE_VERSION = "v1.0.0"
-
-	HEALTHCHECK_FREQUENCY = 5 * time.Second
-
-	RESOURCES_CLEANUP_TIMEOUT = 2 * time.Second
-)
+const RESOURCES_CLEANUP_TIMEOUT = 2 * time.Second

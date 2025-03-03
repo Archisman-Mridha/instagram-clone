@@ -5,7 +5,7 @@ package microservices.followships;
 import "google/protobuf/empty.proto";
 import "buf/validate/validate.proto";
 
-option go_package = "backend/microservices/followships/cmd/server/grpc/api/proto/generated";
+option go_package = "microservices/followships/cmd/server/grpc/api/proto/generated";
 
 service FollowshipsService {
   rpc Ping(google.protobuf.Empty) returns (google.protobuf.Empty);

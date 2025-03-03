@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/observability/logger"
+	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/observability/logs/logger"
 )
 
 // Panics if the given error isn't nil.

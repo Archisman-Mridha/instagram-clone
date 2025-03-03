@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package microservices.posts;
 
-option go_package = "backend/microservices/posts/cmd/server/grpc/api/proto/generated";
+option go_package = "microservices/posts/cmd/server/grpc/api/proto/generated";
 
 message Post {
   int32 id       = 1;

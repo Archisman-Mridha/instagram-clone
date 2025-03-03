@@ -1,0 +1,11 @@
+go 1.23.4
+
+use (
+	./microservices/feeds
+	./microservices/followships
+	./microservices/posts
+	./microservices/profiles
+	./microservices/users
+
+	./shared
+)

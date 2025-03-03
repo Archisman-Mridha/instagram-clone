@@ -7,8 +7,8 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/observability/logger"
-	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/utils"
+	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/observability/logs/logger"
+	sharedUtils "github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/utils"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
@@ -52,9 +52,9 @@ func NewMetricsServer(port int) *MetricsServer {
 
 // Runs the HTTP metrics server.
 func (m *MetricsServer) Run(ctx context.Context) error {
-	slog.InfoContext(ctx, "Running HTTP metrics server....", slog.String("address", m.Addr))
+	slog.DebugContext(ctx, "Running HTTP metrics server....", slog.String("address", m.Addr))
 	if err := m.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-		return utils.WrapError("HTTP metrics server error occurred", err)
+		return sharedUtils.WrapErrorWithPrefix("HTTP metrics server error occurred", err)
 	}
 
 	return nil
@@ -66,5 +66,5 @@ func (m *MetricsServer) GracefulShutdown(ctx context.Context) {
 		slog.ErrorContext(ctx, "Failed shutting down HTTP metrics server", logger.Error(err))
 	}
 
-	slog.InfoContext(ctx, "Shut down HTTP metrics server")
+	slog.DebugContext(ctx, "Shut down HTTP metrics server")
 }

@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.4
 // 	protoc        (unknown)
-// source: posts/internal/core/events/proto/events.proto
+// source: microservices/posts/internal/core/events/proto/events.proto
 
 package posts
 
@@ -31,7 +31,7 @@ type PostCreatedEvent struct {
 
 func (x *PostCreatedEvent) Reset() {
 	*x = PostCreatedEvent{}
-	mi := &file_posts_internal_core_events_proto_events_proto_msgTypes[0]
+	mi := &file_microservices_posts_internal_core_events_proto_events_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -43,7 +43,7 @@ func (x *PostCreatedEvent) String() string {
 func (*PostCreatedEvent) ProtoMessage() {}
 
 func (x *PostCreatedEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_posts_internal_core_events_proto_events_proto_msgTypes[0]
+	mi := &file_microservices_posts_internal_core_events_proto_events_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -56,7 +56,7 @@ func (x *PostCreatedEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PostCreatedEvent.ProtoReflect.Descriptor instead.
 func (*PostCreatedEvent) Descriptor() ([]byte, []int) {
-	return file_posts_internal_core_events_proto_events_proto_rawDescGZIP(), []int{0}
+	return file_microservices_posts_internal_core_events_proto_events_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *PostCreatedEvent) GetId() int32 {
@@ -73,40 +73,40 @@ func (x *PostCreatedEvent) GetOwnerId() int32 {
 	return 0
 }
 
-var File_posts_internal_core_events_proto_events_proto protoreflect.FileDescriptor
+var File_microservices_posts_internal_core_events_proto_events_proto protoreflect.FileDescriptor
 
-var file_posts_internal_core_events_proto_events_proto_rawDesc = string([]byte{
-	0x0a, 0x2d, 0x70, 0x6f, 0x73, 0x74, 0x73, 0x2f, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c,
-	0x2f, 0x63, 0x6f, 0x72, 0x65, 0x2f, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x73, 0x2f, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x2f, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12,
-	0x0c, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x73, 0x2e, 0x70, 0x6f, 0x73, 0x74, 0x73, 0x22, 0x3d, 0x0a,
-	0x10, 0x50, 0x6f, 0x73, 0x74, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x45, 0x76, 0x65, 0x6e,
-	0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x02, 0x69,
-	0x64, 0x12, 0x19, 0x0a, 0x08, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20,
-	0x01, 0x28, 0x05, 0x52, 0x07, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x49, 0x64, 0x42, 0x31, 0x5a, 0x2f,
-	0x62, 0x61, 0x63, 0x6b, 0x65, 0x6e, 0x64, 0x2f, 0x73, 0x68, 0x61, 0x72, 0x65, 0x64, 0x2f, 0x70,
-	0x6b, 0x67, 0x2f, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x73, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f,
-	0x67, 0x65, 0x6e, 0x65, 0x72, 0x61, 0x74, 0x65, 0x64, 0x2f, 0x70, 0x6f, 0x73, 0x74, 0x73, 0x62,
-	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+var file_microservices_posts_internal_core_events_proto_events_proto_rawDesc = string([]byte{
+	0x0a, 0x3b, 0x6d, 0x69, 0x63, 0x72, 0x6f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x73, 0x2f,
+	0x70, 0x6f, 0x73, 0x74, 0x73, 0x2f, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x2f, 0x63,
+	0x6f, 0x72, 0x65, 0x2f, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x73, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x2f, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x0c, 0x65,
+	0x76, 0x65, 0x6e, 0x74, 0x73, 0x2e, 0x70, 0x6f, 0x73, 0x74, 0x73, 0x22, 0x3d, 0x0a, 0x10, 0x50,
+	0x6f, 0x73, 0x74, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x12,
+	0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x02, 0x69, 0x64, 0x12,
+	0x19, 0x0a, 0x08, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x05, 0x52, 0x07, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x49, 0x64, 0x42, 0x29, 0x5a, 0x27, 0x73, 0x68,
+	0x61, 0x72, 0x65, 0x64, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x73, 0x2f,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x67, 0x65, 0x6e, 0x65, 0x72, 0x61, 0x74, 0x65, 0x64, 0x2f,
+	0x70, 0x6f, 0x73, 0x74, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 })
 
 var (
-	file_posts_internal_core_events_proto_events_proto_rawDescOnce sync.Once
-	file_posts_internal_core_events_proto_events_proto_rawDescData []byte
+	file_microservices_posts_internal_core_events_proto_events_proto_rawDescOnce sync.Once
+	file_microservices_posts_internal_core_events_proto_events_proto_rawDescData []byte
 )
 
-func file_posts_internal_core_events_proto_events_proto_rawDescGZIP() []byte {
-	file_posts_internal_core_events_proto_events_proto_rawDescOnce.Do(func() {
-		file_posts_internal_core_events_proto_events_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_posts_internal_core_events_proto_events_proto_rawDesc), len(file_posts_internal_core_events_proto_events_proto_rawDesc)))
+func file_microservices_posts_internal_core_events_proto_events_proto_rawDescGZIP() []byte {
+	file_microservices_posts_internal_core_events_proto_events_proto_rawDescOnce.Do(func() {
+		file_microservices_posts_internal_core_events_proto_events_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_microservices_posts_internal_core_events_proto_events_proto_rawDesc), len(file_microservices_posts_internal_core_events_proto_events_proto_rawDesc)))
 	})
-	return file_posts_internal_core_events_proto_events_proto_rawDescData
+	return file_microservices_posts_internal_core_events_proto_events_proto_rawDescData
 }
 
-var file_posts_internal_core_events_proto_events_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
-var file_posts_internal_core_events_proto_events_proto_goTypes = []any{
+var file_microservices_posts_internal_core_events_proto_events_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_microservices_posts_internal_core_events_proto_events_proto_goTypes = []any{
 	(*PostCreatedEvent)(nil), // 0: events.posts.PostCreatedEvent
 }
-var file_posts_internal_core_events_proto_events_proto_depIdxs = []int32{
+var file_microservices_posts_internal_core_events_proto_events_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
 	0, // [0:0] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
@@ -114,26 +114,26 @@ var file_posts_internal_core_events_proto_events_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for field type_name
 }
 
-func init() { file_posts_internal_core_events_proto_events_proto_init() }
-func file_posts_internal_core_events_proto_events_proto_init() {
-	if File_posts_internal_core_events_proto_events_proto != nil {
+func init() { file_microservices_posts_internal_core_events_proto_events_proto_init() }
+func file_microservices_posts_internal_core_events_proto_events_proto_init() {
+	if File_microservices_posts_internal_core_events_proto_events_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_posts_internal_core_events_proto_events_proto_rawDesc), len(file_posts_internal_core_events_proto_events_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_microservices_posts_internal_core_events_proto_events_proto_rawDesc), len(file_microservices_posts_internal_core_events_proto_events_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   1,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_posts_internal_core_events_proto_events_proto_goTypes,
-		DependencyIndexes: file_posts_internal_core_events_proto_events_proto_depIdxs,
-		MessageInfos:      file_posts_internal_core_events_proto_events_proto_msgTypes,
+		GoTypes:           file_microservices_posts_internal_core_events_proto_events_proto_goTypes,
+		DependencyIndexes: file_microservices_posts_internal_core_events_proto_events_proto_depIdxs,
+		MessageInfos:      file_microservices_posts_internal_core_events_proto_events_proto_msgTypes,
 	}.Build()
-	File_posts_internal_core_events_proto_events_proto = out.File
-	file_posts_internal_core_events_proto_events_proto_goTypes = nil
-	file_posts_internal_core_events_proto_events_proto_depIdxs = nil
+	File_microservices_posts_internal_core_events_proto_events_proto = out.File
+	file_microservices_posts_internal_core_events_proto_events_proto_goTypes = nil
+	file_microservices_posts_internal_core_events_proto_events_proto_depIdxs = nil
 }

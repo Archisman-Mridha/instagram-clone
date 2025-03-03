@@ -1,10 +1,6 @@
 package healthcheck
 
-import (
-	"errors"
-
-	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/utils"
-)
+import sharedUtils "github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/utils"
 
 type (
 	HealthcheckFn = func() error
@@ -15,16 +11,12 @@ type (
 )
 
 // Checks health for each of the given health-checkable entities.
-func Healthcheck(healthcheckables []Healthcheckable) (joinedErrors error) {
+// Fails fast, i.e, when it encounters an unhealthy entity, it immediately returns error.
+func Healthcheck(healthcheckables []Healthcheckable) error {
 	for _, healthcheckable := range healthcheckables {
 		if err := healthcheckable.Healthcheck(); err != nil {
-			errors.Join(joinedErrors, err)
+			return sharedUtils.WrapErrorWithPrefix("Healthcheck failed", err)
 		}
 	}
-
-	if joinedErrors != nil {
-		utils.WrapError("Healthcheck failed", joinedErrors)
-	}
-
-	return
+	return nil
 }

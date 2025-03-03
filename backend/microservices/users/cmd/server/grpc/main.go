@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -10,17 +11,26 @@ import (
 
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/cmd/server/grpc/api"
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/cmd/server/grpc/api/proto/generated"
+	postgres "github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/adapters/postgres/repositories/users"
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/config"
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/constants"
-	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/grpc"
+	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/core/usecases"
+	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/token"
+	version "github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/version"
+	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/connectors"
+	gRPCUtils "github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/grpc"
 	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/healthcheck"
-	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/observability/logger"
+	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/observability"
+	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/observability/logs/logger"
 	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/observability/metrics"
-	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/observability/tracer"
-	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/utils"
-	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/versioning"
+	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/observability/traces"
+	sharedUtils "github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/utils"
+	"github.com/go-playground/validator/v10"
+
 	"golang.org/x/sync/errgroup"
 )
+
+var configFilePath string
 
 func main() {
 	// When the program receives any interruption / SIGKILL / SIGTERM signal, the cancel function is
@@ -31,10 +41,29 @@ func main() {
 	)
 	defer cancel()
 
-	configFilePath := utils.GetEnv(constants.ENV_CONFIG_FILE)
-	config := utils.MustParseConfigFile[config.Config](ctx, configFilePath)
+	validator := sharedUtils.NewValidator(ctx)
 
-	if err := run(ctx, config); err != nil {
+	// Get CLI flag values.
+	{
+		flagSet := flag.NewFlagSet("", flag.ExitOnError)
+
+		flagSet.StringVar(&configFilePath, constants.FLAG_CONFIG_FILE, constants.FLAG_CONFIG_FILE_DEFAULT,
+			"Config file path",
+		)
+
+		flagSet.VisitAll(sharedUtils.CreateGetFlagOrEnvValueFn(""))
+
+		cmdArgs := os.Args[1:]
+		if err := flagSet.Parse(cmdArgs); err != nil {
+			slog.Error("Failed parsing command line flags", logger.Error(err))
+			os.Exit(1)
+		}
+	}
+
+	// Get config.
+	config := sharedUtils.MustParseConfigFile[config.Config](ctx, configFilePath, validator)
+
+	if err := run(ctx, config, validator); err != nil {
 		slog.ErrorContext(ctx, err.Error())
 
 		cancel()
@@ -46,48 +75,64 @@ func main() {
 	}
 }
 
-func run(ctx context.Context, config *config.Config) error {
-	logger.SetupLogger(config.DebugLogging, config.DevMode)
-
-	metricsServer := metrics.NewMetricsServer(config.HTTPMetricsServerPort)
-
-	traceExporter := tracer.SetupTraceExporter(ctx, tracer.SetupTraceExporterArgs{
-		ServiceName:    constants.SERVICE_NAME,
-		ServiceVersion: constants.SERVICE_VERSION,
-
-		TraceCollectorEndpoint: config.JaegerURL,
-	})
-	defer traceExporter.GracefulShutdown(ctx)
-
-	openFeatureClient := versioning.GetOpenFeatureClient(ctx, config.FlagsmithAPIKey,
-		constants.SERVICE_NAME,
-	)
-	_ = openFeatureClient
-
+func run(ctx context.Context, config *config.Config, validator *validator.Validate) error {
 	waitGroup, ctx := errgroup.WithContext(ctx)
 
-	// Run gRPC server.
-	{
-		gRPCServer := grpc.NewGRPCServer(ctx, grpc.NewGRPCServerArgs{
-			DevModeEnabled: config.DevMode,
+	// Setup observability.
 
-			HealthcheckFrequency: constants.HEALTHCHECK_FREQUENCY,
-			Healthcheckables:     []healthcheck.Healthcheckable{},
-		})
+	logger.SetupLogger(config.DebugLogging, config.DevMode)
 
-		generated.RegisterUsersServiceServer(gRPCServer, &api.GRPCAPI{})
+	openTelemetryResource := observability.NewOpenTelemetryResource(ctx,
+		constants.SERVICE_NAME, version.Version,
+	)
 
-		waitGroup.Go(func() error {
-			return gRPCServer.Run(ctx, config.GRPCServerPort)
-		})
-		defer gRPCServer.GracefulShutdown(ctx)
+	openTelemetryCollectorClient := observability.NewOpenTelemetryCollectorClient(ctx,
+		config.OpenTelemetryCollectrURL,
+	)
+
+	exporterArgs := observability.NewExporterArgs{
+		OpenTelemetryResource: openTelemetryResource,
+		GRPCClientConnection:  openTelemetryCollectorClient.GetConnection(),
 	}
 
-	// Run HTTP metrics server.
-	waitGroup.Go(func() error {
-		return metricsServer.Run(ctx)
+	metricExporter := metrics.NewMetricExporter(ctx, exporterArgs)
+
+	traceExporter := traces.NewTraceExporter(ctx, exporterArgs)
+
+	// Setup feature flagging.
+	_ = sharedUtils.GetOpenFeatureClient(ctx, &config.Flagsmith)
+
+	// Construct the usecases layer.
+
+	usersRepositoryAdapter := postgres.NewUsersRepositoryAdapter(ctx, &config.Postgres)
+
+	cacheAdapter := connectors.NewRedisConnector(ctx, &config.Redis)
+
+	usecases := usecases.NewUsecases(
+		validator,
+		cacheAdapter,
+		usersRepositoryAdapter,
+		token.NewJWTService(config.JWTSigningKey),
+	)
+
+	// Run gRPC server.
+
+	gRPCServer := gRPCUtils.NewGRPCServer(ctx, gRPCUtils.NewGRPCServerArgs{
+		DevModeEnabled: config.DevMode,
+
+		Healthcheckables: []healthcheck.Healthcheckable{
+			usersRepositoryAdapter,
+			cacheAdapter,
+		},
+
+		ToGRPCErrorStatusCodeFn: getGRPCErrorStatusCode,
 	})
-	defer metricsServer.GracefulShutdown(ctx)
+
+	generated.RegisterUsersServiceServer(gRPCServer, api.NewGRPCAPI(usecases))
+
+	waitGroup.Go(func() error {
+		return gRPCServer.Run(ctx, config.GRPCServerPort)
+	})
 
 	/*
 		The returned channel gets closed when either of this happens :
@@ -98,7 +143,20 @@ func run(ctx context.Context, config *config.Config) error {
 			(2) Any of the go-routines registered under the wait-group, finishes running.
 	*/
 	<-ctx.Done()
-	slog.InfoContext(ctx, "Gracefully shutting down program....")
+	slog.DebugContext(ctx, "Gracefully shutting down program....")
+
+	// Gracefull shutdown.
+
+	// The gRPC server must be gracefully shutdown first, so that the server finishes ongoing
+	// processing of requests and returns back response.
+	gRPCServer.GracefulShutdown()
+
+	cacheAdapter.Shutdown()
+	usersRepositoryAdapter.Shutdown()
+
+	traceExporter.GracefulShutdown()
+	metricExporter.GracefulShutdown()
+	openTelemetryCollectorClient.Shutdown()
 
 	return waitGroup.Wait()
 }

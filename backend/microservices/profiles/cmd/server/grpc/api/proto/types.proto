@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package microservices.profiles;
 
-option go_package = "backend/microservices/profiles/cmd/server/grpc/api/proto/generated";
+option go_package = "microservices/profiles/cmd/server/grpc/api/proto/generated";
 
 message ProfilePreview {
   int32 id = 1;

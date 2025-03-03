@@ -3,13 +3,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
 
-    rust-overlay = {
-      url = "github:oxalica/rust-overlay";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        flake-utils.follows = "flake-utils";
-      };
-    };
+    foundry.url = "github:shazow/foundry.nix/monthly";
   };
 
   outputs =
@@ -17,24 +11,22 @@
       self,
       nixpkgs,
       flake-utils,
-      rust-overlay,
+      foundry,
     }:
     flake-utils.lib.eachDefaultSystem (
       system:
       let
-        overlays = [ (import rust-overlay) ];
+        overlays = [
+          foundry.overlay
+        ];
         pkgs = import nixpkgs {
           inherit system overlays;
           config.allowUnfree = true;
         };
-        rootPath = ./.;
+        projectRootPath = ./.;
       in
       with pkgs;
       {
-        nativeBuildInputs = [
-          (rust-bin.fromRustupToolchainFile ./rust-toolchain.toml)
-        ];
-
         devShells.default = mkShell {
           buildInputs = [
             go
@@ -44,20 +36,29 @@
             protobuf
             buf
 
-            llvm
-            rustup
-            (rust-bin.fromRustupToolchainFile ./rust-toolchain.toml)
+            sqlc
 
-            nixfmt-rfc-style
+            foundry-bin
+            solc
+
+            bun
+            biome
+
+            cue
+            docker-compose
+            kubectl
+            kubeseal
+            awscli2
 
             gnumake
           ];
+
+          shellHook = "export PS1=\"(dev) $PS1\"";
         };
 
         packages =
           let
-            version = "v1.0.0";
-            microservices = [
+            microserviceNames = [
               "users"
               "posts"
             ];
@@ -65,18 +66,17 @@
           {
             microservices = lib.listToAttrs (
               map (microservice: {
-                name = microservice;
-                value = (import ./build/nix/go.nix) {
+                name = microserviceName;
+                value = (import ./build/nix/go.nix).microservice {
                   inherit
                     lib
                     buildGoModule
                     dockerTools
-                    rootPath
-                    version
+                    projectRootPath
                     ;
-                  microservice = "${microservice}-microservice";
+                  name = microserviceName;
                 };
-              }) microservices
+              }) microserviceNames
             );
           };
       }
