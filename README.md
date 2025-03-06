@@ -14,14 +14,13 @@
 
 **Storage and Stream Processing Systems** :
 
-![Redis Badge](https://img.shields.io/badge/Redis-FF4438?logo=redis&logoColor=fff&style=for-the-badge)
 ![PostgreSQL Badge](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=fff&style=for-the-badge)
-![Apache Kafka Badge](https://img.shields.io/badge/Apache%20Kafka-231F20?logo=apachekafka&logoColor=fff&style=for-the-badge)
-![Elasticsearch Badge](https://img.shields.io/badge/Elasticsearch-005571?logo=elasticsearch&logoColor=fff&style=for-the-badge)
-![MinIO Badge](https://img.shields.io/badge/MinIO-C72E49?logo=minio&logoColor=fff&style=for-the-badge)
 ![Apache Flink Badge](https://img.shields.io/badge/Apache%20Flink-E6526F?logo=apacheflink&logoColor=fff&style=for-the-badge)
 
+- [Dragonfly](https://www.dragonflydb.io)
 - [Redpanda](https://www.redpanda.com)
+- [Conduit](https://conduit.io)
+- [ZincSearch](https://zincsearch-docs.zinc.dev)
 - [Apache Beam](https://beam.apache.org)
 
 **Communication and Searialization Protocols** :
@@ -30,7 +29,6 @@
 
 - [Protobuf](https://protobuf.dev)
 - [gRPC](https://grpc.io)
-- [CloudEvents](https://cloudevents.io)
 
 **Frontend Development** :
 
@@ -59,10 +57,7 @@
 **Continuous Integration** :
 
 ![NixOS Badge](https://img.shields.io/badge/NixOS-5277C3?logo=nixos&logoColor=fff&style=for-the-badge)
-![CMake Badge](https://img.shields.io/badge/CMake-064F8C?logo=cmake&logoColor=fff&style=for-the-badge)
 ![GitHub Actions Badge](https://img.shields.io/badge/GitHub%20Actions-2088FF?logo=githubactions&logoColor=fff&style=for-the-badge)
-
-- [Buf](https://the-guild.dev/graphql/codegen)
 
 **Continuous Deployment**
 
@@ -71,8 +66,6 @@
 ![K3s Badge](https://img.shields.io/badge/K3s-FFC61C?logo=k3s&logoColor=000&style=for-the-badge)
 ![Helm Badge](https://img.shields.io/badge/Helm-0F1689?logo=helm&logoColor=fff&style=for-the-badge)
 ![Cilium Badge](https://img.shields.io/badge/Cilium-F8C517?logo=cilium&logoColor=000&style=for-the-badge)
-![ContainerD Badge](https://img.shields.io/badge/containerd-575757?logo=containerd&logoColor=fff&style=for-the-badge)
-![Harbor Badge](https://img.shields.io/badge/Harbor-60B932?logo=harbor&logoColor=fff&style=for-the-badge)
 ![Argo Badge](https://img.shields.io/badge/Argo-EF7B4D?logo=argo&logoColor=fff&style=for-the-badge)
 ![Vault Badge](https://img.shields.io/badge/Vault-FFEC6E?logo=vault&logoColor=000&style=for-the-badge)
 
@@ -85,7 +78,8 @@
 - [CloudNativePG](https://cloudnative-pg.io)
 - [AtlasGo](https://atlasgo.io)
 - [KEDA](https://keda.sh)
-- [WasmEdge](https://wasmedge.org)
+- [Cluster AutoScaler](https://github.com/kubernetes/autoscaler)
+- [KubeVela](https://kubevela.io)
 
 **Observability** :
 
