@@ -1,6 +1,6 @@
 module github.com/Archisman-Mridha/instagram-clone/backend/microservices/users
 
-go 1.23.4
+go 1.24.0
 
 require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.4-20241127180247-a33202765966.1
@@ -12,7 +12,7 @@ require (
 	github.com/jackc/pgx/v5 v5.7.2
 	github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10
 	golang.org/x/crypto v0.32.0
-	golang.org/x/mod v0.17.0
+	golang.org/x/mod v0.22.0
 	golang.org/x/sync v0.10.0
 	google.golang.org/grpc v1.70.0
 	google.golang.org/protobuf v1.36.4

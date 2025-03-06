@@ -4,13 +4,6 @@
     flake-utils.url = "github:numtide/flake-utils";
 
     foundry.url = "github:shazow/foundry.nix/monthly";
-
-    rust-overlay = {
-      url = "github:oxalica/rust-overlay";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-      };
-    };
   };
 
   outputs =
@@ -19,13 +12,11 @@
       nixpkgs,
       flake-utils,
       foundry,
-      rust-overlay,
     }:
     flake-utils.lib.eachDefaultSystem (
       system:
       let
         overlays = [
-          (import rust-overlay)
           foundry.overlay
         ];
 
@@ -34,27 +25,13 @@
           config.allowUnfree = true;
         };
 
-        cargo-expand = pkgs.cargo-expand.overrideAttrs (oldAttrs: {
-          src = pkgs.fetchFromGitHub {
-            owner = "dtolnay";
-            repo = "cargo-expand";
-            rev = "a1945f760a8fe019a4d753808de424dcd4e5b3cf";
-            sha256 = "";
-          };
-        });
-
         projectRootPath = ./.;
-        rustToolchainFilePath = projectRootPath + /backend/rust-toolchain.toml;
       in
       with pkgs;
       {
-        nativeBuildInputs = [
-          (rust-bin.fromRustupToolchainFile rustToolchainFilePath)
-        ];
-
         devShells.default = mkShell {
           buildInputs = [
-            go
+            go_1_24
             golangci-lint
             golines
 
@@ -62,11 +39,6 @@
             buf
 
             sqlc
-
-            llvm
-            rustup
-            (rust-bin.fromRustupToolchainFile rustToolchainFilePath)
-            cargo-expand
 
             foundry-bin
             solc
@@ -80,10 +52,8 @@
             kubeseal
             awscli2
 
-            gnumake
+            go-task
           ];
-
-          shellHook = "export PS1=\"(dev) $PS1\"";
         };
 
         packages =

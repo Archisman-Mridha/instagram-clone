@@ -7,10 +7,8 @@
 **Programming Languages** :
 
 ![Go Badge](https://img.shields.io/badge/Go-00ADD8?logo=go&logoColor=fff&style=for-the-badge)
-![Rust Badge](https://img.shields.io/badge/Rust-000?logo=rust&logoColor=fff&style=for-the-badge)
 ![TypeScript Badge](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=fff&style=for-the-badge)
 ![Scala Badge](https://img.shields.io/badge/Scala-DC322F?logo=scala&logoColor=fff&style=for-the-badge)
-![WebAssembly Badge](https://img.shields.io/badge/WebAssembly-654FF0?logo=webassembly&logoColor=fff&style=for-the-badge)
 
 - [CueLang](https://cuelang.org)
 

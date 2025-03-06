@@ -7,4 +7,4 @@ contracts/dependencies
 
 deploy/compose/out/
 
-node_modules/
+frontend/node_modules/
