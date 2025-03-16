@@ -7,27 +7,33 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-type TraceIDCtxKey struct{}
+type TraceAndSpanIDCtxKey struct{}
 
-var traceIDCtxKey = TraceIDCtxKey{}
+var traceAndSpanIDCtxKey = TraceAndSpanIDCtxKey{}
 
-type TraceIDHandler struct {
+type TraceAndSpanIDHandler struct {
 	slog.Handler
 }
 
-// Retrieves the trace-id (if present in the context) and appends it to the slog record (log event).
+// Retrieves the tracea and span IDs (if present in the context) and appends it to the slog record
+// (log event).
 // The slog handler is then invoked with the modified record.
-func (h *TraceIDHandler) Handle(ctx context.Context, record slog.Record) error {
+func (h *TraceAndSpanIDHandler) Handle(ctx context.Context, record slog.Record) error {
 	if trace.SpanContextFromContext(ctx).HasTraceID() {
 		traceID := trace.SpanContextFromContext(ctx).TraceID().String()
 		record.AddAttrs(slog.String("trace", traceID))
 	}
 
+	if trace.SpanContextFromContext(ctx).HasSpanID() {
+		spanID := trace.SpanContextFromContext(ctx).SpanID().String()
+		record.AddAttrs(slog.String("span", spanID))
+	}
+
 	return h.Handler.Handle(ctx, record)
 }
 
-func withTraceIDHandler(handler slog.Handler) *TraceIDHandler {
-	return &TraceIDHandler{
+func withTraceAndSpanIDHandler(handler slog.Handler) *TraceAndSpanIDHandler {
+	return &TraceAndSpanIDHandler{
 		handler,
 	}
 }

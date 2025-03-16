@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package events.profiles;
+
+option go_package = "shared/pkg/events/proto/generated/profiles";
+
+message ProfileCreatedEvent {
+  int32 id = 1;
+
+  string name     = 2;
+  string username = 3;
+}

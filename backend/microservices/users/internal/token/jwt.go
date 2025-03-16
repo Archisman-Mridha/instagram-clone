@@ -47,7 +47,7 @@ func NewJWTService(signingKey string) *JWTService {
 }
 
 func (j *JWTService) Issue(userID sharedTypes.ID) (*string, error) {
-	jwtSigner := goJWT.NewWithClaims(&goJWT.SigningMethodECDSA{}, JWTClaims{
+	jwtSigner := goJWT.NewWithClaims(goJWT.SigningMethodHS256, JWTClaims{
 		RegisteredClaims: goJWT.RegisteredClaims{
 			Issuer:    "Instagram Clone",
 			Subject:   strconv.Itoa(int(userID)),

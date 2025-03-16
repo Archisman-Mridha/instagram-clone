@@ -11,7 +11,7 @@ import (
 
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/cmd/server/grpc/api"
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/cmd/server/grpc/api/proto/generated"
-	postgres "github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/adapters/postgres/repositories/users"
+	postgres "github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/adapters/repositories/users"
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/config"
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/constants"
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/core/usecases"
@@ -127,11 +127,10 @@ func run(ctx context.Context, config *config.Config, validator *validator.Valida
 
 		ToGRPCErrorStatusCodeFn: getGRPCErrorStatusCode,
 	})
-
 	generated.RegisterUsersServiceServer(gRPCServer, api.NewGRPCAPI(usecases))
 
 	waitGroup.Go(func() error {
-		return gRPCServer.Run(ctx, config.GRPCServerPort)
+		return gRPCServer.Run(ctx, config.ServerPort)
 	})
 
 	/*

@@ -3,13 +3,13 @@ package usecases
 import (
 	"context"
 
-	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/core/types/repositories"
+	coreTypes "github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/core/types"
 )
 
 type (
 	SigninArgs struct {
-		Email    *string `validate:"email"`
-		Username *string `validate:"username"`
+		Email    *string `validate:"omitempty,email"`
+		Username *string `validate:"omitempty,username"`
 
 		Password string `validate:"password"`
 	}
@@ -25,7 +25,7 @@ func (u *Usecases) Signin(ctx context.Context, args *SigninArgs) (*SigninOutput,
 		return nil, err
 	}
 
-	var userDetails *repositories.FindByOperationOutput
+	var userDetails *coreTypes.FindUserByOperationOutput
 	switch {
 	case args.Email != nil:
 		userDetails, err = u.usersRepository.FindByEmail(ctx, *args.Email)

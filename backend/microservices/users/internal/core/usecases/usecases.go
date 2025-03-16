@@ -1,7 +1,7 @@
 package usecases
 
 import (
-	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/core/types/repositories"
+	coreTypes "github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/core/types"
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/core/validators"
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/token"
 	sharedTypes "github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/types"
@@ -14,7 +14,7 @@ type Usecases struct {
 	validator *validator.Validate
 
 	cache           sharedTypes.KVStore
-	usersRepository repositories.UsersRepository
+	usersRepository coreTypes.UsersRepository
 
 	tokenService token.TokenService
 }
@@ -22,7 +22,7 @@ type Usecases struct {
 func NewUsecases(
 	validator *validator.Validate,
 	cache sharedTypes.KVStore,
-	usersRespository repositories.UsersRepository,
+	usersRespository coreTypes.UsersRepository,
 	tokenService token.TokenService,
 ) *Usecases {
 	sharedUtils.RegisterCustomFieldValidators(validator, map[string]goValidator.Func{

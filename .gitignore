@@ -5,6 +5,4 @@ backend/target/
 
 contracts/dependencies
 
-deploy/compose/out/
-
 frontend/node_modules/

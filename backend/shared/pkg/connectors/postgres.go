@@ -26,6 +26,7 @@ type (
 )
 
 func NewPostgresConnector(ctx context.Context, args *NewPostgresConnectorArgs) *PostgresConnector {
+	// TODO : use a query logger.
 	connection, err := otelsql.Open("pgx", args.URL,
 		otelsql.WithAttributes(semconv.DBSystemPostgreSQL),
 	)

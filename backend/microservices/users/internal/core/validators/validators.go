@@ -10,7 +10,7 @@ import (
 
 func NameFieldValidator(fieldLevel validator.FieldLevel) bool {
 	err := ValidateName(fieldLevel.Field().String())
-	return (err != nil)
+	return (err == nil)
 }
 
 func ValidateName(name string) error {
@@ -22,7 +22,7 @@ func ValidateName(name string) error {
 
 	// name must contain only alphabetic characters.
 	for _, character := range name {
-		if !unicode.IsLetter(character) {
+		if !unicode.IsLetter(character) && (character != ' ') {
 			return errors.New("name can only contain alphabetic characters")
 		}
 	}
@@ -32,7 +32,7 @@ func ValidateName(name string) error {
 
 func EmailFieldValidator(fieldLevel validator.FieldLevel) bool {
 	err := ValidateEmail(fieldLevel.Field().String())
-	return (err != nil)
+	return (err == nil)
 }
 
 func ValidateEmail(email string) error {
@@ -46,7 +46,7 @@ func ValidateEmail(email string) error {
 
 func UsernameFieldValidator(fieldLevel validator.FieldLevel) bool {
 	err := ValidateUsername(fieldLevel.Field().String())
-	return (err != nil)
+	return (err == nil)
 }
 
 func ValidateUsername(username string) error {
@@ -82,7 +82,7 @@ func ValidateUsername(username string) error {
 
 func PasswordFieldValidator(fieldLevel validator.FieldLevel) bool {
 	err := ValidatePassword(fieldLevel.Field().String())
-	return (err != nil)
+	return (err == nil)
 }
 
 // TODO : Validate password based on entropy.

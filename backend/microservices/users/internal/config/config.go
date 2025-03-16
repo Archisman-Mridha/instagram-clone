@@ -10,7 +10,7 @@ type (
 		DevMode      bool `yaml:"devMode" default:"False"`
 		DebugLogging bool `yaml:"debugLogging" default:"False"`
 
-		GRPCServerPort int `yaml:"gRPCServerPort" default:"4000" validate:"gt=0"`
+		ServerPort int `yaml:"serverPort" default:"4000" validate:"gt=0"`
 
 		JWTSigningKey string `yaml:"jwtSigningKey" validate:"required,notblank"`
 

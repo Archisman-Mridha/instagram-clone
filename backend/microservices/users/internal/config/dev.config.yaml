@@ -1,7 +1,7 @@
 devMode: True
 debugLogging: True
 
-gRPCServerPort: 4000
+serverPort: 4000
 
 jwtSigningKey: XHwjzpbA3d32UGYT
 

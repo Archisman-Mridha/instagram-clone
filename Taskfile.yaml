@@ -1,0 +1,22 @@
+version: "3"
+
+tasks:
+  buf-generate:
+    dir: ./backend/
+    cmd: buf generate
+
+  sqlc-generate:
+    dir: ./backend/microservices/
+    cmd: sqlc generate
+
+  compose-up:
+    dir: ./deploy/compose/
+    env:
+      CUE_EXPERIMENT: evalv3
+    cmds:
+      - cue export ./src/ --out yaml > ./out/compose.yaml
+      - docker-compose -f ./out/compose.yaml up -d
+
+  compose-down:
+    dir: ./deploy/compose/
+    cmd: docker-compose -f ./out/compose.yaml down

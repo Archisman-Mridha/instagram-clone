@@ -13,7 +13,7 @@ func (u *Usecases) GetUserIDFromJWT(ctx context.Context, jwt string) (*sharedTyp
 	}
 
 	// Verify that the user exists in the database.
-	_, err = u.usersRepository.FindByID(ctx, *userID)
+	_, err = u.usersRepository.UserIDExists(ctx, *userID)
 	if err != nil {
 		return nil, err
 	}

@@ -92,6 +92,10 @@ func toGRPCError(ctx context.Context,
 	err error,
 	toGRPCErrorStatusCodeFn ToGRPCErrorStatusCodeFn,
 ) error {
+	if err == nil {
+		return nil
+	}
+
 	switch err.(type) {
 	case sharedUtils.APIError:
 		return status.Error(toGRPCErrorStatusCodeFn(err), err.Error())

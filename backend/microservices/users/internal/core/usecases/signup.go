@@ -3,7 +3,7 @@ package usecases
 import (
 	"context"
 
-	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/core/types/repositories"
+	coreTypes "github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/core/types"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -25,7 +25,7 @@ func (u *Usecases) Signup(ctx context.Context, args *SignupArgs) (*SigninOutput,
 		return nil, err
 	}
 
-	userID, err := u.usersRepository.Create(ctx, &repositories.CreateArgs{
+	userID, err := u.usersRepository.Create(ctx, &coreTypes.CreateUserArgs{
 		Name:           args.Name,
 		Email:          args.Email,
 		Username:       args.Username,
@@ -35,7 +35,7 @@ func (u *Usecases) Signup(ctx context.Context, args *SignupArgs) (*SigninOutput,
 		return nil, err
 	}
 
-	jwt, err := u.tokenService.Issue(*userID)
+	jwt, err := u.tokenService.Issue(userID)
 	if err != nil {
 		return nil, err
 	}

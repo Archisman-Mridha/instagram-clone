@@ -15,13 +15,10 @@
 **Storage and Stream Processing Systems** :
 
 ![PostgreSQL Badge](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=fff&style=for-the-badge)
-![Apache Flink Badge](https://img.shields.io/badge/Apache%20Flink-E6526F?logo=apacheflink&logoColor=fff&style=for-the-badge)
 
 - [Dragonfly](https://www.dragonflydb.io)
 - [Redpanda](https://www.redpanda.com)
-- [Conduit](https://conduit.io)
 - [ZincSearch](https://zincsearch-docs.zinc.dev)
-- [Apache Beam](https://beam.apache.org)
 
 **Communication and Searialization Protocols** :
 
@@ -157,6 +154,8 @@ While going through the above resources, I discovered some nice tools and concep
 - [How to get stacktraces from errors in Golang with go-errors/errors](https://www.bugsnag.com/blog/go-errors/)
 
 - [A Beautiful Way To Deal With ERRORS in Golang HTTP Handlers](https://www.youtube.com/watch?v=aS1cJfQ-LrQ)
+
+- [Setup pgx query logger](https://gist.github.com/zaydek/91f27cdd35c6240701f81415c3ba7c07)
 
 **Security** :
 

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/archisman-mridha/instagram-clone/cue.mod/gen/compose:compose"
+	"github.com/archisman-mridha/instagram-clone/deploy/cue.mod/gen/compose:compose"
 )
 
 compose.#Project & {
@@ -24,7 +24,8 @@ compose.#Project & {
 			container_name: "postgres-migrator"
 			image:          "migrate/migrate:latest"
 			volumes: [
-				"../../../backend/microservices/users/internal/adapters/postgres/repositories/users/schema.sql:/migrations/000001_users_db_init.up.sql:ro",
+				"../../../backend/microservices/users/internal/adapters/repositories/users/schema.sql:/migrations/000001_users_table_init.up.sql:ro",
+				"../../../backend/microservices/profiles/internal/adapters/repositories/profiles/schema.sql:/migrations/000002_profiles_table_init.up.sql:ro",
 			]
 			command: [
 				"-path",

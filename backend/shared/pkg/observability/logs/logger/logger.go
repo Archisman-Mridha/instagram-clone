@@ -3,6 +3,8 @@ package logger
 import (
 	"log/slog"
 	"os"
+
+	"github.com/lmittmann/tint"
 )
 
 // Sets up the logger.
@@ -12,26 +14,26 @@ func SetupLogger(debugLoggingEnabled, devModeEnabled bool) {
 		logLevel = slog.LevelDebug
 	}
 
-	formatHandlerOptions := &slog.HandlerOptions{
-		Level: logLevel,
-
-		ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
-			if a.Key == slog.TimeKey {
-				a.Value = slog.StringValue(a.Value.Time().Format("15:04"))
-			}
-			return a
-		},
-	}
-
-	var formatHandler slog.Handler
+	var formatHandler slog.Handler = slog.NewJSONHandler(os.Stderr, &slog.HandlerOptions{
+		Level:       logLevel,
+		ReplaceAttr: replaceSlogAttr,
+	})
 	if devModeEnabled {
-		formatHandler = slog.NewTextHandler(os.Stderr, formatHandlerOptions)
-	} else {
-		formatHandler = slog.NewJSONHandler(os.Stderr, formatHandlerOptions)
+		formatHandler = tint.NewHandler(os.Stderr, &tint.Options{
+			Level:       logLevel,
+			ReplaceAttr: replaceSlogAttr,
+		})
 	}
 
-	logger := slog.New(withContextualSlogAttributesHandler(withTraceIDHandler(formatHandler)))
+	logger := slog.New(withContextualSlogAttributesHandler(withTraceAndSpanIDHandler(formatHandler)))
 	slog.SetDefault(logger)
+}
+
+func replaceSlogAttr(groups []string, a slog.Attr) slog.Attr {
+	if a.Key == slog.TimeKey {
+		a.Value = slog.StringValue(a.Value.Time().Format("15:04"))
+	}
+	return a
 }
 
 func Error(err error) slog.Attr {

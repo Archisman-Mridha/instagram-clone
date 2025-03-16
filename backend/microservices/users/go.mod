@@ -21,7 +21,6 @@ require (
 require (
 	cel.dev/expr v0.19.0 // indirect
 	github.com/Flagsmith/flagsmith-go-client/v3 v3.7.0 // indirect
-	github.com/andybalholm/brotli v1.1.1 // indirect
 	github.com/antlr4-go/antlr/v4 v4.13.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/blang/semver/v4 v4.0.0 // indirect
@@ -29,6 +28,8 @@ require (
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
+	github.com/elastic/elastic-transport-go/v8 v8.6.1 // indirect
+	github.com/elastic/go-elasticsearch/v8 v8.17.1 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
 	github.com/go-errors/errors v1.5.1 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
@@ -36,7 +37,6 @@ require (
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-resty/resty/v2 v2.14.0 // indirect
-	github.com/golang-jwt/jwt/v4 v4.5.1 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/cel-go v0.22.1 // indirect
 	github.com/google/uuid v1.6.0 // indirect
@@ -47,13 +47,11 @@ require (
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
 	github.com/jackc/puddle/v2 v2.2.2 // indirect
-	github.com/josharian/intern v1.0.0 // indirect
 	github.com/klauspost/compress v1.17.11 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
-	github.com/mailru/easyjson v0.9.0 // indirect
+	github.com/lmittmann/tint v1.0.7 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
 	github.com/mcuadros/go-defaults v1.2.0 // indirect
-	github.com/meilisearch/meilisearch-go v0.31.0 // indirect
 	github.com/open-feature/go-sdk v1.14.1 // indirect
 	github.com/open-feature/go-sdk-contrib/hooks/open-telemetry v0.3.4 // indirect
 	github.com/open-feature/go-sdk-contrib/providers/flagsmith v0.1.4 // indirect
@@ -69,6 +67,8 @@ require (
 	github.com/stoewer/go-strcase v1.3.0 // indirect
 	github.com/twmb/franz-go v1.18.1 // indirect
 	github.com/twmb/franz-go/pkg/kmsg v1.9.0 // indirect
+	github.com/twmb/franz-go/plugin/kotel v1.5.0 // indirect
+	github.com/twmb/franz-go/plugin/kslog v1.0.0 // indirect
 	github.com/uptrace/opentelemetry-go-extra/otelsql v0.3.2 // indirect
 	go.opentelemetry.io/auto/sdk v1.1.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.59.0 // indirect

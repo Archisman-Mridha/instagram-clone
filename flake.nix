@@ -60,7 +60,10 @@
           let
             microserviceNames = [
               "users"
+							"profiles"
+							"followships"
               "posts"
+							"feeds"
             ];
           in
           {

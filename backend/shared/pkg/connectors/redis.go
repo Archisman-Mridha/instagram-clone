@@ -89,5 +89,5 @@ func (r *RedisConnector) Shutdown() {
 		slog.Error("Failed closing Redis connection", logger.Error(err))
 		return
 	}
-	slog.Info("Shut down Redis client")
+	slog.Debug("Shut down Redis client")
 }
