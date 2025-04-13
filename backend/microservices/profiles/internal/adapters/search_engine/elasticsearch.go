@@ -5,14 +5,15 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strconv"
-	"strings"
 
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/profiles/internal/constants"
 	coreTypes "github.com/Archisman-Mridha/instagram-clone/backend/microservices/profiles/internal/core/types"
+	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/assert"
 	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/connectors"
+	sharedTypes "github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/types"
 	sharedUtils "github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/utils"
+	"github.com/aquasecurity/esquery"
 )
 
 type (
@@ -34,7 +35,10 @@ func NewSearchEngineAdapter(ctx context.Context,
 	return &SearchEngineAdapter{elasticsearchConnector}
 }
 
-func (s *SearchEngineAdapter) IndexProfile(ctx context.Context, profilePreview *coreTypes.ProfilePreview) error {
+// NOTE : Needs to be idempotent, since this is invoked by a DB event processor.
+func (s *SearchEngineAdapter) IndexProfile(ctx context.Context,
+	profilePreview *coreTypes.ProfilePreview,
+) error {
 	profileMetadata := ProfileMetadata{
 		Name:     profilePreview.Name,
 		Username: profilePreview.Username,
@@ -62,36 +66,33 @@ func (s *SearchEngineAdapter) IndexProfile(ctx context.Context, profilePreview *
 	return nil
 }
 
-// TODO : use scrolling search instead of multi-search, so we can have pagination.
-func (s *SearchEngineAdapter) SearchProfiles(ctx context.Context, query string) ([]*coreTypes.ProfilePreview, error) {
+func (s *SearchEngineAdapter) SearchProfiles(ctx context.Context,
+	query string,
+	paginationArgs *sharedTypes.PaginationArgs,
+) ([]*coreTypes.ProfilePreview, error) {
 	profilePreviews := []*coreTypes.ProfilePreview{}
 
-	elasticsearchMultiSearchClient := s.GetClient().Msearch
+	searchQuery, err := esquery.Search().
+		Query(
+			esquery.MultiMatch(query).
+				Type(esquery.MatchTypePhrasePrefix).
+				Fields("name", "username"),
+		).
+		Sort("_id", esquery.OrderAsc).
+		Size(paginationArgs.PageSize).
+		SearchAfter(paginationArgs.Offset).
+		MarshalJSON()
+	assert.AssertErrNil(ctx, err, "Failed JSON marshalling Elasticsearch search query")
 
-	multiSearchQuery := fmt.Sprintf(
-		`
-      {
-        "query": {
-          "multi_search": {
-            "query": "%s",
-            "type": "phrase_prefix",
-            "fields": ["name", "username"]
-          }
-        }
-      }
-    `,
-		query,
-	)
+	elasticsearchSearchClient := s.GetClient().Search
 
-	response, err := elasticsearchMultiSearchClient(strings.NewReader(multiSearchQuery),
-		elasticsearchMultiSearchClient.WithContext(ctx),
-		elasticsearchMultiSearchClient.WithIndex(constants.SEARCH_ENGINE_INDEX_PROFILES),
-		elasticsearchMultiSearchClient.WithSearchType("query_then_fetch"),
+	response, err := elasticsearchSearchClient(
+		elasticsearchSearchClient.WithBody(bytes.NewReader(searchQuery)),
+		elasticsearchSearchClient.WithContext(ctx),
+		elasticsearchSearchClient.WithIndex(constants.SEARCH_ENGINE_INDEX_PROFILES),
 	)
-	if err != nil {
-		return profilePreviews, sharedUtils.WrapError(err)
-	} else if response.IsError() {
-		return profilePreviews, sharedUtils.WrapError(errors.New("Failed running multi-search query, received error status-code"))
+	if (err != nil) || (response.IsError()) {
+		return profilePreviews, sharedUtils.WrapErrorWithPrefix("Failed running Elasticsearch search query", err)
 	}
 	defer response.Body.Close()
 

@@ -2,9 +2,9 @@ package profiles
 
 import (
 	"context"
+	"log/slog"
 
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/profiles/internal/adapters/repositories/profiles/generated"
-	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/profiles/internal/constants"
 	coreTypes "github.com/Archisman-Mridha/instagram-clone/backend/microservices/profiles/internal/core/types"
 	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/connectors"
 	sharedTypes "github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/types"
@@ -31,6 +31,7 @@ func NewProfilesRepositoryAdapter(ctx context.Context,
 	}
 }
 
+// NOTE : Needs to be idempotent, since this is invoked by a DB event processor.
 func (p *ProfilesRepositoryAdapter) Create(ctx context.Context, args *coreTypes.CreateProfileArgs) error {
 	err := p.queries.CreateProfile(ctx, generated.CreateProfileParams{
 		ID:       args.ID,
@@ -39,8 +40,14 @@ func (p *ProfilesRepositoryAdapter) Create(ctx context.Context, args *coreTypes.
 	})
 	if err != nil {
 		pgErr := err.(*pgconn.PgError)
+
+		// Makes the operation idempotent.
 		if (pgErr.Code == pgerrcode.UniqueViolation) && (pgErr.ColumnName == "id") {
-			return constants.ErrDuplicateID
+			slog.WarnContext(ctx,
+				"Can't create profile, since it already exists. Most probably duplicate processed a Kafka record.",
+				slog.Int("profile-id", int(args.ID)),
+			)
+			return nil
 		}
 
 		return sharedUtils.WrapError(err)

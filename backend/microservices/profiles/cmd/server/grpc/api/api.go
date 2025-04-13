@@ -6,6 +6,7 @@ import (
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/profiles/cmd/server/grpc/api/proto/generated"
 	coreTypes "github.com/Archisman-Mridha/instagram-clone/backend/microservices/profiles/internal/core/types"
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/profiles/internal/core/usecases"
+	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/types"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
@@ -26,7 +27,10 @@ func (*GRPCAPI) Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 func (g *GRPCAPI) SearchProfiles(ctx context.Context,
 	request *generated.SearchProfilesRequest,
 ) (*generated.SearchProfilesResponse, error) {
-	profilePreviews, err := g.usecases.SearchProfiles(ctx, request.Query)
+	profilePreviews, err := g.usecases.SearchProfiles(ctx, request.Query, &types.PaginationArgs{
+		Offset:   request.Offset,
+		PageSize: request.PageSize,
+	})
 	if err != nil {
 		return nil, err
 	}

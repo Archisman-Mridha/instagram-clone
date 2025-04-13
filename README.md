@@ -161,6 +161,22 @@ While going through the above resources, I discovered some nice tools and concep
 
 - [How to Correctly Validate Passwords - Most Websites Do It Wrong](https://blog.boot.dev/open-source/how-to-validate-passwords/)
 
+**Apache Kafka and Flink** :
+
+- [Kafka rebalancing—Triggers, side-effects and and reducing measures](https://www.redpanda.com/guides/kafka-performance-kafka-rebalancing)
+
+- [What is Apache Flink?](https://www.youtube.com/watch?v=PVoc5tRr6to)
+
+- [Fraud Detection with the DataStream API](https://nightlies.apache.org/flink/flink-docs-release-1.20/docs/try-flink/datastream/)
+
+- [Real Time Reporting with the Table API](https://nightlies.apache.org/flink/flink-docs-release-1.20/docs/try-flink/table_api/)
+
+- [Advanced Flink Application Patterns Vol.1: Case Study of a Fraud Detection System](https://flink.apache.org/2020/01/15/advanced-flink-application-patterns-vol.1-case-study-of-a-fraud-detection-system/)
+
+- [Advanced Flink Application Patterns Vol.2: Dynamic Updates of Application Logic](https://flink.apache.org/2020/03/24/advanced-flink-application-patterns-vol.2-dynamic-updates-of-application-logic/)
+
+- [Advanced Flink Application Patterns Vol.3: Custom Window Processing](https://flink.apache.org/2020/07/30/advanced-flink-application-patterns-vol.3-custom-window-processing/)
+
 **Web3** :
 
 - [How are NFTs Integrated into Social Platforms?](https://www.solulab.com/nft-in-social-media/)

@@ -18,12 +18,22 @@ type (
 
 	NewKafkaConnectorArgs struct {
 		SeedBrokerURLs []string `yaml:"seedBrokerURLs" validate:"required,gt=0,dive,notblank"`
+		Group          string   `yaml:"group" validate:"required,notblank"`
+		Topics         []string `yaml:"topics" validate:"required,gt=0,dive,notblank"`
 	}
 )
 
 func NewKafkaConnector(ctx context.Context, args *NewKafkaConnectorArgs) *KafkaConnector {
 	client, err := kgo.NewClient(
 		kgo.SeedBrokers(args.SeedBrokerURLs...),
+
+		kgo.ConsumerGroup(args.Group),
+
+		kgo.ConsumeTopics(args.Topics...),
+		kgo.AllowAutoTopicCreation(),
+
+		kgo.DisableAutoCommit(),
+		kgo.AutoCommitMarks(),
 
 		kgo.WithHooks(
 			kslog.New(slog.Default()),
@@ -40,6 +50,10 @@ func NewKafkaConnector(ctx context.Context, args *NewKafkaConnectorArgs) *KafkaC
 	slog.DebugContext(ctx, "Connected to Kafka")
 
 	return &KafkaConnector{client}
+}
+
+func (k *KafkaConnector) GetClient() *kgo.Client {
+	return k.client
 }
 
 func (k *KafkaConnector) Healthcheck() error {

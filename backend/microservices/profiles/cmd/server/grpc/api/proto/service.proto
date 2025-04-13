@@ -18,6 +18,9 @@ service ProfilesService {
 
 message SearchProfilesRequest {
   string query = 1;
+
+  uint64 offset    = 2;
+  uint64 page_size = 3;
 }
 
 message SearchProfilesResponse {

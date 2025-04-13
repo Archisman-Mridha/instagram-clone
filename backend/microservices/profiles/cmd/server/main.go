@@ -118,6 +118,11 @@ func run(ctx context.Context, config *config.Config, validator *validator.Valida
 
 	eventStreamerAdapter := event_streamer.NewEventStreamerAdapter(ctx, &config.Kafka, usecases)
 
+	waitGroup.Go(func() error {
+		eventStreamerAdapter.Consume(ctx)
+		return nil
+	})
+
 	// Run gRPC server.
 
 	gRPCServer := gRPCUtils.NewGRPCServer(ctx, gRPCUtils.NewGRPCServerArgs{
@@ -154,6 +159,9 @@ func run(ctx context.Context, config *config.Config, validator *validator.Valida
 	// processing of requests and returns back response.
 	gRPCServer.GracefulShutdown()
 
+	eventStreamerAdapter.Shutdown()
+
+	searchEngineAdapter.Shutdown()
 	profilesRepositoryAdapter.Shutdown()
 
 	traceExporter.GracefulShutdown()

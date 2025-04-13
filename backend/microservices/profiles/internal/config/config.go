@@ -12,11 +12,15 @@ type (
 
 		ServerPort int `yaml:"serverPort" default:"4000" validate:"gt=0"`
 
-		Kafka connectors.NewKafkaConnectorArgs `yaml:"kafka" validate:"required"`
+		Kafka KafkaConfig `yaml:"kafka" validate:"required"`
 
 		Postgres                 connectors.NewPostgresConnectorArgs      `yaml:"postgres" validate:"required"`
 		Elasticsearch            connectors.NewElasticsearchConnectorArgs `yaml:"elasticsearch" validate:"required"`
 		OpenTelemetryCollectrURL string                                   `yaml:"openTelemetryCollectorURL" validate:"required,notblank"`
 		Flagsmith                sharedUtils.GetOpenFeatureClientArgs     `yaml:"flagsmith" validate:"required"`
+	}
+
+	KafkaConfig struct {
+		SeedBrokerURLs []string `yaml:"seedBrokerURLs" validate:"required,gt=0,dive,notblank"`
 	}
 )
