@@ -1,0 +1,14 @@
+devMode: True
+debugLogging: True
+
+serverPort: 4001
+
+postgres:
+  url: postgres://default:XHwjzpbA3d32UGYT@localhost:5432/instagram_clone?sslmode=disable
+
+openTelemetryCollectorURL: localhost:4317
+
+flagsmith:
+  url: https://edge.api.flagsmith.com/api/v1/identities/?identifier=default
+  apiKey: S44DpTum6rRUsDp4GTiEwh
+  clientName: users-microservice

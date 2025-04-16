@@ -147,6 +147,16 @@ While going through the above resources, I discovered some nice tools and concep
 
 - [Introduction to exemplars](https://grafana.com/docs/grafana/latest/fundamentals/exemplars/)
 
+**Kubernetes and CloudNative** :
+
+- [Using Cilium Hubble Exporter to log blocked egress traffic on Azure Kubernetes Service](https://www.danielstechblog.io/using-cilium-hubble-exporter-to-log-blocked-egress-traffic-on-azure-kubernetes-service/)
+
+- [Cilium netkit: The Final Frontier in Container Networking Performance](https://isovalent.com/blog/post/cilium-netkit-a-new-container-networking-paradigm-for-the-ai-era/)
+
+- [BIG Performances with BIG TCP on Cilium](https://isovalent.com/blog/post/big-tcp-on-cilium/)
+
+- [What Is Mutual TLS (mTLS), Why Do We Need It, And How Do We Get It?](https://www.youtube.com/watch?v=b38k2GiLDdc)
+
 **GoLang** :
 
 - [Go Microservice with Clean Architecture: Application Logging](https://medium.com/@jfeng45/go-microservice-with-clean-architecture-application-logging-b43dc5839bce)
