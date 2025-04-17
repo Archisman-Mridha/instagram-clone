@@ -1,3 +1,6 @@
+@generateArgoCDApp()
+@namespace("cilium")
+
 // Cilium is used for transparently securing the network connectivity between application services.
 //
 // At the foundation of Cilium is a new Linux kernel technology called eBPF, which enables the
@@ -17,7 +20,7 @@
     namespace: "cilium"
     createNamessace: true
 
-    values: #CiliumHelmValues & {
+    values: generated.#CiliumHelmValues & {
       // IP Address Management (IPAM) is responsible for the allocation and management of IP
       // addresses used by network endpoints (container and others) managed by Cilium.
       ipam: {
@@ -141,16 +144,12 @@
         // Upon deploying Hubble Relay, network visibility is provided for the entire cluster or
         // even multiple clusters in a ClusterMesh scenario.
         // In this mode, Hubble data can be accessed via Hubble UI.
-        relay: {
-          enabled: true
-        }
+        relay: enabled: true
 
         // Hubble UI is a web interface which enables automatic discovery of the services
         // dependency graph at the L3/L4 and even L7 layer, allowing user-friendly visualization
         // and filtering of data flows as a service map.
-        ui: {
-          enabled: true
-        }
+        ui: enabled: true
 
         // Hubble Exporter is a feature of cilium-agent that lets you write Hubble flows to a file
         // for later consumption as logs. It supports file rotation, size limits, filters, and

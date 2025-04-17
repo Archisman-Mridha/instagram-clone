@@ -163,6 +163,18 @@ While going through the above resources, I discovered some nice tools and concep
 
 - [Linux Directory Structure](https://www.geeksforgeeks.org/linux-directory-structure/)
 
+- [What Is HTTPS? How Does It Work? Automate With cert-manager And Let's Encrypt](https://www.youtube.com/watch?v=D7ijCjE31GA&t=688s)
+
+- [Tutorial: Getting Started with the Cilium Gateway API](https://isovalent.com/blog/post/tutorial-getting-started-with-the-cilium-gateway-api/)
+
+- [Kubernetes Gateway API : Security Model](https://gateway-api.sigs.k8s.io/concepts/security-model/)
+
+- [Introduction to HashiCorp Vault on Kubernetes for beginners](https://www.youtube.com/watch?v=L_o_CG_AGKA)
+
+- [Vault with Secrets Store CSI Driver on Kubernetes](https://piotrminkowski.com/2023/03/20/vault-with-secrets-store-csi-driver-on-kubernetes/)
+
+- [Manage Secrets on Kubernetes with ArgoCD and Vault](https://piotrminkowski.com/2022/08/08/manage-secrets-on-kubernetes-with-argocd-and-vault/)
+
 **GoLang** :
 
 - [Go Microservice with Clean Architecture: Application Logging](https://medium.com/@jfeng45/go-microservice-with-clean-architecture-application-logging-b43dc5839bce)

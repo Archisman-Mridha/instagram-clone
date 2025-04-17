@@ -1,3 +1,6 @@
+@generateArgoCDApp()
+@namespace("tetragon")
+
 // Cilium Tetragon component enables powerful realtime, eBPF-based Security Observability and
 // Runtime Enforcement.
 #Tetragon: {
@@ -10,7 +13,7 @@
     namespace: "tetragon"
     createNamessace: true
 
-    values: #TetragonHelmValues & {
+    values: generated.#TetragonHelmValues & {
       tetragon: {
         // Enable ability to check process capabilities and kernel namespaces access.
         // This information would help us determine which process or Kubernetes pod has started or
