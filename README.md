@@ -157,6 +157,12 @@ While going through the above resources, I discovered some nice tools and concep
 
 - [What Is Mutual TLS (mTLS), Why Do We Need It, And How Do We Get It?](https://www.youtube.com/watch?v=b38k2GiLDdc)
 
+- [Falco, Tetragon, KubeArmor, or Tracee? Choosing the Right Security Agent](https://www.youtube.com/watch?v=2FcOeTfmU3M)
+
+- [File Monitoring with eBPF and Tetragon (Part 1)](https://isovalent.com/blog/post/file-monitoring-with-ebpf-and-tetragon-part-1/)
+
+- [Linux Directory Structure](https://www.geeksforgeeks.org/linux-directory-structure/)
+
 **GoLang** :
 
 - [Go Microservice with Clean Architecture: Application Logging](https://medium.com/@jfeng45/go-microservice-with-clean-architecture-application-logging-b43dc5839bce)

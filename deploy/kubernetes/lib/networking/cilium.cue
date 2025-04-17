@@ -15,8 +15,9 @@
 
     releaseName: "cilium"
     namespace: "cilium"
+    createNamessace: true
 
-    values: {
+    values: #CiliumHelmValues & {
       // IP Address Management (IPAM) is responsible for the allocation and management of IP
       // addresses used by network endpoints (container and others) managed by Cilium.
       ipam: {
