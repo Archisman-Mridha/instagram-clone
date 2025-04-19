@@ -7,7 +7,6 @@ package generated
 
 import (
 	"context"
-	"time"
 
 	"github.com/lib/pq"
 )
@@ -32,7 +31,7 @@ type CreatePostParams struct {
 	Description string
 }
 
-func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (int32, error) {
+func (q *Queries) CreatePost(ctx context.Context, arg *CreatePostParams) (int32, error) {
 	row := q.db.QueryRowContext(ctx, createPost, arg.OwnerID, arg.Description)
 	var id int32
 	err := row.Scan(&id)
@@ -53,13 +52,13 @@ ORDER BY
   created_at DESC
 `
 
-func (q *Queries) GetPosts(ctx context.Context, dollar_1 []int32) ([]Post, error) {
+func (q *Queries) GetPosts(ctx context.Context, dollar_1 []int32) ([]*Post, error) {
 	rows, err := q.db.QueryContext(ctx, getPosts, pq.Array(dollar_1))
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Post
+	var items []*Post
 	for rows.Next() {
 		var i Post
 		if err := rows.Scan(
@@ -70,7 +69,7 @@ func (q *Queries) GetPosts(ctx context.Context, dollar_1 []int32) ([]Post, error
 		); err != nil {
 			return nil, err
 		}
-		items = append(items, i)
+		items = append(items, &i)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err
@@ -84,6 +83,7 @@ func (q *Queries) GetPosts(ctx context.Context, dollar_1 []int32) ([]Post, error
 const getUserPosts = `-- name: GetUserPosts :many
 SELECT
   id,
+  owner_id,
   description,
   created_at
 FROM
@@ -100,25 +100,24 @@ type GetUserPostsParams struct {
 	Offset  int32
 }
 
-type GetUserPostsRow struct {
-	ID          int32
-	Description string
-	CreatedAt   time.Time
-}
-
-func (q *Queries) GetUserPosts(ctx context.Context, arg GetUserPostsParams) ([]GetUserPostsRow, error) {
+func (q *Queries) GetUserPosts(ctx context.Context, arg *GetUserPostsParams) ([]*Post, error) {
 	rows, err := q.db.QueryContext(ctx, getUserPosts, arg.OwnerID, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetUserPostsRow
+	var items []*Post
 	for rows.Next() {
-		var i GetUserPostsRow
-		if err := rows.Scan(&i.ID, &i.Description, &i.CreatedAt); err != nil {
+		var i Post
+		if err := rows.Scan(
+			&i.ID,
+			&i.OwnerID,
+			&i.Description,
+			&i.CreatedAt,
+		); err != nil {
 			return nil, err
 		}
-		items = append(items, i)
+		items = append(items, &i)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err

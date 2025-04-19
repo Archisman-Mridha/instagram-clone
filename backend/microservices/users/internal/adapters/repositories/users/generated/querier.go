@@ -9,10 +9,10 @@ import (
 )
 
 type Querier interface {
-	CreateUser(ctx context.Context, arg CreateUserParams) (int32, error)
-	FindUserByEmail(ctx context.Context, email string) (FindUserByEmailRow, error)
+	CreateUser(ctx context.Context, arg *CreateUserParams) (int32, error)
+	FindUserByEmail(ctx context.Context, email string) (*FindUserByEmailRow, error)
 	FindUserByID(ctx context.Context, id int32) (int32, error)
-	FindUserByUsername(ctx context.Context, username string) (FindUserByUsernameRow, error)
+	FindUserByUsername(ctx context.Context, username string) (*FindUserByUsernameRow, error)
 }
 
 var _ Querier = (*Queries)(nil)

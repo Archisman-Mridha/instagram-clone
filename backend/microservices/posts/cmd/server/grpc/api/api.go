@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/posts/cmd/server/grpc/api/proto/generated"
-	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/posts/internal/core/types"
 	coreTypes "github.com/Archisman-Mridha/instagram-clone/backend/microservices/posts/internal/core/types"
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/posts/internal/core/usecases"
 	sharedTypes "github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/types"
@@ -28,7 +27,7 @@ func (*GRPCAPI) Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 func (g *GRPCAPI) CreatePost(ctx context.Context,
 	request *generated.CreatePostRequest,
 ) (*generated.CreatePostResponse, error) {
-	postID, err := g.usecases.CreatePost(ctx, &types.CreatePostArgs{
+	postID, err := g.usecases.CreatePost(ctx, &coreTypes.CreatePostArgs{
 		OwnerID:     request.OwnerId,
 		Description: request.Description,
 	})

@@ -32,7 +32,7 @@ type CreateProfileParams struct {
 	Username string
 }
 
-func (q *Queries) CreateProfile(ctx context.Context, arg CreateProfileParams) error {
+func (q *Queries) CreateProfile(ctx context.Context, arg *CreateProfileParams) error {
 	_, err := q.db.ExecContext(ctx, createProfile, arg.ID, arg.Name, arg.Username)
 	return err
 }
@@ -54,19 +54,19 @@ type GetProfilePreviewsRow struct {
 	Username string
 }
 
-func (q *Queries) GetProfilePreviews(ctx context.Context, dollar_1 []int32) ([]GetProfilePreviewsRow, error) {
+func (q *Queries) GetProfilePreviews(ctx context.Context, dollar_1 []int32) ([]*GetProfilePreviewsRow, error) {
 	rows, err := q.db.QueryContext(ctx, getProfilePreviews, pq.Array(dollar_1))
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetProfilePreviewsRow
+	var items []*GetProfilePreviewsRow
 	for rows.Next() {
 		var i GetProfilePreviewsRow
 		if err := rows.Scan(&i.ID, &i.Name, &i.Username); err != nil {
 			return nil, err
 		}
-		items = append(items, i)
+		items = append(items, &i)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err

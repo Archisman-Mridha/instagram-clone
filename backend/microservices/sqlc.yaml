@@ -5,25 +5,34 @@ sql:
     queries: users/internal/adapters/repositories/users/queries.sql
     gen:
       go:
-        emit_interface: true
         sql_package: "database/sql"
         out: users/internal/adapters/repositories/users/generated
         package: generated
+        emit_interface: true
+        emit_params_struct_pointers: true
+        emit_result_struct_pointers: true
+        emit_pointers_for_null_types: true
   - engine: postgresql
     schema: profiles/internal/adapters/repositories/profiles/schema.sql
     queries: profiles/internal/adapters/repositories/profiles/queries.sql
     gen:
       go:
-        emit_interface: true
         sql_package: "database/sql"
         out: profiles/internal/adapters/repositories/profiles/generated
         package: generated
+        emit_interface: true
+        emit_params_struct_pointers: true
+        emit_result_struct_pointers: true
+        emit_pointers_for_null_types: true
   - engine: postgresql
     schema: posts/internal/adapters/repositories/posts/schema.sql
     queries: posts/internal/adapters/repositories/posts/queries.sql
     gen:
       go:
-        emit_interface: true
         sql_package: "database/sql"
         out: posts/internal/adapters/repositories/posts/generated
         package: generated
+        emit_interface: true
+        emit_params_struct_pointers: true
+        emit_result_struct_pointers: true
+        emit_pointers_for_null_types: true

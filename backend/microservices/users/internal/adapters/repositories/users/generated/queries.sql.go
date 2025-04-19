@@ -35,7 +35,7 @@ type CreateUserParams struct {
 	HashedPassword string
 }
 
-func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (int32, error) {
+func (q *Queries) CreateUser(ctx context.Context, arg *CreateUserParams) (int32, error) {
 	row := q.db.QueryRowContext(ctx, createUser,
 		arg.Name,
 		arg.Email,
@@ -63,11 +63,11 @@ type FindUserByEmailRow struct {
 	HashedPassword string
 }
 
-func (q *Queries) FindUserByEmail(ctx context.Context, email string) (FindUserByEmailRow, error) {
+func (q *Queries) FindUserByEmail(ctx context.Context, email string) (*FindUserByEmailRow, error) {
 	row := q.db.QueryRowContext(ctx, findUserByEmail, email)
 	var i FindUserByEmailRow
 	err := row.Scan(&i.ID, &i.HashedPassword)
-	return i, err
+	return &i, err
 }
 
 const findUserByID = `-- name: FindUserByID :one
@@ -102,9 +102,9 @@ type FindUserByUsernameRow struct {
 	HashedPassword string
 }
 
-func (q *Queries) FindUserByUsername(ctx context.Context, username string) (FindUserByUsernameRow, error) {
+func (q *Queries) FindUserByUsername(ctx context.Context, username string) (*FindUserByUsernameRow, error) {
 	row := q.db.QueryRowContext(ctx, findUserByUsername, username)
 	var i FindUserByUsernameRow
 	err := row.Scan(&i.ID, &i.HashedPassword)
-	return i, err
+	return &i, err
 }

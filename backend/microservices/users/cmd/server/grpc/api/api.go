@@ -5,7 +5,6 @@ import (
 
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/cmd/server/grpc/api/proto/generated"
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/core/usecases"
-	sharedTypes "github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/types"
 	"github.com/aws/aws-sdk-go/aws"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
@@ -77,7 +76,7 @@ func (g *GRPCAPI) GetUserIDFromJWT(ctx context.Context,
 	}
 
 	response := &generated.GetUserIDFromJWTResponse{
-		UserId: sharedTypes.ID(*userID),
+		UserId: *userID,
 	}
 	return response, nil
 }

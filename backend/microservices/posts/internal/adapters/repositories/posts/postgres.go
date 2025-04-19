@@ -31,7 +31,7 @@ func NewPostsRepositoryAdapter(ctx context.Context,
 func (p *PostsRepositoryAdapter) Create(ctx context.Context,
 	args *coreTypes.CreatePostArgs,
 ) (sharedTypes.ID, error) {
-	postID, err := p.queries.CreatePost(ctx, generated.CreatePostParams(*args))
+	postID, err := p.queries.CreatePost(ctx, (*generated.CreatePostParams)(args))
 	if err != nil {
 		return 0, sharedUtils.WrapError(err)
 	}
@@ -49,7 +49,7 @@ func (p *PostsRepositoryAdapter) GetPosts(ctx context.Context,
 	}
 
 	for _, row := range rows {
-		posts = append(posts, (*coreTypes.Post)(&row))
+		posts = append(posts, (*coreTypes.Post)(row))
 	}
 	return posts, nil
 }
@@ -59,7 +59,7 @@ func (p *PostsRepositoryAdapter) GetUserPosts(ctx context.Context,
 ) ([]*coreTypes.Post, error) {
 	posts := []*coreTypes.Post{}
 
-	rows, err := p.queries.GetUserPosts(ctx, generated.GetUserPostsParams{
+	rows, err := p.queries.GetUserPosts(ctx, &generated.GetUserPostsParams{
 		OwnerID: args.OwnerID,
 
 		Offset: int32(args.PaginationArgs.Offset),
@@ -70,12 +70,7 @@ func (p *PostsRepositoryAdapter) GetUserPosts(ctx context.Context,
 	}
 
 	for _, row := range rows {
-		posts = append(posts, &coreTypes.Post{
-			ID:          row.ID,
-			OwnerID:     args.OwnerID,
-			Description: row.Description,
-			CreatedAt:   row.CreatedAt,
-		})
+		posts = append(posts, (*coreTypes.Post)(row))
 	}
 	return posts, nil
 }

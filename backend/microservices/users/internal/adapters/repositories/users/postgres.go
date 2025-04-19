@@ -36,7 +36,7 @@ func NewUsersRepositoryAdapter(ctx context.Context,
 func (u *UsersRepositoryAdapter) Create(ctx context.Context,
 	args *coreTypes.CreateUserArgs,
 ) (sharedTypes.ID, error) {
-	userID, err := u.queries.CreateUser(ctx, generated.CreateUserParams(*args))
+	userID, err := u.queries.CreateUser(ctx, (*generated.CreateUserParams)(args))
 	if err != nil {
 		pgErr := err.(*pgconn.PgError)
 		if pgErr.Code == pgerrcode.UniqueViolation {
@@ -65,7 +65,7 @@ func (u *UsersRepositoryAdapter) FindByEmail(ctx context.Context,
 
 		return nil, sharedUtils.WrapError(err)
 	}
-	return (*coreTypes.FindUserByOperationOutput)(&userDetails), nil
+	return (*coreTypes.FindUserByOperationOutput)(userDetails), nil
 }
 
 func (u *UsersRepositoryAdapter) FindByUsername(ctx context.Context,
@@ -79,7 +79,7 @@ func (u *UsersRepositoryAdapter) FindByUsername(ctx context.Context,
 
 		return nil, sharedUtils.WrapError(err)
 	}
-	return (*coreTypes.FindUserByOperationOutput)(&userDetails), nil
+	return (*coreTypes.FindUserByOperationOutput)(userDetails), nil
 }
 
 func (u *UsersRepositoryAdapter) UserIDExists(ctx context.Context, id sharedTypes.ID) (bool, error) {

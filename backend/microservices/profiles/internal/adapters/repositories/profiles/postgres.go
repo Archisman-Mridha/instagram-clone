@@ -33,7 +33,7 @@ func NewProfilesRepositoryAdapter(ctx context.Context,
 
 // NOTE : Needs to be idempotent, since this is invoked by a DB event processor.
 func (p *ProfilesRepositoryAdapter) Create(ctx context.Context, args *coreTypes.CreateProfileArgs) error {
-	err := p.queries.CreateProfile(ctx, generated.CreateProfileParams(*args))
+	err := p.queries.CreateProfile(ctx, (*generated.CreateProfileParams)(args))
 	if err != nil {
 		pgErr := err.(*pgconn.PgError)
 
@@ -62,7 +62,7 @@ func (p *ProfilesRepositoryAdapter) GetPreviews(ctx context.Context,
 	}
 
 	for _, row := range rows {
-		profilePreviews = append(profilePreviews, (*coreTypes.ProfilePreview)(&row))
+		profilePreviews = append(profilePreviews, (*coreTypes.ProfilePreview)(row))
 	}
 	return profilePreviews, nil
 }

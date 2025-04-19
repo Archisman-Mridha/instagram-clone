@@ -15,6 +15,7 @@ RETURNING
 -- name: GetUserPosts :many
 SELECT
   id,
+  owner_id,
   description,
   created_at
 FROM
