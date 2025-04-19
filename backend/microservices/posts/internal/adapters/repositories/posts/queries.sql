@@ -1,31 +1,38 @@
 -- name: CreatePost :one
 INSERT INTO posts
-	(owner_id, description)
+	(
+		owner_id,
+		description
+	)
 VALUES
-	($1, $2)
-RETURNING id;
+	(
+		$1,
+		$2
+	)
+RETURNING
+  id;
 
--- name: GetPostsOfUser :many
+-- name: GetUserPosts :many
 SELECT
-	id,
-	description,
-	created_at
+  id,
+  description,
+  created_at
 FROM
-	posts
+  posts
 WHERE
-	owner_id = $1
-LIMIT
-	$2 OFFSET $3;
+  owner_id = $1
+LIMIT $2
+OFFSET $3;
 
 -- name: GetPosts :many
 SELECT
-	id,
-	owner_id,
-	description,
-	created_at
+  id,
+  owner_id,
+  description,
+  created_at
 FROM
-	posts
+  posts
 WHERE
-	id = ANY($1)
+  id = ANY ($1::int[])
 ORDER BY
-	created_at DESC;
+  created_at DESC;

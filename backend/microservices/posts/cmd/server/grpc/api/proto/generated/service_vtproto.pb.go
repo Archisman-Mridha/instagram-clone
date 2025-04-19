@@ -60,14 +60,13 @@ func (m *CreatePostResponse) CloneMessageVT() proto.Message {
 	return m.CloneVT()
 }
 
-func (m *GetPostsOfUserRequest) CloneVT() *GetPostsOfUserRequest {
+func (m *GetUserPostsRequest) CloneVT() *GetUserPostsRequest {
 	if m == nil {
-		return (*GetPostsOfUserRequest)(nil)
+		return (*GetUserPostsRequest)(nil)
 	}
-	r := new(GetPostsOfUserRequest)
+	r := new(GetUserPostsRequest)
 	r.OwnerId = m.OwnerId
-	r.Offset = m.Offset
-	r.PageSize = m.PageSize
+	r.PaginationArgs = m.PaginationArgs.CloneVT()
 	if len(m.unknownFields) > 0 {
 		r.unknownFields = make([]byte, len(m.unknownFields))
 		copy(r.unknownFields, m.unknownFields)
@@ -75,7 +74,7 @@ func (m *GetPostsOfUserRequest) CloneVT() *GetPostsOfUserRequest {
 	return r
 }
 
-func (m *GetPostsOfUserRequest) CloneMessageVT() proto.Message {
+func (m *GetUserPostsRequest) CloneMessageVT() proto.Message {
 	return m.CloneVT()
 }
 
@@ -164,7 +163,7 @@ func (this *CreatePostResponse) EqualMessageVT(thatMsg proto.Message) bool {
 	}
 	return this.EqualVT(that)
 }
-func (this *GetPostsOfUserRequest) EqualVT(that *GetPostsOfUserRequest) bool {
+func (this *GetUserPostsRequest) EqualVT(that *GetUserPostsRequest) bool {
 	if this == that {
 		return true
 	} else if this == nil || that == nil {
@@ -173,17 +172,14 @@ func (this *GetPostsOfUserRequest) EqualVT(that *GetPostsOfUserRequest) bool {
 	if this.OwnerId != that.OwnerId {
 		return false
 	}
-	if this.Offset != that.Offset {
-		return false
-	}
-	if this.PageSize != that.PageSize {
+	if !this.PaginationArgs.EqualVT(that.PaginationArgs) {
 		return false
 	}
 	return string(this.unknownFields) == string(that.unknownFields)
 }
 
-func (this *GetPostsOfUserRequest) EqualMessageVT(thatMsg proto.Message) bool {
-	that, ok := thatMsg.(*GetPostsOfUserRequest)
+func (this *GetUserPostsRequest) EqualMessageVT(thatMsg proto.Message) bool {
+	that, ok := thatMsg.(*GetUserPostsRequest)
 	if !ok {
 		return false
 	}
@@ -259,7 +255,7 @@ const _ = grpc.SupportPackageIsVersion7
 type PostsServiceClient interface {
 	Ping(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	CreatePost(ctx context.Context, in *CreatePostRequest, opts ...grpc.CallOption) (*CreatePostResponse, error)
-	GetPostsOfUser(ctx context.Context, in *GetPostsOfUserRequest, opts ...grpc.CallOption) (*GetPostsResponse, error)
+	GetUserPosts(ctx context.Context, in *GetUserPostsRequest, opts ...grpc.CallOption) (*GetPostsResponse, error)
 	GetPosts(ctx context.Context, in *GetPostsRequest, opts ...grpc.CallOption) (*GetPostsResponse, error)
 }
 
@@ -289,9 +285,9 @@ func (c *postsServiceClient) CreatePost(ctx context.Context, in *CreatePostReque
 	return out, nil
 }
 
-func (c *postsServiceClient) GetPostsOfUser(ctx context.Context, in *GetPostsOfUserRequest, opts ...grpc.CallOption) (*GetPostsResponse, error) {
+func (c *postsServiceClient) GetUserPosts(ctx context.Context, in *GetUserPostsRequest, opts ...grpc.CallOption) (*GetPostsResponse, error) {
 	out := new(GetPostsResponse)
-	err := c.cc.Invoke(ctx, "/microservices.posts.PostsService/GetPostsOfUser", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/microservices.posts.PostsService/GetUserPosts", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -313,7 +309,7 @@ func (c *postsServiceClient) GetPosts(ctx context.Context, in *GetPostsRequest, 
 type PostsServiceServer interface {
 	Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	CreatePost(context.Context, *CreatePostRequest) (*CreatePostResponse, error)
-	GetPostsOfUser(context.Context, *GetPostsOfUserRequest) (*GetPostsResponse, error)
+	GetUserPosts(context.Context, *GetUserPostsRequest) (*GetPostsResponse, error)
 	GetPosts(context.Context, *GetPostsRequest) (*GetPostsResponse, error)
 	mustEmbedUnimplementedPostsServiceServer()
 }
@@ -328,8 +324,8 @@ func (UnimplementedPostsServiceServer) Ping(context.Context, *emptypb.Empty) (*e
 func (UnimplementedPostsServiceServer) CreatePost(context.Context, *CreatePostRequest) (*CreatePostResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreatePost not implemented")
 }
-func (UnimplementedPostsServiceServer) GetPostsOfUser(context.Context, *GetPostsOfUserRequest) (*GetPostsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetPostsOfUser not implemented")
+func (UnimplementedPostsServiceServer) GetUserPosts(context.Context, *GetUserPostsRequest) (*GetPostsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserPosts not implemented")
 }
 func (UnimplementedPostsServiceServer) GetPosts(context.Context, *GetPostsRequest) (*GetPostsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPosts not implemented")
@@ -383,20 +379,20 @@ func _PostsService_CreatePost_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PostsService_GetPostsOfUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetPostsOfUserRequest)
+func _PostsService_GetUserPosts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserPostsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PostsServiceServer).GetPostsOfUser(ctx, in)
+		return srv.(PostsServiceServer).GetUserPosts(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/microservices.posts.PostsService/GetPostsOfUser",
+		FullMethod: "/microservices.posts.PostsService/GetUserPosts",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PostsServiceServer).GetPostsOfUser(ctx, req.(*GetPostsOfUserRequest))
+		return srv.(PostsServiceServer).GetUserPosts(ctx, req.(*GetUserPostsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -435,8 +431,8 @@ var PostsService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _PostsService_CreatePost_Handler,
 		},
 		{
-			MethodName: "GetPostsOfUser",
-			Handler:    _PostsService_GetPostsOfUser_Handler,
+			MethodName: "GetUserPosts",
+			Handler:    _PostsService_GetUserPosts_Handler,
 		},
 		{
 			MethodName: "GetPosts",
@@ -530,7 +526,7 @@ func (m *CreatePostResponse) MarshalToSizedBufferVT(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *GetPostsOfUserRequest) MarshalVT() (dAtA []byte, err error) {
+func (m *GetUserPostsRequest) MarshalVT() (dAtA []byte, err error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -543,12 +539,12 @@ func (m *GetPostsOfUserRequest) MarshalVT() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *GetPostsOfUserRequest) MarshalToVT(dAtA []byte) (int, error) {
+func (m *GetUserPostsRequest) MarshalToVT(dAtA []byte) (int, error) {
 	size := m.SizeVT()
 	return m.MarshalToSizedBufferVT(dAtA[:size])
 }
 
-func (m *GetPostsOfUserRequest) MarshalToSizedBufferVT(dAtA []byte) (int, error) {
+func (m *GetUserPostsRequest) MarshalToSizedBufferVT(dAtA []byte) (int, error) {
 	if m == nil {
 		return 0, nil
 	}
@@ -560,15 +556,15 @@ func (m *GetPostsOfUserRequest) MarshalToSizedBufferVT(dAtA []byte) (int, error)
 		i -= len(m.unknownFields)
 		copy(dAtA[i:], m.unknownFields)
 	}
-	if m.PageSize != 0 {
-		i = protohelpers.EncodeVarint(dAtA, i, uint64(m.PageSize))
+	if m.PaginationArgs != nil {
+		size, err := m.PaginationArgs.MarshalToSizedBufferVT(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = protohelpers.EncodeVarint(dAtA, i, uint64(size))
 		i--
-		dAtA[i] = 0x18
-	}
-	if m.Offset != 0 {
-		i = protohelpers.EncodeVarint(dAtA, i, uint64(m.Offset))
-		i--
-		dAtA[i] = 0x10
+		dAtA[i] = 0x12
 	}
 	if m.OwnerId != 0 {
 		i = protohelpers.EncodeVarint(dAtA, i, uint64(m.OwnerId))
@@ -760,7 +756,7 @@ func (m *CreatePostResponse) MarshalToSizedBufferVTStrict(dAtA []byte) (int, err
 	return len(dAtA) - i, nil
 }
 
-func (m *GetPostsOfUserRequest) MarshalVTStrict() (dAtA []byte, err error) {
+func (m *GetUserPostsRequest) MarshalVTStrict() (dAtA []byte, err error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -773,12 +769,12 @@ func (m *GetPostsOfUserRequest) MarshalVTStrict() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *GetPostsOfUserRequest) MarshalToVTStrict(dAtA []byte) (int, error) {
+func (m *GetUserPostsRequest) MarshalToVTStrict(dAtA []byte) (int, error) {
 	size := m.SizeVT()
 	return m.MarshalToSizedBufferVTStrict(dAtA[:size])
 }
 
-func (m *GetPostsOfUserRequest) MarshalToSizedBufferVTStrict(dAtA []byte) (int, error) {
+func (m *GetUserPostsRequest) MarshalToSizedBufferVTStrict(dAtA []byte) (int, error) {
 	if m == nil {
 		return 0, nil
 	}
@@ -790,15 +786,15 @@ func (m *GetPostsOfUserRequest) MarshalToSizedBufferVTStrict(dAtA []byte) (int, 
 		i -= len(m.unknownFields)
 		copy(dAtA[i:], m.unknownFields)
 	}
-	if m.PageSize != 0 {
-		i = protohelpers.EncodeVarint(dAtA, i, uint64(m.PageSize))
+	if m.PaginationArgs != nil {
+		size, err := m.PaginationArgs.MarshalToSizedBufferVTStrict(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = protohelpers.EncodeVarint(dAtA, i, uint64(size))
 		i--
-		dAtA[i] = 0x18
-	}
-	if m.Offset != 0 {
-		i = protohelpers.EncodeVarint(dAtA, i, uint64(m.Offset))
-		i--
-		dAtA[i] = 0x10
+		dAtA[i] = 0x12
 	}
 	if m.OwnerId != 0 {
 		i = protohelpers.EncodeVarint(dAtA, i, uint64(m.OwnerId))
@@ -937,7 +933,7 @@ func (m *CreatePostResponse) SizeVT() (n int) {
 	return n
 }
 
-func (m *GetPostsOfUserRequest) SizeVT() (n int) {
+func (m *GetUserPostsRequest) SizeVT() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -946,11 +942,9 @@ func (m *GetPostsOfUserRequest) SizeVT() (n int) {
 	if m.OwnerId != 0 {
 		n += 1 + protohelpers.SizeOfVarint(uint64(m.OwnerId))
 	}
-	if m.Offset != 0 {
-		n += 1 + protohelpers.SizeOfVarint(uint64(m.Offset))
-	}
-	if m.PageSize != 0 {
-		n += 1 + protohelpers.SizeOfVarint(uint64(m.PageSize))
+	if m.PaginationArgs != nil {
+		l = m.PaginationArgs.SizeVT()
+		n += 1 + l + protohelpers.SizeOfVarint(uint64(l))
 	}
 	n += len(m.unknownFields)
 	return n
@@ -1161,7 +1155,7 @@ func (m *CreatePostResponse) UnmarshalVT(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *GetPostsOfUserRequest) UnmarshalVT(dAtA []byte) error {
+func (m *GetUserPostsRequest) UnmarshalVT(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1184,10 +1178,10 @@ func (m *GetPostsOfUserRequest) UnmarshalVT(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: GetPostsOfUserRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: GetUserPostsRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: GetPostsOfUserRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: GetUserPostsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1210,10 +1204,10 @@ func (m *GetPostsOfUserRequest) UnmarshalVT(dAtA []byte) error {
 				}
 			}
 		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Offset", wireType)
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PaginationArgs", wireType)
 			}
-			m.Offset = 0
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return protohelpers.ErrIntOverflow
@@ -1223,30 +1217,28 @@ func (m *GetPostsOfUserRequest) UnmarshalVT(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Offset |= int64(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PageSize", wireType)
+			if msglen < 0 {
+				return protohelpers.ErrInvalidLength
 			}
-			m.PageSize = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return protohelpers.ErrIntOverflow
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PageSize |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return protohelpers.ErrInvalidLength
 			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.PaginationArgs == nil {
+				m.PaginationArgs = &PaginationArgs{}
+			}
+			if err := m.PaginationArgs.UnmarshalVT(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := protohelpers.Skip(dAtA[iNdEx:])
@@ -1657,7 +1649,7 @@ func (m *CreatePostResponse) UnmarshalVTUnsafe(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *GetPostsOfUserRequest) UnmarshalVTUnsafe(dAtA []byte) error {
+func (m *GetUserPostsRequest) UnmarshalVTUnsafe(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1680,10 +1672,10 @@ func (m *GetPostsOfUserRequest) UnmarshalVTUnsafe(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: GetPostsOfUserRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: GetUserPostsRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: GetPostsOfUserRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: GetUserPostsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1706,10 +1698,10 @@ func (m *GetPostsOfUserRequest) UnmarshalVTUnsafe(dAtA []byte) error {
 				}
 			}
 		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Offset", wireType)
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PaginationArgs", wireType)
 			}
-			m.Offset = 0
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return protohelpers.ErrIntOverflow
@@ -1719,30 +1711,28 @@ func (m *GetPostsOfUserRequest) UnmarshalVTUnsafe(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Offset |= int64(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PageSize", wireType)
+			if msglen < 0 {
+				return protohelpers.ErrInvalidLength
 			}
-			m.PageSize = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return protohelpers.ErrIntOverflow
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PageSize |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return protohelpers.ErrInvalidLength
 			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.PaginationArgs == nil {
+				m.PaginationArgs = &PaginationArgs{}
+			}
+			if err := m.PaginationArgs.UnmarshalVTUnsafe(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := protohelpers.Skip(dAtA[iNdEx:])

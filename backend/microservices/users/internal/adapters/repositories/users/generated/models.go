@@ -5,9 +5,9 @@
 package generated
 
 type User struct {
-	ID       int32
-	Name     string
-	Email    string
-	Username string
-	Password string
+	ID             int32
+	Name           string
+	Email          string
+	Username       string
+	HashedPassword string
 }

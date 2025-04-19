@@ -8,14 +8,19 @@ import (
 
 type (
 	PostsRepository interface {
-		Create(ctx context.Context, args *CreateProfileArgs) error
+		Create(ctx context.Context, args *CreatePostArgs) (sharedTypes.ID, error)
 
-		GetPreviews(ctx context.Context, ids []sharedTypes.ID) ([]*ProfilePreview, error)
+		GetPosts(ctx context.Context, ids []sharedTypes.ID) ([]*Post, error)
+		GetUserPosts(ctx context.Context, args *GetUserPostsArgs) ([]*Post, error)
 	}
 
-	CreateProfileArgs struct {
-		ID sharedTypes.ID
-		Name,
-		Username string
+	CreatePostArgs struct {
+		OwnerID     sharedTypes.ID
+		Description string `validate:"description"`
+	}
+
+	GetUserPostsArgs struct {
+		OwnerID        sharedTypes.ID
+		PaginationArgs *sharedTypes.PaginationArgs
 	}
 )

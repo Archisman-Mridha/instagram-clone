@@ -20,6 +20,7 @@ type (
 )
 
 func (u *Usecases) Signin(ctx context.Context, args *SigninArgs) (*SigninOutput, error) {
+	// Validate input.
 	err := u.validator.StructCtx(ctx, args)
 	if err != nil {
 		return nil, err

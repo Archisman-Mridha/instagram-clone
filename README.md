@@ -8,7 +8,7 @@
 
 ![Go Badge](https://img.shields.io/badge/Go-00ADD8?logo=go&logoColor=fff&style=for-the-badge)
 ![TypeScript Badge](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=fff&style=for-the-badge)
-![Scala Badge](https://img.shields.io/badge/Scala-DC322F?logo=scala&logoColor=fff&style=for-the-badge)
+![Rust Badge](https://img.shields.io/badge/Rust-000?logo=rust&logoColor=fff&style=for-the-badge)
 
 - [CueLang](https://cuelang.org)
 
@@ -23,6 +23,8 @@
 **Communication and Searialization Protocols** :
 
 ![Apollo GraphQL Badge](https://img.shields.io/badge/Apollo%20GraphQL-311C87?logo=apollographql&logoColor=fff&style=for-the-badge)
+
+- [Grafbase](https://grafbase.com)
 
 - [Protobuf](https://protobuf.dev)
 - [gRPC](https://grpc.io)
@@ -90,10 +92,11 @@
 
 **Security** :
 
+![Keycloak Badge](https://img.shields.io/badge/Keycloak-4D4D4D?logo=keycloak&logoColor=fff&style=for-the-badge)
 ![Trivy Badge](https://img.shields.io/badge/Trivy-1904DA?logo=trivy&logoColor=fff&style=for-the-badge)
 
+- [Teleport](https://goteleport.com/)
 - [Cosign](https://github.com/sigstore/cosign)
-- [Zitadel](https://zitadel.com)
 - [Open Policy Agent](https://www.openpolicyagent.org)
 - [Tetragon](https://tetragon.io)
 
@@ -184,6 +187,8 @@ While going through the above resources, I discovered some nice tools and concep
 - [A Beautiful Way To Deal With ERRORS in Golang HTTP Handlers](https://www.youtube.com/watch?v=aS1cJfQ-LrQ)
 
 - [Setup pgx query logger](https://gist.github.com/zaydek/91f27cdd35c6240701f81415c3ba7c07)
+
+- [Type conversions in GoLang](https://go.dev/ref/spec#Conversions)
 
 **Security** :
 

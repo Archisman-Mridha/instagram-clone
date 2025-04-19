@@ -11,16 +11,28 @@ import (
 
 const createUser = `-- name: CreateUser :one
 INSERT INTO users
-  (name, email, username, password)
-  VALUES ($1, $2, $3, $4)
-  RETURNING id
+	(
+		name,
+		email,
+		username,
+		hashed_password
+	)
+VALUES
+	(
+		$1,
+		$2,
+		$3,
+		$4
+	)
+RETURNING
+	id
 `
 
 type CreateUserParams struct {
-	Name     string
-	Email    string
-	Username string
-	Password string
+	Name           string
+	Email          string
+	Username       string
+	HashedPassword string
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (int32, error) {
@@ -28,7 +40,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (int32, 
 		arg.Name,
 		arg.Email,
 		arg.Username,
-		arg.Password,
+		arg.HashedPassword,
 	)
 	var id int32
 	err := row.Scan(&id)
@@ -36,27 +48,36 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (int32, 
 }
 
 const findUserByEmail = `-- name: FindUserByEmail :one
-SELECT id, password FROM users
-  WHERE email= $1
-  LIMIT 1
+SELECT
+  id,
+  hashed_password
+FROM
+  users
+WHERE
+  email = $1
+LIMIT 1
 `
 
 type FindUserByEmailRow struct {
-	ID       int32
-	Password string
+	ID             int32
+	HashedPassword string
 }
 
 func (q *Queries) FindUserByEmail(ctx context.Context, email string) (FindUserByEmailRow, error) {
 	row := q.db.QueryRowContext(ctx, findUserByEmail, email)
 	var i FindUserByEmailRow
-	err := row.Scan(&i.ID, &i.Password)
+	err := row.Scan(&i.ID, &i.HashedPassword)
 	return i, err
 }
 
 const findUserByID = `-- name: FindUserByID :one
-SELECT id FROM users
-  WHERE id= $1
-  LIMIT 1
+SELECT
+  id
+FROM
+  users
+WHERE
+  id = $1
+LIMIT 1
 `
 
 func (q *Queries) FindUserByID(ctx context.Context, id int32) (int32, error) {
@@ -66,19 +87,24 @@ func (q *Queries) FindUserByID(ctx context.Context, id int32) (int32, error) {
 }
 
 const findUserByUsername = `-- name: FindUserByUsername :one
-SELECT id, password FROM users
-  WHERE username= $1
-  LIMIT 1
+SELECT
+  id,
+  hashed_password
+FROM
+  users
+WHERE
+  username = $1
+LIMIT 1
 `
 
 type FindUserByUsernameRow struct {
-	ID       int32
-	Password string
+	ID             int32
+	HashedPassword string
 }
 
 func (q *Queries) FindUserByUsername(ctx context.Context, username string) (FindUserByUsernameRow, error) {
 	row := q.db.QueryRowContext(ctx, findUserByUsername, username)
 	var i FindUserByUsernameRow
-	err := row.Scan(&i.ID, &i.Password)
+	err := row.Scan(&i.ID, &i.HashedPassword)
 	return i, err
 }

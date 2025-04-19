@@ -70,7 +70,7 @@ func (r *RedisConnector) Healthcheck() error {
 
 func (r *RedisConnector) Set(ctx context.Context,
 	key string,
-	value interface{},
+	value any,
 	expiration time.Duration,
 ) error {
 	return r.client.Set(ctx, key, value, expiration).Err()

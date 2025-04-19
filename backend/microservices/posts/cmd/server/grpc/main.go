@@ -102,7 +102,7 @@ func run(ctx context.Context, config *config.Config, validator *validator.Valida
 
 	// Construct the usecases layer.
 
-	postsRepositoryAdapter := postgres.NewpostsRepositoryAdapter(ctx, &config.Postgres)
+	postsRepositoryAdapter := postgres.NewPostsRepositoryAdapter(ctx, &config.Postgres)
 
 	usecases := usecases.NewUsecases(
 		validator,

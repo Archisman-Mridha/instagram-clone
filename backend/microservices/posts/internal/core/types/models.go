@@ -1,11 +1,16 @@
 package types
 
 import (
+	"time"
+
 	sharedTypes "github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/types"
 )
 
-type ProfilePreview struct {
-	ID sharedTypes.ID
-	Name,
-	Username string
+type Post struct {
+	ID,
+	OwnerID sharedTypes.ID
+
+	Description string
+
+	CreatedAt time.Time
 }

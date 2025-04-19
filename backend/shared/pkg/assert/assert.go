@@ -25,7 +25,6 @@ func Assert(ctx context.Context, condition bool, contextualErrorMessage string, 
 		return
 	}
 
-	attributes = append(attributes)
 	slog.ErrorContext(ctx, contextualErrorMessage, attributes...)
 	os.Exit(1)
 }

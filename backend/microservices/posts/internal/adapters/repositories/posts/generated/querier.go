@@ -9,8 +9,9 @@ import (
 )
 
 type Querier interface {
-	CreateProfile(ctx context.Context, arg CreateProfileParams) error
-	GetProfilePreviews(ctx context.Context, dollar_1 []int32) ([]GetProfilePreviewsRow, error)
+	CreatePost(ctx context.Context, arg CreatePostParams) (int32, error)
+	GetPosts(ctx context.Context, dollar_1 []int32) ([]Post, error)
+	GetUserPosts(ctx context.Context, arg GetUserPostsParams) ([]GetUserPostsRow, error)
 }
 
 var _ Querier = (*Queries)(nil)

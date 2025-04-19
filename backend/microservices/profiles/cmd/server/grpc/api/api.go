@@ -27,9 +27,12 @@ func (*GRPCAPI) Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 func (g *GRPCAPI) SearchProfiles(ctx context.Context,
 	request *generated.SearchProfilesRequest,
 ) (*generated.SearchProfilesResponse, error) {
-	profilePreviews, err := g.usecases.SearchProfiles(ctx, request.Query, &types.PaginationArgs{
-		Offset:   request.Offset,
-		PageSize: request.PageSize,
+	profilePreviews, err := g.usecases.SearchProfiles(ctx, &coreTypes.SearchProfilesArgs{
+		Query: request.Query,
+		PaginationArgs: &types.PaginationArgs{
+			Offset:   request.Offset,
+			PageSize: request.PageSize,
+		},
 	})
 	if err != nil {
 		return nil, err

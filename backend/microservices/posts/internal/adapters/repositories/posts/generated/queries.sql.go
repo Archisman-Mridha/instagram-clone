@@ -7,48 +7,115 @@ package generated
 
 import (
 	"context"
+	"time"
 
 	"github.com/lib/pq"
 )
 
-const createProfile = `-- name: CreateProfile :exec
+const createPost = `-- name: CreatePost :one
 INSERT INTO posts
-  (id, name, username)
-  VALUES ($1, $2, $3)
+	(
+		owner_id,
+		description
+	)
+VALUES
+	(
+		$1,
+		$2
+	)
+RETURNING
+  id
 `
 
-type CreateProfileParams struct {
-	ID       int32
-	Name     string
-	Username string
+type CreatePostParams struct {
+	OwnerID     int32
+	Description string
 }
 
-func (q *Queries) CreateProfile(ctx context.Context, arg CreateProfileParams) error {
-	_, err := q.db.ExecContext(ctx, createProfile, arg.ID, arg.Name, arg.Username)
-	return err
+func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (int32, error) {
+	row := q.db.QueryRowContext(ctx, createPost, arg.OwnerID, arg.Description)
+	var id int32
+	err := row.Scan(&id)
+	return id, err
 }
 
-const getProfilePreviews = `-- name: GetProfilePreviews :many
-SELECT id, name, username FROM posts
-  WHERE id= ANY($1::int[])
+const getPosts = `-- name: GetPosts :many
+SELECT
+  id,
+  owner_id,
+  description,
+  created_at
+FROM
+  posts
+WHERE
+  id = ANY ($1::int[])
+ORDER BY
+  created_at DESC
 `
 
-type GetProfilePreviewsRow struct {
-	ID       int32
-	Name     string
-	Username string
-}
-
-func (q *Queries) GetProfilePreviews(ctx context.Context, dollar_1 []int32) ([]GetProfilePreviewsRow, error) {
-	rows, err := q.db.QueryContext(ctx, getProfilePreviews, pq.Array(dollar_1))
+func (q *Queries) GetPosts(ctx context.Context, dollar_1 []int32) ([]Post, error) {
+	rows, err := q.db.QueryContext(ctx, getPosts, pq.Array(dollar_1))
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetProfilePreviewsRow
+	var items []Post
 	for rows.Next() {
-		var i GetProfilePreviewsRow
-		if err := rows.Scan(&i.ID, &i.Name, &i.Username); err != nil {
+		var i Post
+		if err := rows.Scan(
+			&i.ID,
+			&i.OwnerID,
+			&i.Description,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getUserPosts = `-- name: GetUserPosts :many
+SELECT
+  id,
+  description,
+  created_at
+FROM
+  posts
+WHERE
+  owner_id = $1
+LIMIT $2
+OFFSET $3
+`
+
+type GetUserPostsParams struct {
+	OwnerID int32
+	Limit   int32
+	Offset  int32
+}
+
+type GetUserPostsRow struct {
+	ID          int32
+	Description string
+	CreatedAt   time.Time
+}
+
+func (q *Queries) GetUserPosts(ctx context.Context, arg GetUserPostsParams) ([]GetUserPostsRow, error) {
+	rows, err := q.db.QueryContext(ctx, getUserPosts, arg.OwnerID, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetUserPostsRow
+	for rows.Next() {
+		var i GetUserPostsRow
+		if err := rows.Scan(&i.ID, &i.Description, &i.CreatedAt); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

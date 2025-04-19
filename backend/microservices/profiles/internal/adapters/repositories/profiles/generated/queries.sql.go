@@ -13,8 +13,17 @@ import (
 
 const createProfile = `-- name: CreateProfile :exec
 INSERT INTO profiles
-  (id, name, username)
-  VALUES ($1, $2, $3)
+	(
+		id,
+		name,
+		username
+	)
+VALUES
+	(
+		$1,
+		$2,
+		$3
+	)
 `
 
 type CreateProfileParams struct {
@@ -29,8 +38,14 @@ func (q *Queries) CreateProfile(ctx context.Context, arg CreateProfileParams) er
 }
 
 const getProfilePreviews = `-- name: GetProfilePreviews :many
-SELECT id, name, username FROM profiles
-  WHERE id= ANY($1::int[])
+SELECT
+  id,
+  name,
+  username
+FROM
+  profiles
+WHERE
+  id = ANY($1::int[])
 `
 
 type GetProfilePreviewsRow struct {

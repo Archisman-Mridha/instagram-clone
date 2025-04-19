@@ -15,6 +15,7 @@ type SignupArgs struct {
 }
 
 func (u *Usecases) Signup(ctx context.Context, args *SignupArgs) (*SigninOutput, error) {
+	// Validate input.
 	err := u.validator.StructCtx(ctx, args)
 	if err != nil {
 		return nil, err

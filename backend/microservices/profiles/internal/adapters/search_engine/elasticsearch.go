@@ -11,7 +11,6 @@ import (
 	coreTypes "github.com/Archisman-Mridha/instagram-clone/backend/microservices/profiles/internal/core/types"
 	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/assert"
 	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/connectors"
-	sharedTypes "github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/types"
 	sharedUtils "github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/utils"
 	"github.com/aquasecurity/esquery"
 )
@@ -59,7 +58,7 @@ func (s *SearchEngineAdapter) IndexProfile(ctx context.Context,
 	if err != nil {
 		return sharedUtils.WrapError(err)
 	} else if response.IsError() {
-		return sharedUtils.WrapError(errors.New("Failed indexing profile, received error status-code"))
+		return sharedUtils.WrapError(errors.New("failed indexing profile, received error status-code"))
 	}
 	defer response.Body.Close()
 
@@ -67,20 +66,19 @@ func (s *SearchEngineAdapter) IndexProfile(ctx context.Context,
 }
 
 func (s *SearchEngineAdapter) SearchProfiles(ctx context.Context,
-	query string,
-	paginationArgs *sharedTypes.PaginationArgs,
+	args *coreTypes.SearchProfilesArgs,
 ) ([]*coreTypes.ProfilePreview, error) {
 	profilePreviews := []*coreTypes.ProfilePreview{}
 
 	searchQuery, err := esquery.Search().
 		Query(
-			esquery.MultiMatch(query).
+			esquery.MultiMatch(args.Query).
 				Type(esquery.MatchTypePhrasePrefix).
 				Fields("name", "username"),
 		).
 		Sort("_id", esquery.OrderAsc).
-		Size(paginationArgs.PageSize).
-		SearchAfter(paginationArgs.Offset).
+		Size(args.PaginationArgs.PageSize).
+		SearchAfter(args.PaginationArgs.Offset).
 		MarshalJSON()
 	assert.AssertErrNil(ctx, err, "Failed JSON marshalling Elasticsearch search query")
 

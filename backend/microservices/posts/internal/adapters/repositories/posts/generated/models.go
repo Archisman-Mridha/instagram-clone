@@ -5,12 +5,12 @@
 package generated
 
 import (
-	"database/sql"
+	"time"
 )
 
-type Profile struct {
-	ID                int32
-	Name              string
-	Username          string
-	ProfilePictureUri sql.NullString
+type Post struct {
+	ID          int32
+	OwnerID     int32
+	Description string
+	CreatedAt   time.Time
 }

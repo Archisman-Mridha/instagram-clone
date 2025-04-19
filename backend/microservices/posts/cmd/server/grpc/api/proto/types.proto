@@ -11,3 +11,8 @@ message Post {
   string description = 3;
   string created_at  = 4;
 }
+
+message PaginationArgs {
+  uint64 offset    = 1;
+  uint64 page_size = 2;
+}

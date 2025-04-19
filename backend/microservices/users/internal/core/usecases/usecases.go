@@ -6,12 +6,11 @@ import (
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/token"
 	sharedTypes "github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/types"
 	sharedUtils "github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/utils"
-	"github.com/go-playground/validator/v10"
 	goValidator "github.com/go-playground/validator/v10"
 )
 
 type Usecases struct {
-	validator *validator.Validate
+	validator *goValidator.Validate
 
 	cache           sharedTypes.KVStore
 	usersRepository coreTypes.UsersRepository
@@ -20,7 +19,7 @@ type Usecases struct {
 }
 
 func NewUsecases(
-	validator *validator.Validate,
+	validator *goValidator.Validate,
 	cache sharedTypes.KVStore,
 	usersRespository coreTypes.UsersRepository,
 	tokenService token.TokenService,

@@ -18,3 +18,12 @@ sql:
         sql_package: "database/sql"
         out: profiles/internal/adapters/repositories/profiles/generated
         package: generated
+  - engine: postgresql
+    schema: posts/internal/adapters/repositories/posts/schema.sql
+    queries: posts/internal/adapters/repositories/posts/queries.sql
+    gen:
+      go:
+        emit_interface: true
+        sql_package: "database/sql"
+        out: posts/internal/adapters/repositories/posts/generated
+        package: generated
