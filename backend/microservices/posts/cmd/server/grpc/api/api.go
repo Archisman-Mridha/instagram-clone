@@ -77,7 +77,7 @@ func (g *GRPCAPI) GetPosts(ctx context.Context,
 
 // Converts []*coreTypes.Post to []*generated.Post.
 func toProtoGeneratedPosts(input []*coreTypes.Post) []*generated.Post {
-	output := []*generated.Post{}
+	output := make([]*generated.Post, len(input))
 	for _, item := range input {
 		output = append(output, &generated.Post{
 			Id:          item.ID,

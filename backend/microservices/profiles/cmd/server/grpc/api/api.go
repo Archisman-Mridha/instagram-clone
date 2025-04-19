@@ -60,7 +60,7 @@ func (g *GRPCAPI) GetProfilePreviews(ctx context.Context,
 
 // Converts []*coreTypes.ProfilePreview to []*generated.ProfilePreiew.
 func toProtoGeneratedProfilePreviews(input []*coreTypes.ProfilePreview) []*generated.ProfilePreview {
-	output := []*generated.ProfilePreview{}
+	output := make([]*generated.ProfilePreview, len(input))
 	for _, item := range input {
 		output = append(output, &generated.ProfilePreview{
 			Id:       item.ID,
