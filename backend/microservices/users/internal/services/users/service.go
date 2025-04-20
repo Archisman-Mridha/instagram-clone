@@ -71,7 +71,11 @@ func (u *UsersService) Signup(ctx context.Context, args *SignupArgs) (*SigninOut
 		return nil, err
 	}
 
-	return &SigninOutput{JWT: *jwt}, nil
+	response := &SigninOutput{
+		UserID: userID,
+		JWT:    *jwt,
+	}
+	return response, nil
 }
 
 type (
@@ -83,7 +87,8 @@ type (
 	}
 
 	SigninOutput struct {
-		JWT string
+		UserID sharedTypes.ID
+		JWT    string
 	}
 )
 
@@ -114,20 +119,9 @@ func (u *UsersService) Signin(ctx context.Context, args *SigninArgs) (*SigninOut
 		return nil, err
 	}
 
-	return &SigninOutput{JWT: *jwt}, nil
-}
-
-func (u *UsersService) GetUserIDFromJWT(ctx context.Context, jwt string) (*sharedTypes.ID, error) {
-	userID, err := u.tokenService.GetUserIDFromToken(jwt)
-	if err != nil {
-		return nil, err
+	response := &SigninOutput{
+		UserID: userDetails.ID,
+		JWT:    *jwt,
 	}
-
-	// Verify that the user exists in the database.
-	_, err = u.usersRepository.UserIDExists(ctx, *userID)
-	if err != nil {
-		return nil, err
-	}
-
-	return userID, nil
+	return response, nil
 }

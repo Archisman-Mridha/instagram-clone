@@ -9,6 +9,30 @@ tasks:
     dir: ./backend/microservices/
     cmd: sqlc generate
 
+  subgraphs-generate:
+    dir: ./backend
+    cmds:
+      - |
+        protoc \
+          --grafbase-subgraph_out=./gateway/generated/subgraphs/users \
+          ./microservices/users/cmd/server/grpc/api/proto/*.proto
+      - |
+        protoc \
+          --grafbase-subgraph_out=./gateway/generated/subgraphs/profiles \
+          ./microservices/profiles/cmd/server/grpc/api/proto/*.proto
+      - |
+        protoc \
+          --grafbase-subgraph_out=./gateway/generated/subgraphs/followships \
+          ./microservices/followships/cmd/server/grpc/api/proto/*.proto
+      - |
+        protoc \
+          --grafbase-subgraph_out=./gateway/generated/subgraphs/posts \
+          ./microservices/posts/cmd/server/grpc/api/proto/*.proto
+      - |
+        protoc \
+          --grafbase-subgraph_out=./gateway/generated/subgraphs/feeds \
+          ./microservices/feeds/cmd/server/grpc/api/proto/*.proto
+
   compose-up:
     dir: ./deploy/compose/
     env:

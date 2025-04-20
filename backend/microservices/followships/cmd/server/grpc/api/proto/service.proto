@@ -3,7 +3,6 @@ syntax = "proto3";
 package microservices.followships;
 
 import "google/protobuf/empty.proto";
-import "buf/validate/validate.proto";
 import "microservices/followships/cmd/server/grpc/api/proto/types.proto";
 
 option go_package = "microservices/followships/cmd/server/grpc/api/proto/generated";

@@ -18,8 +18,7 @@ modules:
 #
 # NOTE : Dependencies between the modules in the workspace are automatically handled by Buf and
 #        shouldn't be declared here.
-deps:
-  - buf.build/bufbuild/protovalidate # Doesn't require any code generation.
+deps: []
 
 # Workspace-level lint and breaking change detection settings.
 # These settings are the default for all modules in the workspace unless specifically replaced in

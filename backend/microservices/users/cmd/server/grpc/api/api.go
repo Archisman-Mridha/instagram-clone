@@ -68,17 +68,3 @@ func (g *GRPCAPI) Signin(ctx context.Context,
 	}
 	return response, nil
 }
-
-func (g *GRPCAPI) GetUserIDFromJWT(ctx context.Context,
-	request *generated.GetUserIDFromJWTRequest,
-) (*generated.GetUserIDFromJWTResponse, error) {
-	userID, err := g.usersService.GetUserIDFromJWT(ctx, request.Jwt)
-	if err != nil {
-		return nil, err
-	}
-
-	response := &generated.GetUserIDFromJWTResponse{
-		UserId: *userID,
-	}
-	return response, nil
-}

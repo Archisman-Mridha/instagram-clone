@@ -3,7 +3,6 @@ syntax = "proto3";
 package microservices.users;
 
 import "google/protobuf/empty.proto";
-import "buf/validate/validate.proto";
 
 option go_package = "microservices/users/cmd/server/grpc/api/proto/generated";
 
@@ -12,20 +11,18 @@ service UsersService {
 
   rpc Signup(SignupRequest) returns (SigninResponse);
   rpc Signin(SigninRequest) returns (SigninResponse);
-
-  rpc GetUserIDFromJWT(GetUserIDFromJWTRequest) returns (GetUserIDFromJWTResponse);
 }
 
 message SignupRequest {
-  string name = 1;
-  string email = 2;
+  string name     = 1;
+  string email    = 2;
   string username = 3;
   string password = 4;
 }
 
 message SigninRequest {
   oneof identifier {
-    string email = 1;
+    string email    = 1;
     string username = 2;
   }
 
@@ -33,13 +30,6 @@ message SigninRequest {
 }
 
 message SigninResponse {
-  string jwt = 1;
-}
-
-message GetUserIDFromJWTRequest {
-  string jwt = 1;
-}
-
-message GetUserIDFromJWTResponse {
-  int32 user_id = 1;
+  int32  user_id = 1;
+  string jwt     = 2;
 }

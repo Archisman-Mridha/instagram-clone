@@ -3,7 +3,6 @@ syntax = "proto3";
 package microservices.feeds;
 
 import "google/protobuf/empty.proto";
-import "buf/validate/validate.proto";
 
 option go_package = "microservices/feeds/cmd/server/grpc/api/proto/generated";
 
