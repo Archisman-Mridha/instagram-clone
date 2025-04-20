@@ -13,7 +13,6 @@ import (
 type UsersService struct {
 	validator *goValidator.Validate
 
-	cache           sharedTypes.KVStore
 	usersRepository UsersRepository
 
 	tokenService token.TokenService
@@ -21,7 +20,6 @@ type UsersService struct {
 
 func NewUsersService(
 	validator *goValidator.Validate,
-	cache sharedTypes.KVStore,
 	usersRespository UsersRepository,
 	tokenService token.TokenService,
 ) *UsersService {
@@ -34,7 +32,6 @@ func NewUsersService(
 
 	return &UsersService{
 		validator,
-		cache,
 		usersRespository,
 		tokenService,
 	}

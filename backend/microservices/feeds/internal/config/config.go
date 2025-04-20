@@ -12,9 +12,7 @@ type (
 
 		ServerPort int `yaml:"serverPort" default:"4000" validate:"gt=0"`
 
-		JWTSigningKey string `yaml:"jwtSigningKey" validate:"required,notblank"`
-
-		Postgres                 connectors.NewPostgresConnectorArgs  `yaml:"postgres" validate:"required"`
+		Redis                    connectors.NewRedisConnectorArgs     `yaml:"redis" validate:"required"`
 		OpenTelemetryCollectrURL string                               `yaml:"openTelemetryCollectorURL" validate:"required,notblank"`
 		Flagsmith                sharedUtils.GetOpenFeatureClientArgs `yaml:"flagsmith" validate:"required"`
 	}

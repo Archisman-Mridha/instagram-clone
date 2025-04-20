@@ -84,6 +84,14 @@ func (r *RedisConnector) Del(ctx context.Context, keys ...string) error {
 	return r.client.Del(ctx, keys...).Err()
 }
 
+func (r *RedisConnector) LRange(ctx context.Context, key string, start, stop int64) ([]string, error) {
+	return r.client.LRange(ctx, key, start, stop).Result()
+}
+
+func (r *RedisConnector) LLen(ctx context.Context, key string) (int64, error) {
+	return r.client.LLen(ctx, key).Result()
+}
+
 func (r *RedisConnector) Shutdown() {
 	if err := r.client.Close(); err != nil {
 		slog.Error("Failed closing Redis connection", logger.Error(err))

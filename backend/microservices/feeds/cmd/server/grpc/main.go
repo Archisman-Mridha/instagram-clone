@@ -9,14 +9,13 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/cmd/server/grpc/api"
-	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/cmd/server/grpc/api/proto/generated"
-	postgres "github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/adapters/repositories/users"
-	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/config"
-	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/constants"
-	usersService "github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/services/users"
-	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/token"
-	version "github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/version"
+	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/feeds/cmd/server/grpc/api"
+	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/feeds/cmd/server/grpc/api/proto/generated"
+	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/feeds/internal/config"
+	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/feeds/internal/constants"
+	feedsService "github.com/Archisman-Mridha/instagram-clone/backend/microservices/feeds/internal/services/feeds"
+	version "github.com/Archisman-Mridha/instagram-clone/backend/microservices/feeds/version"
+	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/connectors"
 	gRPCUtils "github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/grpc"
 	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/healthcheck"
 	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/observability"
@@ -24,7 +23,6 @@ import (
 	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/observability/metrics"
 	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/observability/traces"
 	sharedUtils "github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/utils"
-	"github.com/go-playground/validator/v10"
 
 	"golang.org/x/sync/errgroup"
 )
@@ -62,7 +60,7 @@ func main() {
 	// Get config.
 	config := sharedUtils.MustParseConfigFile[config.Config](ctx, configFilePath, validator)
 
-	if err := run(ctx, config, validator); err != nil {
+	if err := run(ctx, config); err != nil {
 		slog.ErrorContext(ctx, err.Error())
 
 		cancel()
@@ -74,7 +72,7 @@ func main() {
 	}
 }
 
-func run(ctx context.Context, config *config.Config, validator *validator.Validate) error {
+func run(ctx context.Context, config *config.Config) error {
 	waitGroup, ctx := errgroup.WithContext(ctx)
 
 	// Setup observability.
@@ -103,13 +101,9 @@ func run(ctx context.Context, config *config.Config, validator *validator.Valida
 
 	// Construct adapters and services.
 
-	usersRepositoryAdapter := postgres.NewUsersRepositoryAdapter(ctx, &config.Postgres)
+	cacheAdapter := connectors.NewRedisConnector(ctx, &config.Redis)
 
-	usersService := usersService.NewUsersService(
-		validator,
-		usersRepositoryAdapter,
-		token.NewJWTService(config.JWTSigningKey),
-	)
+	feedsService := feedsService.NewFeedsService(cacheAdapter)
 
 	// Run gRPC server.
 
@@ -117,12 +111,12 @@ func run(ctx context.Context, config *config.Config, validator *validator.Valida
 		DevModeEnabled: config.DevMode,
 
 		Healthcheckables: []healthcheck.Healthcheckable{
-			usersRepositoryAdapter,
+			cacheAdapter,
 		},
 
 		ToGRPCErrorStatusCodeFn: getGRPCErrorStatusCode,
 	})
-	generated.RegisterUsersServiceServer(gRPCServer, api.NewGRPCAPI(usersService))
+	generated.RegisterFeedsServiceServer(gRPCServer, api.NewGRPCAPI(feedsService))
 
 	waitGroup.Go(func() error {
 		return gRPCServer.Run(ctx, config.ServerPort)
@@ -145,7 +139,7 @@ func run(ctx context.Context, config *config.Config, validator *validator.Valida
 	// processing of requests and returns back response.
 	gRPCServer.GracefulShutdown()
 
-	usersRepositoryAdapter.Shutdown()
+	cacheAdapter.Shutdown()
 
 	traceExporter.GracefulShutdown()
 	metricExporter.GracefulShutdown()
