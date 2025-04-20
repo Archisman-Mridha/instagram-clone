@@ -1,6 +1,6 @@
 -- name: CreatePost :one
-INSERT INTO posts
-	(
+INSERT INTO
+  posts(
 		owner_id,
 		description
 	)
@@ -12,7 +12,7 @@ VALUES
 RETURNING
   id;
 
--- name: GetUserPosts :many
+-- name: GetPostsOfUser :many
 SELECT
   id,
   owner_id,

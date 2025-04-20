@@ -12,8 +12,8 @@ import (
 )
 
 const createPost = `-- name: CreatePost :one
-INSERT INTO posts
-	(
+INSERT INTO
+  posts(
 		owner_id,
 		description
 	)
@@ -80,7 +80,7 @@ func (q *Queries) GetPosts(ctx context.Context, dollar_1 []int32) ([]*Post, erro
 	return items, nil
 }
 
-const getUserPosts = `-- name: GetUserPosts :many
+const getPostsOfUser = `-- name: GetPostsOfUser :many
 SELECT
   id,
   owner_id,
@@ -94,14 +94,14 @@ LIMIT $2
 OFFSET $3
 `
 
-type GetUserPostsParams struct {
+type GetPostsOfUserParams struct {
 	OwnerID int32
 	Limit   int32
 	Offset  int32
 }
 
-func (q *Queries) GetUserPosts(ctx context.Context, arg *GetUserPostsParams) ([]*Post, error) {
-	rows, err := q.db.QueryContext(ctx, getUserPosts, arg.OwnerID, arg.Limit, arg.Offset)
+func (q *Queries) GetPostsOfUser(ctx context.Context, arg *GetPostsOfUserParams) ([]*Post, error) {
+	rows, err := q.db.QueryContext(ctx, getPostsOfUser, arg.OwnerID, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}

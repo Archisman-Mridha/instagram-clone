@@ -8,7 +8,7 @@ import (
 	"strconv"
 
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/profiles/internal/constants"
-	coreTypes "github.com/Archisman-Mridha/instagram-clone/backend/microservices/profiles/internal/core/types"
+	profilesService "github.com/Archisman-Mridha/instagram-clone/backend/microservices/profiles/internal/services/profiles"
 	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/assert"
 	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/connectors"
 	sharedUtils "github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/utils"
@@ -36,7 +36,7 @@ func NewSearchEngineAdapter(ctx context.Context,
 
 // NOTE : Needs to be idempotent, since this is invoked by a DB event processor.
 func (s *SearchEngineAdapter) IndexProfile(ctx context.Context,
-	profilePreview *coreTypes.ProfilePreview,
+	profilePreview *profilesService.ProfilePreview,
 ) error {
 	profileMetadata := ProfileMetadata{
 		Name:     profilePreview.Name,
@@ -66,9 +66,9 @@ func (s *SearchEngineAdapter) IndexProfile(ctx context.Context,
 }
 
 func (s *SearchEngineAdapter) SearchProfiles(ctx context.Context,
-	args *coreTypes.SearchProfilesArgs,
-) ([]*coreTypes.ProfilePreview, error) {
-	profilePreviews := []*coreTypes.ProfilePreview{}
+	args *profilesService.SearchProfilesArgs,
+) ([]*profilesService.ProfilePreview, error) {
+	profilePreviews := []*profilesService.ProfilePreview{}
 
 	searchQuery, err := esquery.Search().
 		Query(
@@ -105,7 +105,7 @@ func (s *SearchEngineAdapter) SearchProfiles(ctx context.Context,
 			return profilePreviews, sharedUtils.WrapErrorWithPrefix("Failed parsing profile id to int32", err)
 		}
 
-		profilePreviews = append(profilePreviews, &coreTypes.ProfilePreview{
+		profilePreviews = append(profilePreviews, &profilesService.ProfilePreview{
 			ID:       int32(id),
 			Name:     hit.Source.Name,
 			Username: hit.Source.Username,

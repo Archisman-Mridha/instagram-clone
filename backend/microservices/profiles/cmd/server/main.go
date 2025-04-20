@@ -16,7 +16,7 @@ import (
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/profiles/internal/adapters/search_engine"
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/profiles/internal/config"
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/profiles/internal/constants"
-	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/profiles/internal/core/usecases"
+	profilesService "github.com/Archisman-Mridha/instagram-clone/backend/microservices/profiles/internal/services/profiles"
 	version "github.com/Archisman-Mridha/instagram-clone/backend/microservices/profiles/version"
 	gRPCUtils "github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/grpc"
 	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/healthcheck"
@@ -102,13 +102,13 @@ func run(ctx context.Context, config *config.Config, validator *validator.Valida
 	// Setup feature flagging.
 	_ = sharedUtils.GetOpenFeatureClient(ctx, &config.Flagsmith)
 
-	// Construct the usecases layer.
+	// Construct adapters and services.
 
 	profilesRepositoryAdapter := postgres.NewProfilesRepositoryAdapter(ctx, &config.Postgres)
 
 	searchEngineAdapter := search_engine.NewSearchEngineAdapter(ctx, &config.Elasticsearch)
 
-	usecases := usecases.NewUsecases(
+	profilesService := profilesService.NewProfilesService(
 		validator,
 		profilesRepositoryAdapter,
 		searchEngineAdapter,
@@ -116,7 +116,7 @@ func run(ctx context.Context, config *config.Config, validator *validator.Valida
 
 	// Consume events from event streamer.
 
-	eventStreamerAdapter := event_streamer.NewEventStreamerAdapter(ctx, &config.Kafka, usecases)
+	eventStreamerAdapter := event_streamer.NewEventStreamerAdapter(ctx, &config.Kafka, profilesService)
 
 	waitGroup.Go(func() error {
 		eventStreamerAdapter.Consume(ctx)
@@ -136,7 +136,7 @@ func run(ctx context.Context, config *config.Config, validator *validator.Valida
 
 		ToGRPCErrorStatusCodeFn: getGRPCErrorStatusCode,
 	})
-	generated.RegisterProfilesServiceServer(gRPCServer, api.NewGRPCAPI(usecases))
+	generated.RegisterProfilesServiceServer(gRPCServer, api.NewGRPCAPI(profilesService))
 
 	waitGroup.Go(func() error {
 		return gRPCServer.Run(ctx, config.ServerPort)

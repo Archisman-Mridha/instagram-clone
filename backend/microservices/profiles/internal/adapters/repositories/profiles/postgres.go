@@ -5,7 +5,7 @@ import (
 	"log/slog"
 
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/profiles/internal/adapters/repositories/profiles/generated"
-	coreTypes "github.com/Archisman-Mridha/instagram-clone/backend/microservices/profiles/internal/core/types"
+	profilesService "github.com/Archisman-Mridha/instagram-clone/backend/microservices/profiles/internal/services/profiles"
 	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/connectors"
 	sharedTypes "github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/types"
 	sharedUtils "github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/utils"
@@ -32,7 +32,7 @@ func NewProfilesRepositoryAdapter(ctx context.Context,
 }
 
 // NOTE : Needs to be idempotent, since this is invoked by a DB event processor.
-func (p *ProfilesRepositoryAdapter) Create(ctx context.Context, args *coreTypes.CreateProfileArgs) error {
+func (p *ProfilesRepositoryAdapter) Create(ctx context.Context, args *profilesService.CreateProfileArgs) error {
 	err := p.queries.CreateProfile(ctx, (*generated.CreateProfileParams)(args))
 	if err != nil {
 		pgErr := err.(*pgconn.PgError)
@@ -53,8 +53,8 @@ func (p *ProfilesRepositoryAdapter) Create(ctx context.Context, args *coreTypes.
 
 func (p *ProfilesRepositoryAdapter) GetPreviews(ctx context.Context,
 	ids []sharedTypes.ID,
-) ([]*coreTypes.ProfilePreview, error) {
-	profilePreviews := []*coreTypes.ProfilePreview{}
+) ([]*profilesService.ProfilePreview, error) {
+	profilePreviews := []*profilesService.ProfilePreview{}
 
 	rows, err := p.queries.GetProfilePreviews(ctx, ids)
 	if err != nil {
@@ -62,7 +62,7 @@ func (p *ProfilesRepositoryAdapter) GetPreviews(ctx context.Context,
 	}
 
 	for _, row := range rows {
-		profilePreviews = append(profilePreviews, (*coreTypes.ProfilePreview)(row))
+		profilePreviews = append(profilePreviews, (*profilesService.ProfilePreview)(row))
 	}
 	return profilePreviews, nil
 }

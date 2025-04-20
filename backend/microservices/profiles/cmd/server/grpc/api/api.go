@@ -4,8 +4,7 @@ import (
 	"context"
 
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/profiles/cmd/server/grpc/api/proto/generated"
-	coreTypes "github.com/Archisman-Mridha/instagram-clone/backend/microservices/profiles/internal/core/types"
-	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/profiles/internal/core/usecases"
+	profilesService "github.com/Archisman-Mridha/instagram-clone/backend/microservices/profiles/internal/services/profiles"
 	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/types"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
@@ -13,11 +12,13 @@ import (
 type GRPCAPI struct {
 	generated.UnimplementedProfilesServiceServer
 
-	usecases *usecases.Usecases
+	profilesService *profilesService.ProfilesService
 }
 
-func NewGRPCAPI(usecases *usecases.Usecases) *GRPCAPI {
-	return &GRPCAPI{usecases: usecases}
+func NewGRPCAPI(profilesService *profilesService.ProfilesService) *GRPCAPI {
+	return &GRPCAPI{
+		profilesService: profilesService,
+	}
 }
 
 func (*GRPCAPI) Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
@@ -27,11 +28,11 @@ func (*GRPCAPI) Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 func (g *GRPCAPI) SearchProfiles(ctx context.Context,
 	request *generated.SearchProfilesRequest,
 ) (*generated.SearchProfilesResponse, error) {
-	profilePreviews, err := g.usecases.SearchProfiles(ctx, &coreTypes.SearchProfilesArgs{
+	profilePreviews, err := g.profilesService.SearchProfiles(ctx, &profilesService.SearchProfilesArgs{
 		Query: request.Query,
 		PaginationArgs: &types.PaginationArgs{
-			Offset:   request.Offset,
-			PageSize: request.PageSize,
+			Offset:   request.PaginationArgs.Offset,
+			PageSize: request.PaginationArgs.PageSize,
 		},
 	})
 	if err != nil {
@@ -47,7 +48,7 @@ func (g *GRPCAPI) SearchProfiles(ctx context.Context,
 func (g *GRPCAPI) GetProfilePreviews(ctx context.Context,
 	request *generated.GetProfilePreviewsRequest,
 ) (*generated.GetProfilePreviewsResponse, error) {
-	profilePreviews, err := g.usecases.GetProfilePreviews(ctx, request.Ids)
+	profilePreviews, err := g.profilesService.GetProfilePreviews(ctx, request.Ids)
 	if err != nil {
 		return nil, err
 	}
@@ -58,8 +59,8 @@ func (g *GRPCAPI) GetProfilePreviews(ctx context.Context,
 	return response, nil
 }
 
-// Converts []*coreTypes.ProfilePreview to []*generated.ProfilePreiew.
-func toProtoGeneratedProfilePreviews(input []*coreTypes.ProfilePreview) []*generated.ProfilePreview {
+// Converts []*postsService.ProfilePreview to []*generated.ProfilePreiew.
+func toProtoGeneratedProfilePreviews(input []*profilesService.ProfilePreview) []*generated.ProfilePreview {
 	output := make([]*generated.ProfilePreview, len(input))
 	for _, item := range input {
 		output = append(output, &generated.ProfilePreview{

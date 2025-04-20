@@ -42,14 +42,30 @@ func (m *FollowshipOperationRequest) CloneMessageVT() proto.Message {
 	return m.CloneVT()
 }
 
+func (m *DoesFollowshipExistResponse) CloneVT() *DoesFollowshipExistResponse {
+	if m == nil {
+		return (*DoesFollowshipExistResponse)(nil)
+	}
+	r := new(DoesFollowshipExistResponse)
+	r.FollowshipExists = m.FollowshipExists
+	if len(m.unknownFields) > 0 {
+		r.unknownFields = make([]byte, len(m.unknownFields))
+		copy(r.unknownFields, m.unknownFields)
+	}
+	return r
+}
+
+func (m *DoesFollowshipExistResponse) CloneMessageVT() proto.Message {
+	return m.CloneVT()
+}
+
 func (m *GetFollowersRequest) CloneVT() *GetFollowersRequest {
 	if m == nil {
 		return (*GetFollowersRequest)(nil)
 	}
 	r := new(GetFollowersRequest)
 	r.UserId = m.UserId
-	r.PageSize = m.PageSize
-	r.Offset = m.Offset
+	r.PaginationArgs = m.PaginationArgs.CloneVT()
 	if len(m.unknownFields) > 0 {
 		r.unknownFields = make([]byte, len(m.unknownFields))
 		copy(r.unknownFields, m.unknownFields)
@@ -88,8 +104,7 @@ func (m *GetFollowingsRequest) CloneVT() *GetFollowingsRequest {
 	}
 	r := new(GetFollowingsRequest)
 	r.UserId = m.UserId
-	r.PageSize = m.PageSize
-	r.Offset = m.Offset
+	r.PaginationArgs = m.PaginationArgs.CloneVT()
 	if len(m.unknownFields) > 0 {
 		r.unknownFields = make([]byte, len(m.unknownFields))
 		copy(r.unknownFields, m.unknownFields)
@@ -122,11 +137,11 @@ func (m *GetFollowingsResponse) CloneMessageVT() proto.Message {
 	return m.CloneVT()
 }
 
-func (m *GetFollowshipCountsRequest) CloneVT() *GetFollowshipCountsRequest {
+func (m *GetFollowerAndFollowingCountsRequest) CloneVT() *GetFollowerAndFollowingCountsRequest {
 	if m == nil {
-		return (*GetFollowshipCountsRequest)(nil)
+		return (*GetFollowerAndFollowingCountsRequest)(nil)
 	}
-	r := new(GetFollowshipCountsRequest)
+	r := new(GetFollowerAndFollowingCountsRequest)
 	r.UserId = m.UserId
 	if len(m.unknownFields) > 0 {
 		r.unknownFields = make([]byte, len(m.unknownFields))
@@ -135,15 +150,15 @@ func (m *GetFollowshipCountsRequest) CloneVT() *GetFollowshipCountsRequest {
 	return r
 }
 
-func (m *GetFollowshipCountsRequest) CloneMessageVT() proto.Message {
+func (m *GetFollowerAndFollowingCountsRequest) CloneMessageVT() proto.Message {
 	return m.CloneVT()
 }
 
-func (m *GetFollowshipCountsResponse) CloneVT() *GetFollowshipCountsResponse {
+func (m *GetFollowerAndFollowingCountsResponse) CloneVT() *GetFollowerAndFollowingCountsResponse {
 	if m == nil {
-		return (*GetFollowshipCountsResponse)(nil)
+		return (*GetFollowerAndFollowingCountsResponse)(nil)
 	}
-	r := new(GetFollowshipCountsResponse)
+	r := new(GetFollowerAndFollowingCountsResponse)
 	r.FollowerCount = m.FollowerCount
 	r.FollowingCount = m.FollowingCount
 	if len(m.unknownFields) > 0 {
@@ -153,42 +168,7 @@ func (m *GetFollowshipCountsResponse) CloneVT() *GetFollowshipCountsResponse {
 	return r
 }
 
-func (m *GetFollowshipCountsResponse) CloneMessageVT() proto.Message {
-	return m.CloneVT()
-}
-
-func (m *DoesFollowshipExistRequest) CloneVT() *DoesFollowshipExistRequest {
-	if m == nil {
-		return (*DoesFollowshipExistRequest)(nil)
-	}
-	r := new(DoesFollowshipExistRequest)
-	r.FollowerId = m.FollowerId
-	r.FolloweeId = m.FolloweeId
-	if len(m.unknownFields) > 0 {
-		r.unknownFields = make([]byte, len(m.unknownFields))
-		copy(r.unknownFields, m.unknownFields)
-	}
-	return r
-}
-
-func (m *DoesFollowshipExistRequest) CloneMessageVT() proto.Message {
-	return m.CloneVT()
-}
-
-func (m *DoesFollowshipExistResponse) CloneVT() *DoesFollowshipExistResponse {
-	if m == nil {
-		return (*DoesFollowshipExistResponse)(nil)
-	}
-	r := new(DoesFollowshipExistResponse)
-	r.Exists = m.Exists
-	if len(m.unknownFields) > 0 {
-		r.unknownFields = make([]byte, len(m.unknownFields))
-		copy(r.unknownFields, m.unknownFields)
-	}
-	return r
-}
-
-func (m *DoesFollowshipExistResponse) CloneMessageVT() proto.Message {
+func (m *GetFollowerAndFollowingCountsResponse) CloneMessageVT() proto.Message {
 	return m.CloneVT()
 }
 
@@ -214,6 +194,25 @@ func (this *FollowshipOperationRequest) EqualMessageVT(thatMsg proto.Message) bo
 	}
 	return this.EqualVT(that)
 }
+func (this *DoesFollowshipExistResponse) EqualVT(that *DoesFollowshipExistResponse) bool {
+	if this == that {
+		return true
+	} else if this == nil || that == nil {
+		return false
+	}
+	if this.FollowshipExists != that.FollowshipExists {
+		return false
+	}
+	return string(this.unknownFields) == string(that.unknownFields)
+}
+
+func (this *DoesFollowshipExistResponse) EqualMessageVT(thatMsg proto.Message) bool {
+	that, ok := thatMsg.(*DoesFollowshipExistResponse)
+	if !ok {
+		return false
+	}
+	return this.EqualVT(that)
+}
 func (this *GetFollowersRequest) EqualVT(that *GetFollowersRequest) bool {
 	if this == that {
 		return true
@@ -223,10 +222,7 @@ func (this *GetFollowersRequest) EqualVT(that *GetFollowersRequest) bool {
 	if this.UserId != that.UserId {
 		return false
 	}
-	if this.PageSize != that.PageSize {
-		return false
-	}
-	if this.Offset != that.Offset {
+	if !this.PaginationArgs.EqualVT(that.PaginationArgs) {
 		return false
 	}
 	return string(this.unknownFields) == string(that.unknownFields)
@@ -273,10 +269,7 @@ func (this *GetFollowingsRequest) EqualVT(that *GetFollowingsRequest) bool {
 	if this.UserId != that.UserId {
 		return false
 	}
-	if this.PageSize != that.PageSize {
-		return false
-	}
-	if this.Offset != that.Offset {
+	if !this.PaginationArgs.EqualVT(that.PaginationArgs) {
 		return false
 	}
 	return string(this.unknownFields) == string(that.unknownFields)
@@ -314,7 +307,7 @@ func (this *GetFollowingsResponse) EqualMessageVT(thatMsg proto.Message) bool {
 	}
 	return this.EqualVT(that)
 }
-func (this *GetFollowshipCountsRequest) EqualVT(that *GetFollowshipCountsRequest) bool {
+func (this *GetFollowerAndFollowingCountsRequest) EqualVT(that *GetFollowerAndFollowingCountsRequest) bool {
 	if this == that {
 		return true
 	} else if this == nil || that == nil {
@@ -326,14 +319,14 @@ func (this *GetFollowshipCountsRequest) EqualVT(that *GetFollowshipCountsRequest
 	return string(this.unknownFields) == string(that.unknownFields)
 }
 
-func (this *GetFollowshipCountsRequest) EqualMessageVT(thatMsg proto.Message) bool {
-	that, ok := thatMsg.(*GetFollowshipCountsRequest)
+func (this *GetFollowerAndFollowingCountsRequest) EqualMessageVT(thatMsg proto.Message) bool {
+	that, ok := thatMsg.(*GetFollowerAndFollowingCountsRequest)
 	if !ok {
 		return false
 	}
 	return this.EqualVT(that)
 }
-func (this *GetFollowshipCountsResponse) EqualVT(that *GetFollowshipCountsResponse) bool {
+func (this *GetFollowerAndFollowingCountsResponse) EqualVT(that *GetFollowerAndFollowingCountsResponse) bool {
 	if this == that {
 		return true
 	} else if this == nil || that == nil {
@@ -348,49 +341,8 @@ func (this *GetFollowshipCountsResponse) EqualVT(that *GetFollowshipCountsRespon
 	return string(this.unknownFields) == string(that.unknownFields)
 }
 
-func (this *GetFollowshipCountsResponse) EqualMessageVT(thatMsg proto.Message) bool {
-	that, ok := thatMsg.(*GetFollowshipCountsResponse)
-	if !ok {
-		return false
-	}
-	return this.EqualVT(that)
-}
-func (this *DoesFollowshipExistRequest) EqualVT(that *DoesFollowshipExistRequest) bool {
-	if this == that {
-		return true
-	} else if this == nil || that == nil {
-		return false
-	}
-	if this.FollowerId != that.FollowerId {
-		return false
-	}
-	if this.FolloweeId != that.FolloweeId {
-		return false
-	}
-	return string(this.unknownFields) == string(that.unknownFields)
-}
-
-func (this *DoesFollowshipExistRequest) EqualMessageVT(thatMsg proto.Message) bool {
-	that, ok := thatMsg.(*DoesFollowshipExistRequest)
-	if !ok {
-		return false
-	}
-	return this.EqualVT(that)
-}
-func (this *DoesFollowshipExistResponse) EqualVT(that *DoesFollowshipExistResponse) bool {
-	if this == that {
-		return true
-	} else if this == nil || that == nil {
-		return false
-	}
-	if this.Exists != that.Exists {
-		return false
-	}
-	return string(this.unknownFields) == string(that.unknownFields)
-}
-
-func (this *DoesFollowshipExistResponse) EqualMessageVT(thatMsg proto.Message) bool {
-	that, ok := thatMsg.(*DoesFollowshipExistResponse)
+func (this *GetFollowerAndFollowingCountsResponse) EqualMessageVT(thatMsg proto.Message) bool {
+	that, ok := thatMsg.(*GetFollowerAndFollowingCountsResponse)
 	if !ok {
 		return false
 	}
@@ -407,12 +359,12 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type FollowshipsServiceClient interface {
 	Ping(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	Follow(ctx context.Context, in *FollowshipOperationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	Unfollow(ctx context.Context, in *FollowshipOperationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	DoesFollowshipExist(ctx context.Context, in *DoesFollowshipExistRequest, opts ...grpc.CallOption) (*DoesFollowshipExistResponse, error)
+	CreateFollowship(ctx context.Context, in *FollowshipOperationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	DeleteFollowship(ctx context.Context, in *FollowshipOperationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	DoesFollowshipExist(ctx context.Context, in *FollowshipOperationRequest, opts ...grpc.CallOption) (*DoesFollowshipExistResponse, error)
 	GetFollowers(ctx context.Context, in *GetFollowersRequest, opts ...grpc.CallOption) (*GetFollowersResponse, error)
 	GetFollowings(ctx context.Context, in *GetFollowingsRequest, opts ...grpc.CallOption) (*GetFollowingsResponse, error)
-	GetFollowshipCounts(ctx context.Context, in *GetFollowshipCountsRequest, opts ...grpc.CallOption) (*GetFollowshipCountsResponse, error)
+	GetFollowerAndFollowingCounts(ctx context.Context, in *GetFollowerAndFollowingCountsRequest, opts ...grpc.CallOption) (*GetFollowerAndFollowingCountsResponse, error)
 }
 
 type followshipsServiceClient struct {
@@ -432,25 +384,25 @@ func (c *followshipsServiceClient) Ping(ctx context.Context, in *emptypb.Empty, 
 	return out, nil
 }
 
-func (c *followshipsServiceClient) Follow(ctx context.Context, in *FollowshipOperationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *followshipsServiceClient) CreateFollowship(ctx context.Context, in *FollowshipOperationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/microservices.followships.FollowshipsService/Follow", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/microservices.followships.FollowshipsService/CreateFollowship", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *followshipsServiceClient) Unfollow(ctx context.Context, in *FollowshipOperationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *followshipsServiceClient) DeleteFollowship(ctx context.Context, in *FollowshipOperationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/microservices.followships.FollowshipsService/Unfollow", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/microservices.followships.FollowshipsService/DeleteFollowship", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *followshipsServiceClient) DoesFollowshipExist(ctx context.Context, in *DoesFollowshipExistRequest, opts ...grpc.CallOption) (*DoesFollowshipExistResponse, error) {
+func (c *followshipsServiceClient) DoesFollowshipExist(ctx context.Context, in *FollowshipOperationRequest, opts ...grpc.CallOption) (*DoesFollowshipExistResponse, error) {
 	out := new(DoesFollowshipExistResponse)
 	err := c.cc.Invoke(ctx, "/microservices.followships.FollowshipsService/DoesFollowshipExist", in, out, opts...)
 	if err != nil {
@@ -477,9 +429,9 @@ func (c *followshipsServiceClient) GetFollowings(ctx context.Context, in *GetFol
 	return out, nil
 }
 
-func (c *followshipsServiceClient) GetFollowshipCounts(ctx context.Context, in *GetFollowshipCountsRequest, opts ...grpc.CallOption) (*GetFollowshipCountsResponse, error) {
-	out := new(GetFollowshipCountsResponse)
-	err := c.cc.Invoke(ctx, "/microservices.followships.FollowshipsService/GetFollowshipCounts", in, out, opts...)
+func (c *followshipsServiceClient) GetFollowerAndFollowingCounts(ctx context.Context, in *GetFollowerAndFollowingCountsRequest, opts ...grpc.CallOption) (*GetFollowerAndFollowingCountsResponse, error) {
+	out := new(GetFollowerAndFollowingCountsResponse)
+	err := c.cc.Invoke(ctx, "/microservices.followships.FollowshipsService/GetFollowerAndFollowingCounts", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -491,12 +443,12 @@ func (c *followshipsServiceClient) GetFollowshipCounts(ctx context.Context, in *
 // for forward compatibility
 type FollowshipsServiceServer interface {
 	Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
-	Follow(context.Context, *FollowshipOperationRequest) (*emptypb.Empty, error)
-	Unfollow(context.Context, *FollowshipOperationRequest) (*emptypb.Empty, error)
-	DoesFollowshipExist(context.Context, *DoesFollowshipExistRequest) (*DoesFollowshipExistResponse, error)
+	CreateFollowship(context.Context, *FollowshipOperationRequest) (*emptypb.Empty, error)
+	DeleteFollowship(context.Context, *FollowshipOperationRequest) (*emptypb.Empty, error)
+	DoesFollowshipExist(context.Context, *FollowshipOperationRequest) (*DoesFollowshipExistResponse, error)
 	GetFollowers(context.Context, *GetFollowersRequest) (*GetFollowersResponse, error)
 	GetFollowings(context.Context, *GetFollowingsRequest) (*GetFollowingsResponse, error)
-	GetFollowshipCounts(context.Context, *GetFollowshipCountsRequest) (*GetFollowshipCountsResponse, error)
+	GetFollowerAndFollowingCounts(context.Context, *GetFollowerAndFollowingCountsRequest) (*GetFollowerAndFollowingCountsResponse, error)
 	mustEmbedUnimplementedFollowshipsServiceServer()
 }
 
@@ -507,13 +459,13 @@ type UnimplementedFollowshipsServiceServer struct {
 func (UnimplementedFollowshipsServiceServer) Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
 }
-func (UnimplementedFollowshipsServiceServer) Follow(context.Context, *FollowshipOperationRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Follow not implemented")
+func (UnimplementedFollowshipsServiceServer) CreateFollowship(context.Context, *FollowshipOperationRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateFollowship not implemented")
 }
-func (UnimplementedFollowshipsServiceServer) Unfollow(context.Context, *FollowshipOperationRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Unfollow not implemented")
+func (UnimplementedFollowshipsServiceServer) DeleteFollowship(context.Context, *FollowshipOperationRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteFollowship not implemented")
 }
-func (UnimplementedFollowshipsServiceServer) DoesFollowshipExist(context.Context, *DoesFollowshipExistRequest) (*DoesFollowshipExistResponse, error) {
+func (UnimplementedFollowshipsServiceServer) DoesFollowshipExist(context.Context, *FollowshipOperationRequest) (*DoesFollowshipExistResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DoesFollowshipExist not implemented")
 }
 func (UnimplementedFollowshipsServiceServer) GetFollowers(context.Context, *GetFollowersRequest) (*GetFollowersResponse, error) {
@@ -522,8 +474,8 @@ func (UnimplementedFollowshipsServiceServer) GetFollowers(context.Context, *GetF
 func (UnimplementedFollowshipsServiceServer) GetFollowings(context.Context, *GetFollowingsRequest) (*GetFollowingsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetFollowings not implemented")
 }
-func (UnimplementedFollowshipsServiceServer) GetFollowshipCounts(context.Context, *GetFollowshipCountsRequest) (*GetFollowshipCountsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetFollowshipCounts not implemented")
+func (UnimplementedFollowshipsServiceServer) GetFollowerAndFollowingCounts(context.Context, *GetFollowerAndFollowingCountsRequest) (*GetFollowerAndFollowingCountsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetFollowerAndFollowingCounts not implemented")
 }
 func (UnimplementedFollowshipsServiceServer) mustEmbedUnimplementedFollowshipsServiceServer() {}
 
@@ -556,44 +508,44 @@ func _FollowshipsService_Ping_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _FollowshipsService_Follow_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _FollowshipsService_CreateFollowship_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(FollowshipOperationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FollowshipsServiceServer).Follow(ctx, in)
+		return srv.(FollowshipsServiceServer).CreateFollowship(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/microservices.followships.FollowshipsService/Follow",
+		FullMethod: "/microservices.followships.FollowshipsService/CreateFollowship",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FollowshipsServiceServer).Follow(ctx, req.(*FollowshipOperationRequest))
+		return srv.(FollowshipsServiceServer).CreateFollowship(ctx, req.(*FollowshipOperationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _FollowshipsService_Unfollow_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _FollowshipsService_DeleteFollowship_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(FollowshipOperationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FollowshipsServiceServer).Unfollow(ctx, in)
+		return srv.(FollowshipsServiceServer).DeleteFollowship(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/microservices.followships.FollowshipsService/Unfollow",
+		FullMethod: "/microservices.followships.FollowshipsService/DeleteFollowship",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FollowshipsServiceServer).Unfollow(ctx, req.(*FollowshipOperationRequest))
+		return srv.(FollowshipsServiceServer).DeleteFollowship(ctx, req.(*FollowshipOperationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _FollowshipsService_DoesFollowshipExist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DoesFollowshipExistRequest)
+	in := new(FollowshipOperationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -605,7 +557,7 @@ func _FollowshipsService_DoesFollowshipExist_Handler(srv interface{}, ctx contex
 		FullMethod: "/microservices.followships.FollowshipsService/DoesFollowshipExist",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FollowshipsServiceServer).DoesFollowshipExist(ctx, req.(*DoesFollowshipExistRequest))
+		return srv.(FollowshipsServiceServer).DoesFollowshipExist(ctx, req.(*FollowshipOperationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -646,20 +598,20 @@ func _FollowshipsService_GetFollowings_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
-func _FollowshipsService_GetFollowshipCounts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetFollowshipCountsRequest)
+func _FollowshipsService_GetFollowerAndFollowingCounts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetFollowerAndFollowingCountsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FollowshipsServiceServer).GetFollowshipCounts(ctx, in)
+		return srv.(FollowshipsServiceServer).GetFollowerAndFollowingCounts(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/microservices.followships.FollowshipsService/GetFollowshipCounts",
+		FullMethod: "/microservices.followships.FollowshipsService/GetFollowerAndFollowingCounts",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FollowshipsServiceServer).GetFollowshipCounts(ctx, req.(*GetFollowshipCountsRequest))
+		return srv.(FollowshipsServiceServer).GetFollowerAndFollowingCounts(ctx, req.(*GetFollowerAndFollowingCountsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -676,12 +628,12 @@ var FollowshipsService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _FollowshipsService_Ping_Handler,
 		},
 		{
-			MethodName: "Follow",
-			Handler:    _FollowshipsService_Follow_Handler,
+			MethodName: "CreateFollowship",
+			Handler:    _FollowshipsService_CreateFollowship_Handler,
 		},
 		{
-			MethodName: "Unfollow",
-			Handler:    _FollowshipsService_Unfollow_Handler,
+			MethodName: "DeleteFollowship",
+			Handler:    _FollowshipsService_DeleteFollowship_Handler,
 		},
 		{
 			MethodName: "DoesFollowshipExist",
@@ -696,8 +648,8 @@ var FollowshipsService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _FollowshipsService_GetFollowings_Handler,
 		},
 		{
-			MethodName: "GetFollowshipCounts",
-			Handler:    _FollowshipsService_GetFollowshipCounts_Handler,
+			MethodName: "GetFollowerAndFollowingCounts",
+			Handler:    _FollowshipsService_GetFollowerAndFollowingCounts_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -747,6 +699,49 @@ func (m *FollowshipOperationRequest) MarshalToSizedBufferVT(dAtA []byte) (int, e
 	return len(dAtA) - i, nil
 }
 
+func (m *DoesFollowshipExistResponse) MarshalVT() (dAtA []byte, err error) {
+	if m == nil {
+		return nil, nil
+	}
+	size := m.SizeVT()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBufferVT(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *DoesFollowshipExistResponse) MarshalToVT(dAtA []byte) (int, error) {
+	size := m.SizeVT()
+	return m.MarshalToSizedBufferVT(dAtA[:size])
+}
+
+func (m *DoesFollowshipExistResponse) MarshalToSizedBufferVT(dAtA []byte) (int, error) {
+	if m == nil {
+		return 0, nil
+	}
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.unknownFields != nil {
+		i -= len(m.unknownFields)
+		copy(dAtA[i:], m.unknownFields)
+	}
+	if m.FollowshipExists {
+		i--
+		if m.FollowshipExists {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
 func (m *GetFollowersRequest) MarshalVT() (dAtA []byte, err error) {
 	if m == nil {
 		return nil, nil
@@ -777,15 +772,15 @@ func (m *GetFollowersRequest) MarshalToSizedBufferVT(dAtA []byte) (int, error) {
 		i -= len(m.unknownFields)
 		copy(dAtA[i:], m.unknownFields)
 	}
-	if m.Offset != 0 {
-		i = protohelpers.EncodeVarint(dAtA, i, uint64(m.Offset))
+	if m.PaginationArgs != nil {
+		size, err := m.PaginationArgs.MarshalToSizedBufferVT(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = protohelpers.EncodeVarint(dAtA, i, uint64(size))
 		i--
-		dAtA[i] = 0x18
-	}
-	if m.PageSize != 0 {
-		i = protohelpers.EncodeVarint(dAtA, i, uint64(m.PageSize))
-		i--
-		dAtA[i] = 0x10
+		dAtA[i] = 0x12
 	}
 	if m.UserId != 0 {
 		i = protohelpers.EncodeVarint(dAtA, i, uint64(m.UserId))
@@ -879,15 +874,15 @@ func (m *GetFollowingsRequest) MarshalToSizedBufferVT(dAtA []byte) (int, error) 
 		i -= len(m.unknownFields)
 		copy(dAtA[i:], m.unknownFields)
 	}
-	if m.Offset != 0 {
-		i = protohelpers.EncodeVarint(dAtA, i, uint64(m.Offset))
+	if m.PaginationArgs != nil {
+		size, err := m.PaginationArgs.MarshalToSizedBufferVT(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = protohelpers.EncodeVarint(dAtA, i, uint64(size))
 		i--
-		dAtA[i] = 0x18
-	}
-	if m.PageSize != 0 {
-		i = protohelpers.EncodeVarint(dAtA, i, uint64(m.PageSize))
-		i--
-		dAtA[i] = 0x10
+		dAtA[i] = 0x12
 	}
 	if m.UserId != 0 {
 		i = protohelpers.EncodeVarint(dAtA, i, uint64(m.UserId))
@@ -951,7 +946,7 @@ func (m *GetFollowingsResponse) MarshalToSizedBufferVT(dAtA []byte) (int, error)
 	return len(dAtA) - i, nil
 }
 
-func (m *GetFollowshipCountsRequest) MarshalVT() (dAtA []byte, err error) {
+func (m *GetFollowerAndFollowingCountsRequest) MarshalVT() (dAtA []byte, err error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -964,12 +959,12 @@ func (m *GetFollowshipCountsRequest) MarshalVT() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *GetFollowshipCountsRequest) MarshalToVT(dAtA []byte) (int, error) {
+func (m *GetFollowerAndFollowingCountsRequest) MarshalToVT(dAtA []byte) (int, error) {
 	size := m.SizeVT()
 	return m.MarshalToSizedBufferVT(dAtA[:size])
 }
 
-func (m *GetFollowshipCountsRequest) MarshalToSizedBufferVT(dAtA []byte) (int, error) {
+func (m *GetFollowerAndFollowingCountsRequest) MarshalToSizedBufferVT(dAtA []byte) (int, error) {
 	if m == nil {
 		return 0, nil
 	}
@@ -989,7 +984,7 @@ func (m *GetFollowshipCountsRequest) MarshalToSizedBufferVT(dAtA []byte) (int, e
 	return len(dAtA) - i, nil
 }
 
-func (m *GetFollowshipCountsResponse) MarshalVT() (dAtA []byte, err error) {
+func (m *GetFollowerAndFollowingCountsResponse) MarshalVT() (dAtA []byte, err error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -1002,12 +997,12 @@ func (m *GetFollowshipCountsResponse) MarshalVT() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *GetFollowshipCountsResponse) MarshalToVT(dAtA []byte) (int, error) {
+func (m *GetFollowerAndFollowingCountsResponse) MarshalToVT(dAtA []byte) (int, error) {
 	size := m.SizeVT()
 	return m.MarshalToSizedBufferVT(dAtA[:size])
 }
 
-func (m *GetFollowshipCountsResponse) MarshalToSizedBufferVT(dAtA []byte) (int, error) {
+func (m *GetFollowerAndFollowingCountsResponse) MarshalToSizedBufferVT(dAtA []byte) (int, error) {
 	if m == nil {
 		return 0, nil
 	}
@@ -1026,92 +1021,6 @@ func (m *GetFollowshipCountsResponse) MarshalToSizedBufferVT(dAtA []byte) (int, 
 	}
 	if m.FollowerCount != 0 {
 		i = protohelpers.EncodeVarint(dAtA, i, uint64(m.FollowerCount))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *DoesFollowshipExistRequest) MarshalVT() (dAtA []byte, err error) {
-	if m == nil {
-		return nil, nil
-	}
-	size := m.SizeVT()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBufferVT(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *DoesFollowshipExistRequest) MarshalToVT(dAtA []byte) (int, error) {
-	size := m.SizeVT()
-	return m.MarshalToSizedBufferVT(dAtA[:size])
-}
-
-func (m *DoesFollowshipExistRequest) MarshalToSizedBufferVT(dAtA []byte) (int, error) {
-	if m == nil {
-		return 0, nil
-	}
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.unknownFields != nil {
-		i -= len(m.unknownFields)
-		copy(dAtA[i:], m.unknownFields)
-	}
-	if m.FolloweeId != 0 {
-		i = protohelpers.EncodeVarint(dAtA, i, uint64(m.FolloweeId))
-		i--
-		dAtA[i] = 0x10
-	}
-	if m.FollowerId != 0 {
-		i = protohelpers.EncodeVarint(dAtA, i, uint64(m.FollowerId))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *DoesFollowshipExistResponse) MarshalVT() (dAtA []byte, err error) {
-	if m == nil {
-		return nil, nil
-	}
-	size := m.SizeVT()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBufferVT(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *DoesFollowshipExistResponse) MarshalToVT(dAtA []byte) (int, error) {
-	size := m.SizeVT()
-	return m.MarshalToSizedBufferVT(dAtA[:size])
-}
-
-func (m *DoesFollowshipExistResponse) MarshalToSizedBufferVT(dAtA []byte) (int, error) {
-	if m == nil {
-		return 0, nil
-	}
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.unknownFields != nil {
-		i -= len(m.unknownFields)
-		copy(dAtA[i:], m.unknownFields)
-	}
-	if m.Exists {
-		i--
-		if m.Exists {
-			dAtA[i] = 1
-		} else {
-			dAtA[i] = 0
-		}
 		i--
 		dAtA[i] = 0x8
 	}
@@ -1161,6 +1070,49 @@ func (m *FollowshipOperationRequest) MarshalToSizedBufferVTStrict(dAtA []byte) (
 	return len(dAtA) - i, nil
 }
 
+func (m *DoesFollowshipExistResponse) MarshalVTStrict() (dAtA []byte, err error) {
+	if m == nil {
+		return nil, nil
+	}
+	size := m.SizeVT()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBufferVTStrict(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *DoesFollowshipExistResponse) MarshalToVTStrict(dAtA []byte) (int, error) {
+	size := m.SizeVT()
+	return m.MarshalToSizedBufferVTStrict(dAtA[:size])
+}
+
+func (m *DoesFollowshipExistResponse) MarshalToSizedBufferVTStrict(dAtA []byte) (int, error) {
+	if m == nil {
+		return 0, nil
+	}
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.unknownFields != nil {
+		i -= len(m.unknownFields)
+		copy(dAtA[i:], m.unknownFields)
+	}
+	if m.FollowshipExists {
+		i--
+		if m.FollowshipExists {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
 func (m *GetFollowersRequest) MarshalVTStrict() (dAtA []byte, err error) {
 	if m == nil {
 		return nil, nil
@@ -1191,15 +1143,15 @@ func (m *GetFollowersRequest) MarshalToSizedBufferVTStrict(dAtA []byte) (int, er
 		i -= len(m.unknownFields)
 		copy(dAtA[i:], m.unknownFields)
 	}
-	if m.Offset != 0 {
-		i = protohelpers.EncodeVarint(dAtA, i, uint64(m.Offset))
+	if m.PaginationArgs != nil {
+		size, err := m.PaginationArgs.MarshalToSizedBufferVTStrict(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = protohelpers.EncodeVarint(dAtA, i, uint64(size))
 		i--
-		dAtA[i] = 0x18
-	}
-	if m.PageSize != 0 {
-		i = protohelpers.EncodeVarint(dAtA, i, uint64(m.PageSize))
-		i--
-		dAtA[i] = 0x10
+		dAtA[i] = 0x12
 	}
 	if m.UserId != 0 {
 		i = protohelpers.EncodeVarint(dAtA, i, uint64(m.UserId))
@@ -1293,15 +1245,15 @@ func (m *GetFollowingsRequest) MarshalToSizedBufferVTStrict(dAtA []byte) (int, e
 		i -= len(m.unknownFields)
 		copy(dAtA[i:], m.unknownFields)
 	}
-	if m.Offset != 0 {
-		i = protohelpers.EncodeVarint(dAtA, i, uint64(m.Offset))
+	if m.PaginationArgs != nil {
+		size, err := m.PaginationArgs.MarshalToSizedBufferVTStrict(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = protohelpers.EncodeVarint(dAtA, i, uint64(size))
 		i--
-		dAtA[i] = 0x18
-	}
-	if m.PageSize != 0 {
-		i = protohelpers.EncodeVarint(dAtA, i, uint64(m.PageSize))
-		i--
-		dAtA[i] = 0x10
+		dAtA[i] = 0x12
 	}
 	if m.UserId != 0 {
 		i = protohelpers.EncodeVarint(dAtA, i, uint64(m.UserId))
@@ -1365,7 +1317,7 @@ func (m *GetFollowingsResponse) MarshalToSizedBufferVTStrict(dAtA []byte) (int, 
 	return len(dAtA) - i, nil
 }
 
-func (m *GetFollowshipCountsRequest) MarshalVTStrict() (dAtA []byte, err error) {
+func (m *GetFollowerAndFollowingCountsRequest) MarshalVTStrict() (dAtA []byte, err error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -1378,12 +1330,12 @@ func (m *GetFollowshipCountsRequest) MarshalVTStrict() (dAtA []byte, err error) 
 	return dAtA[:n], nil
 }
 
-func (m *GetFollowshipCountsRequest) MarshalToVTStrict(dAtA []byte) (int, error) {
+func (m *GetFollowerAndFollowingCountsRequest) MarshalToVTStrict(dAtA []byte) (int, error) {
 	size := m.SizeVT()
 	return m.MarshalToSizedBufferVTStrict(dAtA[:size])
 }
 
-func (m *GetFollowshipCountsRequest) MarshalToSizedBufferVTStrict(dAtA []byte) (int, error) {
+func (m *GetFollowerAndFollowingCountsRequest) MarshalToSizedBufferVTStrict(dAtA []byte) (int, error) {
 	if m == nil {
 		return 0, nil
 	}
@@ -1403,7 +1355,7 @@ func (m *GetFollowshipCountsRequest) MarshalToSizedBufferVTStrict(dAtA []byte) (
 	return len(dAtA) - i, nil
 }
 
-func (m *GetFollowshipCountsResponse) MarshalVTStrict() (dAtA []byte, err error) {
+func (m *GetFollowerAndFollowingCountsResponse) MarshalVTStrict() (dAtA []byte, err error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -1416,12 +1368,12 @@ func (m *GetFollowshipCountsResponse) MarshalVTStrict() (dAtA []byte, err error)
 	return dAtA[:n], nil
 }
 
-func (m *GetFollowshipCountsResponse) MarshalToVTStrict(dAtA []byte) (int, error) {
+func (m *GetFollowerAndFollowingCountsResponse) MarshalToVTStrict(dAtA []byte) (int, error) {
 	size := m.SizeVT()
 	return m.MarshalToSizedBufferVTStrict(dAtA[:size])
 }
 
-func (m *GetFollowshipCountsResponse) MarshalToSizedBufferVTStrict(dAtA []byte) (int, error) {
+func (m *GetFollowerAndFollowingCountsResponse) MarshalToSizedBufferVTStrict(dAtA []byte) (int, error) {
 	if m == nil {
 		return 0, nil
 	}
@@ -1446,92 +1398,6 @@ func (m *GetFollowshipCountsResponse) MarshalToSizedBufferVTStrict(dAtA []byte) 
 	return len(dAtA) - i, nil
 }
 
-func (m *DoesFollowshipExistRequest) MarshalVTStrict() (dAtA []byte, err error) {
-	if m == nil {
-		return nil, nil
-	}
-	size := m.SizeVT()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBufferVTStrict(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *DoesFollowshipExistRequest) MarshalToVTStrict(dAtA []byte) (int, error) {
-	size := m.SizeVT()
-	return m.MarshalToSizedBufferVTStrict(dAtA[:size])
-}
-
-func (m *DoesFollowshipExistRequest) MarshalToSizedBufferVTStrict(dAtA []byte) (int, error) {
-	if m == nil {
-		return 0, nil
-	}
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.unknownFields != nil {
-		i -= len(m.unknownFields)
-		copy(dAtA[i:], m.unknownFields)
-	}
-	if m.FolloweeId != 0 {
-		i = protohelpers.EncodeVarint(dAtA, i, uint64(m.FolloweeId))
-		i--
-		dAtA[i] = 0x10
-	}
-	if m.FollowerId != 0 {
-		i = protohelpers.EncodeVarint(dAtA, i, uint64(m.FollowerId))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *DoesFollowshipExistResponse) MarshalVTStrict() (dAtA []byte, err error) {
-	if m == nil {
-		return nil, nil
-	}
-	size := m.SizeVT()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBufferVTStrict(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *DoesFollowshipExistResponse) MarshalToVTStrict(dAtA []byte) (int, error) {
-	size := m.SizeVT()
-	return m.MarshalToSizedBufferVTStrict(dAtA[:size])
-}
-
-func (m *DoesFollowshipExistResponse) MarshalToSizedBufferVTStrict(dAtA []byte) (int, error) {
-	if m == nil {
-		return 0, nil
-	}
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.unknownFields != nil {
-		i -= len(m.unknownFields)
-		copy(dAtA[i:], m.unknownFields)
-	}
-	if m.Exists {
-		i--
-		if m.Exists {
-			dAtA[i] = 1
-		} else {
-			dAtA[i] = 0
-		}
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
 func (m *FollowshipOperationRequest) SizeVT() (n int) {
 	if m == nil {
 		return 0
@@ -1548,6 +1414,19 @@ func (m *FollowshipOperationRequest) SizeVT() (n int) {
 	return n
 }
 
+func (m *DoesFollowshipExistResponse) SizeVT() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.FollowshipExists {
+		n += 2
+	}
+	n += len(m.unknownFields)
+	return n
+}
+
 func (m *GetFollowersRequest) SizeVT() (n int) {
 	if m == nil {
 		return 0
@@ -1557,11 +1436,9 @@ func (m *GetFollowersRequest) SizeVT() (n int) {
 	if m.UserId != 0 {
 		n += 1 + protohelpers.SizeOfVarint(uint64(m.UserId))
 	}
-	if m.PageSize != 0 {
-		n += 1 + protohelpers.SizeOfVarint(uint64(m.PageSize))
-	}
-	if m.Offset != 0 {
-		n += 1 + protohelpers.SizeOfVarint(uint64(m.Offset))
+	if m.PaginationArgs != nil {
+		l = m.PaginationArgs.SizeVT()
+		n += 1 + l + protohelpers.SizeOfVarint(uint64(l))
 	}
 	n += len(m.unknownFields)
 	return n
@@ -1593,11 +1470,9 @@ func (m *GetFollowingsRequest) SizeVT() (n int) {
 	if m.UserId != 0 {
 		n += 1 + protohelpers.SizeOfVarint(uint64(m.UserId))
 	}
-	if m.PageSize != 0 {
-		n += 1 + protohelpers.SizeOfVarint(uint64(m.PageSize))
-	}
-	if m.Offset != 0 {
-		n += 1 + protohelpers.SizeOfVarint(uint64(m.Offset))
+	if m.PaginationArgs != nil {
+		l = m.PaginationArgs.SizeVT()
+		n += 1 + l + protohelpers.SizeOfVarint(uint64(l))
 	}
 	n += len(m.unknownFields)
 	return n
@@ -1620,7 +1495,7 @@ func (m *GetFollowingsResponse) SizeVT() (n int) {
 	return n
 }
 
-func (m *GetFollowshipCountsRequest) SizeVT() (n int) {
+func (m *GetFollowerAndFollowingCountsRequest) SizeVT() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1633,7 +1508,7 @@ func (m *GetFollowshipCountsRequest) SizeVT() (n int) {
 	return n
 }
 
-func (m *GetFollowshipCountsResponse) SizeVT() (n int) {
+func (m *GetFollowerAndFollowingCountsResponse) SizeVT() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1644,35 +1519,6 @@ func (m *GetFollowshipCountsResponse) SizeVT() (n int) {
 	}
 	if m.FollowingCount != 0 {
 		n += 1 + protohelpers.SizeOfVarint(uint64(m.FollowingCount))
-	}
-	n += len(m.unknownFields)
-	return n
-}
-
-func (m *DoesFollowshipExistRequest) SizeVT() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.FollowerId != 0 {
-		n += 1 + protohelpers.SizeOfVarint(uint64(m.FollowerId))
-	}
-	if m.FolloweeId != 0 {
-		n += 1 + protohelpers.SizeOfVarint(uint64(m.FolloweeId))
-	}
-	n += len(m.unknownFields)
-	return n
-}
-
-func (m *DoesFollowshipExistResponse) SizeVT() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Exists {
-		n += 2
 	}
 	n += len(m.unknownFields)
 	return n
@@ -1767,6 +1613,77 @@ func (m *FollowshipOperationRequest) UnmarshalVT(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *DoesFollowshipExistResponse) UnmarshalVT(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return protohelpers.ErrIntOverflow
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: DoesFollowshipExistResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: DoesFollowshipExistResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FollowshipExists", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protohelpers.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.FollowshipExists = bool(v != 0)
+		default:
+			iNdEx = preIndex
+			skippy, err := protohelpers.Skip(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return protohelpers.ErrInvalidLength
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.unknownFields = append(m.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func (m *GetFollowersRequest) UnmarshalVT(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -1816,10 +1733,10 @@ func (m *GetFollowersRequest) UnmarshalVT(dAtA []byte) error {
 				}
 			}
 		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PageSize", wireType)
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PaginationArgs", wireType)
 			}
-			m.PageSize = 0
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return protohelpers.ErrIntOverflow
@@ -1829,30 +1746,28 @@ func (m *GetFollowersRequest) UnmarshalVT(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.PageSize |= int64(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Offset", wireType)
+			if msglen < 0 {
+				return protohelpers.ErrInvalidLength
 			}
-			m.Offset = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return protohelpers.ErrIntOverflow
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Offset |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return protohelpers.ErrInvalidLength
 			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.PaginationArgs == nil {
+				m.PaginationArgs = &PaginationArgs{}
+			}
+			if err := m.PaginationArgs.UnmarshalVT(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := protohelpers.Skip(dAtA[iNdEx:])
@@ -2051,10 +1966,10 @@ func (m *GetFollowingsRequest) UnmarshalVT(dAtA []byte) error {
 				}
 			}
 		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PageSize", wireType)
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PaginationArgs", wireType)
 			}
-			m.PageSize = 0
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return protohelpers.ErrIntOverflow
@@ -2064,30 +1979,28 @@ func (m *GetFollowingsRequest) UnmarshalVT(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.PageSize |= int64(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Offset", wireType)
+			if msglen < 0 {
+				return protohelpers.ErrInvalidLength
 			}
-			m.Offset = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return protohelpers.ErrIntOverflow
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Offset |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return protohelpers.ErrInvalidLength
 			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.PaginationArgs == nil {
+				m.PaginationArgs = &PaginationArgs{}
+			}
+			if err := m.PaginationArgs.UnmarshalVT(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := protohelpers.Skip(dAtA[iNdEx:])
@@ -2237,7 +2150,7 @@ func (m *GetFollowingsResponse) UnmarshalVT(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *GetFollowshipCountsRequest) UnmarshalVT(dAtA []byte) error {
+func (m *GetFollowerAndFollowingCountsRequest) UnmarshalVT(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -2260,10 +2173,10 @@ func (m *GetFollowshipCountsRequest) UnmarshalVT(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: GetFollowshipCountsRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: GetFollowerAndFollowingCountsRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: GetFollowshipCountsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: GetFollowerAndFollowingCountsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -2307,7 +2220,7 @@ func (m *GetFollowshipCountsRequest) UnmarshalVT(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *GetFollowshipCountsResponse) UnmarshalVT(dAtA []byte) error {
+func (m *GetFollowerAndFollowingCountsResponse) UnmarshalVT(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -2330,10 +2243,10 @@ func (m *GetFollowshipCountsResponse) UnmarshalVT(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: GetFollowshipCountsResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: GetFollowerAndFollowingCountsResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: GetFollowshipCountsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: GetFollowerAndFollowingCountsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -2374,166 +2287,6 @@ func (m *GetFollowshipCountsResponse) UnmarshalVT(dAtA []byte) error {
 					break
 				}
 			}
-		default:
-			iNdEx = preIndex
-			skippy, err := protohelpers.Skip(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return protohelpers.ErrInvalidLength
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.unknownFields = append(m.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *DoesFollowshipExistRequest) UnmarshalVT(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return protohelpers.ErrIntOverflow
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: DoesFollowshipExistRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: DoesFollowshipExistRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field FollowerId", wireType)
-			}
-			m.FollowerId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return protohelpers.ErrIntOverflow
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.FollowerId |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field FolloweeId", wireType)
-			}
-			m.FolloweeId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return protohelpers.ErrIntOverflow
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.FolloweeId |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := protohelpers.Skip(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return protohelpers.ErrInvalidLength
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.unknownFields = append(m.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *DoesFollowshipExistResponse) UnmarshalVT(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return protohelpers.ErrIntOverflow
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: DoesFollowshipExistResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: DoesFollowshipExistResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Exists", wireType)
-			}
-			var v int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return protohelpers.ErrIntOverflow
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				v |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			m.Exists = bool(v != 0)
 		default:
 			iNdEx = preIndex
 			skippy, err := protohelpers.Skip(dAtA[iNdEx:])
@@ -2645,6 +2398,77 @@ func (m *FollowshipOperationRequest) UnmarshalVTUnsafe(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *DoesFollowshipExistResponse) UnmarshalVTUnsafe(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return protohelpers.ErrIntOverflow
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: DoesFollowshipExistResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: DoesFollowshipExistResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FollowshipExists", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protohelpers.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.FollowshipExists = bool(v != 0)
+		default:
+			iNdEx = preIndex
+			skippy, err := protohelpers.Skip(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return protohelpers.ErrInvalidLength
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.unknownFields = append(m.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func (m *GetFollowersRequest) UnmarshalVTUnsafe(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -2694,10 +2518,10 @@ func (m *GetFollowersRequest) UnmarshalVTUnsafe(dAtA []byte) error {
 				}
 			}
 		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PageSize", wireType)
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PaginationArgs", wireType)
 			}
-			m.PageSize = 0
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return protohelpers.ErrIntOverflow
@@ -2707,30 +2531,28 @@ func (m *GetFollowersRequest) UnmarshalVTUnsafe(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.PageSize |= int64(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Offset", wireType)
+			if msglen < 0 {
+				return protohelpers.ErrInvalidLength
 			}
-			m.Offset = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return protohelpers.ErrIntOverflow
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Offset |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return protohelpers.ErrInvalidLength
 			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.PaginationArgs == nil {
+				m.PaginationArgs = &PaginationArgs{}
+			}
+			if err := m.PaginationArgs.UnmarshalVTUnsafe(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := protohelpers.Skip(dAtA[iNdEx:])
@@ -2929,10 +2751,10 @@ func (m *GetFollowingsRequest) UnmarshalVTUnsafe(dAtA []byte) error {
 				}
 			}
 		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PageSize", wireType)
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PaginationArgs", wireType)
 			}
-			m.PageSize = 0
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return protohelpers.ErrIntOverflow
@@ -2942,30 +2764,28 @@ func (m *GetFollowingsRequest) UnmarshalVTUnsafe(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.PageSize |= int64(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Offset", wireType)
+			if msglen < 0 {
+				return protohelpers.ErrInvalidLength
 			}
-			m.Offset = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return protohelpers.ErrIntOverflow
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Offset |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return protohelpers.ErrInvalidLength
 			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.PaginationArgs == nil {
+				m.PaginationArgs = &PaginationArgs{}
+			}
+			if err := m.PaginationArgs.UnmarshalVTUnsafe(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := protohelpers.Skip(dAtA[iNdEx:])
@@ -3115,7 +2935,7 @@ func (m *GetFollowingsResponse) UnmarshalVTUnsafe(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *GetFollowshipCountsRequest) UnmarshalVTUnsafe(dAtA []byte) error {
+func (m *GetFollowerAndFollowingCountsRequest) UnmarshalVTUnsafe(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -3138,10 +2958,10 @@ func (m *GetFollowshipCountsRequest) UnmarshalVTUnsafe(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: GetFollowshipCountsRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: GetFollowerAndFollowingCountsRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: GetFollowshipCountsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: GetFollowerAndFollowingCountsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -3185,7 +3005,7 @@ func (m *GetFollowshipCountsRequest) UnmarshalVTUnsafe(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *GetFollowshipCountsResponse) UnmarshalVTUnsafe(dAtA []byte) error {
+func (m *GetFollowerAndFollowingCountsResponse) UnmarshalVTUnsafe(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -3208,10 +3028,10 @@ func (m *GetFollowshipCountsResponse) UnmarshalVTUnsafe(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: GetFollowshipCountsResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: GetFollowerAndFollowingCountsResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: GetFollowshipCountsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: GetFollowerAndFollowingCountsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -3252,166 +3072,6 @@ func (m *GetFollowshipCountsResponse) UnmarshalVTUnsafe(dAtA []byte) error {
 					break
 				}
 			}
-		default:
-			iNdEx = preIndex
-			skippy, err := protohelpers.Skip(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return protohelpers.ErrInvalidLength
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.unknownFields = append(m.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *DoesFollowshipExistRequest) UnmarshalVTUnsafe(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return protohelpers.ErrIntOverflow
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: DoesFollowshipExistRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: DoesFollowshipExistRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field FollowerId", wireType)
-			}
-			m.FollowerId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return protohelpers.ErrIntOverflow
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.FollowerId |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field FolloweeId", wireType)
-			}
-			m.FolloweeId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return protohelpers.ErrIntOverflow
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.FolloweeId |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := protohelpers.Skip(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return protohelpers.ErrInvalidLength
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.unknownFields = append(m.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *DoesFollowshipExistResponse) UnmarshalVTUnsafe(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return protohelpers.ErrIntOverflow
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: DoesFollowshipExistResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: DoesFollowshipExistResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Exists", wireType)
-			}
-			var v int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return protohelpers.ErrIntOverflow
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				v |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			m.Exists = bool(v != 0)
 		default:
 			iNdEx = preIndex
 			skippy, err := protohelpers.Skip(dAtA[iNdEx:])

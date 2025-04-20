@@ -10,3 +10,8 @@ message ProfilePreview {
   string name     = 2;
   string username = 3;
 }
+
+message PaginationArgs {
+  uint64 offset    = 1;
+  uint64 page_size = 2;
+}

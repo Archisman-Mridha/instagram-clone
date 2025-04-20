@@ -13,7 +13,7 @@ service PostsService {
 
   rpc CreatePost(CreatePostRequest) returns (CreatePostResponse);
 
-  rpc GetUserPosts(GetUserPostsRequest) returns (GetPostsResponse);
+  rpc GetPostsOfUser(GetPostsOfUserRequest) returns (GetPostsResponse);
   rpc GetPosts(GetPostsRequest) returns (GetPostsResponse);
 }
 
@@ -26,10 +26,10 @@ message CreatePostResponse {
   int32 post_id = 1;
 }
 
-message GetUserPostsRequest {
+message GetPostsOfUserRequest {
   int32 owner_id = 1;
 
-  PaginationArgs paginationArgs = 2;
+  PaginationArgs pagination_args = 2;
 }
 
 message GetPostsRequest {

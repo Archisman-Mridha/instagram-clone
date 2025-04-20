@@ -10,8 +10,9 @@ import (
 )
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users
-	(
+INSERT
+INTO
+  users(
 		name,
 		email,
 		username,

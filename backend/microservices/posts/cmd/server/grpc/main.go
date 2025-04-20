@@ -14,7 +14,7 @@ import (
 	postgres "github.com/Archisman-Mridha/instagram-clone/backend/microservices/posts/internal/adapters/repositories/posts"
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/posts/internal/config"
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/posts/internal/constants"
-	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/posts/internal/core/usecases"
+	postsService "github.com/Archisman-Mridha/instagram-clone/backend/microservices/posts/internal/services/posts"
 	version "github.com/Archisman-Mridha/instagram-clone/backend/microservices/posts/version"
 	gRPCUtils "github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/grpc"
 	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/healthcheck"
@@ -100,11 +100,11 @@ func run(ctx context.Context, config *config.Config, validator *validator.Valida
 	// Setup feature flagging.
 	_ = sharedUtils.GetOpenFeatureClient(ctx, &config.Flagsmith)
 
-	// Construct the usecases layer.
+	// Construct adapters and services.
 
 	postsRepositoryAdapter := postgres.NewPostsRepositoryAdapter(ctx, &config.Postgres)
 
-	usecases := usecases.NewUsecases(
+	postsService := postsService.NewPostsService(
 		validator,
 		postsRepositoryAdapter,
 	)
@@ -120,7 +120,7 @@ func run(ctx context.Context, config *config.Config, validator *validator.Valida
 
 		ToGRPCErrorStatusCodeFn: getGRPCErrorStatusCode,
 	})
-	generated.RegisterPostsServiceServer(gRPCServer, api.NewGRPCAPI(usecases))
+	generated.RegisterPostsServiceServer(gRPCServer, api.NewGRPCAPI(postsService))
 
 	waitGroup.Go(func() error {
 		return gRPCServer.Run(ctx, config.ServerPort)

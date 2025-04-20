@@ -36,3 +36,15 @@ sql:
         emit_params_struct_pointers: true
         emit_result_struct_pointers: true
         emit_pointers_for_null_types: true
+  - engine: postgresql
+    schema: followships/internal/adapters/repositories/followships/schema.sql
+    queries: followships/internal/adapters/repositories/followships/queries.sql
+    gen:
+      go:
+        sql_package: "database/sql"
+        out: followships/internal/adapters/repositories/followships/generated
+        package: generated
+        emit_interface: true
+        emit_params_struct_pointers: true
+        emit_result_struct_pointers: true
+        emit_pointers_for_null_types: true

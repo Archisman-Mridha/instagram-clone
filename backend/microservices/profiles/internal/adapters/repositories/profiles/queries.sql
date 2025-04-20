@@ -1,6 +1,7 @@
 -- name: CreateProfile :exec
-INSERT INTO profiles
-	(
+INSERT
+INTO
+  profiles(
 		id,
 		name,
 		username

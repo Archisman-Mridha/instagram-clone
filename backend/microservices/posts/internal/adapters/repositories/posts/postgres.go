@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/posts/internal/adapters/repositories/posts/generated"
-	coreTypes "github.com/Archisman-Mridha/instagram-clone/backend/microservices/posts/internal/core/types"
+	postsService "github.com/Archisman-Mridha/instagram-clone/backend/microservices/posts/internal/services/posts"
 	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/connectors"
 	sharedTypes "github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/types"
 	sharedUtils "github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/utils"
@@ -29,7 +29,7 @@ func NewPostsRepositoryAdapter(ctx context.Context,
 }
 
 func (p *PostsRepositoryAdapter) Create(ctx context.Context,
-	args *coreTypes.CreatePostArgs,
+	args *postsService.CreatePostArgs,
 ) (sharedTypes.ID, error) {
 	postID, err := p.queries.CreatePost(ctx, (*generated.CreatePostParams)(args))
 	if err != nil {
@@ -40,8 +40,8 @@ func (p *PostsRepositoryAdapter) Create(ctx context.Context,
 
 func (p *PostsRepositoryAdapter) GetPosts(ctx context.Context,
 	ids []sharedTypes.ID,
-) ([]*coreTypes.Post, error) {
-	posts := []*coreTypes.Post{}
+) ([]*postsService.Post, error) {
+	posts := []*postsService.Post{}
 
 	rows, err := p.queries.GetPosts(ctx, ids)
 	if err != nil {
@@ -49,17 +49,17 @@ func (p *PostsRepositoryAdapter) GetPosts(ctx context.Context,
 	}
 
 	for _, row := range rows {
-		posts = append(posts, (*coreTypes.Post)(row))
+		posts = append(posts, (*postsService.Post)(row))
 	}
 	return posts, nil
 }
 
-func (p *PostsRepositoryAdapter) GetUserPosts(ctx context.Context,
-	args *coreTypes.GetUserPostsArgs,
-) ([]*coreTypes.Post, error) {
-	posts := []*coreTypes.Post{}
+func (p *PostsRepositoryAdapter) GetPostsOfUser(ctx context.Context,
+	args *postsService.GetPostsOfUserArgs,
+) ([]*postsService.Post, error) {
+	posts := []*postsService.Post{}
 
-	rows, err := p.queries.GetUserPosts(ctx, &generated.GetUserPostsParams{
+	rows, err := p.queries.GetPostsOfUser(ctx, &generated.GetPostsOfUserParams{
 		OwnerID: args.OwnerID,
 
 		Offset: int32(args.PaginationArgs.Offset),
@@ -70,7 +70,7 @@ func (p *PostsRepositoryAdapter) GetUserPosts(ctx context.Context,
 	}
 
 	for _, row := range rows {
-		posts = append(posts, (*coreTypes.Post)(row))
+		posts = append(posts, (*postsService.Post)(row))
 	}
 	return posts, nil
 }

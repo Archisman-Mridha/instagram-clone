@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/cmd/server/grpc/api/proto/generated"
-	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/core/usecases"
+	usersService "github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/services/users"
 	"github.com/aws/aws-sdk-go/aws"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
@@ -12,11 +12,13 @@ import (
 type GRPCAPI struct {
 	generated.UnimplementedUsersServiceServer
 
-	usecases *usecases.Usecases
+	usersService *usersService.UsersService
 }
 
-func NewGRPCAPI(usecases *usecases.Usecases) *GRPCAPI {
-	return &GRPCAPI{usecases: usecases}
+func NewGRPCAPI(usersService *usersService.UsersService) *GRPCAPI {
+	return &GRPCAPI{
+		usersService: usersService,
+	}
 }
 
 func (*GRPCAPI) Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
@@ -26,7 +28,7 @@ func (*GRPCAPI) Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 func (g *GRPCAPI) Signup(ctx context.Context,
 	request *generated.SignupRequest,
 ) (*generated.SigninResponse, error) {
-	output, err := g.usecases.Signup(ctx, &usecases.SignupArgs{
+	output, err := g.usersService.Signup(ctx, &usersService.SignupArgs{
 		Name:     request.Name,
 		Email:    request.Email,
 		Username: request.Username,
@@ -45,7 +47,7 @@ func (g *GRPCAPI) Signup(ctx context.Context,
 func (g *GRPCAPI) Signin(ctx context.Context,
 	request *generated.SigninRequest,
 ) (*generated.SigninResponse, error) {
-	args := &usecases.SigninArgs{
+	args := &usersService.SigninArgs{
 		Password: request.Password,
 	}
 	switch request.Identifier.(type) {
@@ -56,7 +58,7 @@ func (g *GRPCAPI) Signin(ctx context.Context,
 		args.Username = aws.String(request.GetUsername())
 	}
 
-	output, err := g.usecases.Signin(ctx, args)
+	output, err := g.usersService.Signin(ctx, args)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +72,7 @@ func (g *GRPCAPI) Signin(ctx context.Context,
 func (g *GRPCAPI) GetUserIDFromJWT(ctx context.Context,
 	request *generated.GetUserIDFromJWTRequest,
 ) (*generated.GetUserIDFromJWTResponse, error) {
-	userID, err := g.usecases.GetUserIDFromJWT(ctx, request.Jwt)
+	userID, err := g.usersService.GetUserIDFromJWT(ctx, request.Jwt)
 	if err != nil {
 		return nil, err
 	}

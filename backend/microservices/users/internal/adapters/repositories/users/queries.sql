@@ -1,6 +1,7 @@
 -- name: CreateUser :one
-INSERT INTO users
-	(
+INSERT
+INTO
+  users(
 		name,
 		email,
 		username,

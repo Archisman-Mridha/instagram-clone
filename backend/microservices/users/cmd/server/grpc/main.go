@@ -14,7 +14,7 @@ import (
 	postgres "github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/adapters/repositories/users"
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/config"
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/constants"
-	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/core/usecases"
+	usersService "github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/services/users"
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/token"
 	version "github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/version"
 	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/connectors"
@@ -102,13 +102,13 @@ func run(ctx context.Context, config *config.Config, validator *validator.Valida
 	// Setup feature flagging.
 	_ = sharedUtils.GetOpenFeatureClient(ctx, &config.Flagsmith)
 
-	// Construct the usecases layer.
+	// Construct adapters and services.
 
 	usersRepositoryAdapter := postgres.NewUsersRepositoryAdapter(ctx, &config.Postgres)
 
 	cacheAdapter := connectors.NewRedisConnector(ctx, &config.Redis)
 
-	usecases := usecases.NewUsecases(
+	usersService := usersService.NewUsersService(
 		validator,
 		cacheAdapter,
 		usersRepositoryAdapter,
@@ -127,7 +127,7 @@ func run(ctx context.Context, config *config.Config, validator *validator.Valida
 
 		ToGRPCErrorStatusCodeFn: getGRPCErrorStatusCode,
 	})
-	generated.RegisterUsersServiceServer(gRPCServer, api.NewGRPCAPI(usecases))
+	generated.RegisterUsersServiceServer(gRPCServer, api.NewGRPCAPI(usersService))
 
 	waitGroup.Go(func() error {
 		return gRPCServer.Run(ctx, config.ServerPort)

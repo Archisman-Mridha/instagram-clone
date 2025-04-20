@@ -4,8 +4,7 @@ import (
 	"context"
 
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/posts/cmd/server/grpc/api/proto/generated"
-	coreTypes "github.com/Archisman-Mridha/instagram-clone/backend/microservices/posts/internal/core/types"
-	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/posts/internal/core/usecases"
+	postsService "github.com/Archisman-Mridha/instagram-clone/backend/microservices/posts/internal/services/posts"
 	sharedTypes "github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/types"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
@@ -13,11 +12,13 @@ import (
 type GRPCAPI struct {
 	generated.UnimplementedPostsServiceServer
 
-	usecases *usecases.Usecases
+	postsService *postsService.PostsService
 }
 
-func NewGRPCAPI(usecases *usecases.Usecases) *GRPCAPI {
-	return &GRPCAPI{usecases: usecases}
+func NewGRPCAPI(postsService *postsService.PostsService) *GRPCAPI {
+	return &GRPCAPI{
+		postsService: postsService,
+	}
 }
 
 func (*GRPCAPI) Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
@@ -27,7 +28,7 @@ func (*GRPCAPI) Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 func (g *GRPCAPI) CreatePost(ctx context.Context,
 	request *generated.CreatePostRequest,
 ) (*generated.CreatePostResponse, error) {
-	postID, err := g.usecases.CreatePost(ctx, &coreTypes.CreatePostArgs{
+	postID, err := g.postsService.CreatePost(ctx, &postsService.CreatePostArgs{
 		OwnerID:     request.OwnerId,
 		Description: request.Description,
 	})
@@ -41,10 +42,10 @@ func (g *GRPCAPI) CreatePost(ctx context.Context,
 	return response, nil
 }
 
-func (g *GRPCAPI) GetUserPosts(ctx context.Context,
-	request *generated.GetUserPostsRequest,
+func (g *GRPCAPI) GetPostsOfUser(ctx context.Context,
+	request *generated.GetPostsOfUserRequest,
 ) (*generated.GetPostsResponse, error) {
-	posts, err := g.usecases.GetUserPosts(ctx, &coreTypes.GetUserPostsArgs{
+	posts, err := g.postsService.GetUserPosts(ctx, &postsService.GetPostsOfUserArgs{
 		OwnerID: request.OwnerId,
 		PaginationArgs: &sharedTypes.PaginationArgs{
 			Offset:   request.PaginationArgs.Offset,
@@ -64,7 +65,7 @@ func (g *GRPCAPI) GetUserPosts(ctx context.Context,
 func (g *GRPCAPI) GetPosts(ctx context.Context,
 	request *generated.GetPostsRequest,
 ) (*generated.GetPostsResponse, error) {
-	posts, err := g.usecases.GetPosts(ctx, request.PostIds)
+	posts, err := g.postsService.GetPosts(ctx, request.PostIds)
 	if err != nil {
 		return nil, err
 	}
@@ -75,8 +76,8 @@ func (g *GRPCAPI) GetPosts(ctx context.Context,
 	return response, nil
 }
 
-// Converts []*coreTypes.Post to []*generated.Post.
-func toProtoGeneratedPosts(input []*coreTypes.Post) []*generated.Post {
+// Converts []*postsService.Post to []*generated.Post.
+func toProtoGeneratedPosts(input []*postsService.Post) []*generated.Post {
 	output := make([]*generated.Post, len(input))
 	for _, item := range input {
 		output = append(output, &generated.Post{

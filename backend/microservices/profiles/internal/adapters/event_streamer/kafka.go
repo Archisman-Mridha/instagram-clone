@@ -8,8 +8,7 @@ import (
 
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/profiles/internal/config"
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/profiles/internal/constants"
-	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/profiles/internal/core/types"
-	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/profiles/internal/core/usecases"
+	profilesService "github.com/Archisman-Mridha/instagram-clone/backend/microservices/profiles/internal/services/profiles"
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/profiles/version"
 	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/connectors"
 	profilesMicroservice "github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/events/proto/generated/profiles"
@@ -23,12 +22,12 @@ import (
 type EventStreamerAdapter struct {
 	*connectors.KafkaConnector
 
-	usecases *usecases.Usecases
+	profilesService *profilesService.ProfilesService
 }
 
 func NewEventStreamerAdapter(ctx context.Context,
 	kafkaConfig *config.KafkaConfig,
-	usecases *usecases.Usecases,
+	profilesService *profilesService.ProfilesService,
 ) *EventStreamerAdapter {
 	group := fmt.Sprintf("%s-%s", constants.SERVICE_NAME, version.Version)
 
@@ -44,7 +43,7 @@ func NewEventStreamerAdapter(ctx context.Context,
 
 	return &EventStreamerAdapter{
 		kafkaConnector,
-		usecases,
+		profilesService,
 	}
 }
 
@@ -75,6 +74,11 @@ func (e *EventStreamerAdapter) Consume(ctx context.Context) {
 				}
 
 				kafkaClient.MarkCommitRecords(record)
+
+				err = kafkaClient.CommitRecords(ctx, record)
+				if err != nil {
+					slog.ErrorContext(ctx, "Failed committing record", logger.Error(err))
+				}
 			}()
 		})
 	}
@@ -88,7 +92,11 @@ func (e *EventStreamerAdapter) HandleUserCreatedEvent(ctx context.Context, dbEve
 		return
 	}
 
-	err = e.usecases.CreateProfile(ctx, &types.CreateProfileArgs{})
+	err = e.profilesService.CreateProfile(ctx, &profilesService.CreateProfileArgs{
+		ID:       userCreatedEvent.Id,
+		Name:     userCreatedEvent.Name,
+		Username: userCreatedEvent.Username,
+	})
 	if err != nil {
 		slog.ErrorContext(ctx, "Failed creating profile", logger.Error(err))
 		return
@@ -103,7 +111,11 @@ func (e *EventStreamerAdapter) HandleProfileCreatedEvent(ctx context.Context, db
 		return
 	}
 
-	err = e.usecases.IndexProfile(ctx, &types.ProfilePreview{})
+	err = e.profilesService.IndexProfile(ctx, &profilesService.ProfilePreview{
+		ID:       profileCreatedEvent.Id,
+		Name:     profileCreatedEvent.Name,
+		Username: profileCreatedEvent.Username,
+	})
 	if err != nil {
 		slog.ErrorContext(ctx, "Failed indexing profile", logger.Error(err))
 		return

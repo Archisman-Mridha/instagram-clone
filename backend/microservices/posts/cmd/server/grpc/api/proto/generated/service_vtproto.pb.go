@@ -60,11 +60,11 @@ func (m *CreatePostResponse) CloneMessageVT() proto.Message {
 	return m.CloneVT()
 }
 
-func (m *GetUserPostsRequest) CloneVT() *GetUserPostsRequest {
+func (m *GetPostsOfUserRequest) CloneVT() *GetPostsOfUserRequest {
 	if m == nil {
-		return (*GetUserPostsRequest)(nil)
+		return (*GetPostsOfUserRequest)(nil)
 	}
-	r := new(GetUserPostsRequest)
+	r := new(GetPostsOfUserRequest)
 	r.OwnerId = m.OwnerId
 	r.PaginationArgs = m.PaginationArgs.CloneVT()
 	if len(m.unknownFields) > 0 {
@@ -74,7 +74,7 @@ func (m *GetUserPostsRequest) CloneVT() *GetUserPostsRequest {
 	return r
 }
 
-func (m *GetUserPostsRequest) CloneMessageVT() proto.Message {
+func (m *GetPostsOfUserRequest) CloneMessageVT() proto.Message {
 	return m.CloneVT()
 }
 
@@ -163,7 +163,7 @@ func (this *CreatePostResponse) EqualMessageVT(thatMsg proto.Message) bool {
 	}
 	return this.EqualVT(that)
 }
-func (this *GetUserPostsRequest) EqualVT(that *GetUserPostsRequest) bool {
+func (this *GetPostsOfUserRequest) EqualVT(that *GetPostsOfUserRequest) bool {
 	if this == that {
 		return true
 	} else if this == nil || that == nil {
@@ -178,8 +178,8 @@ func (this *GetUserPostsRequest) EqualVT(that *GetUserPostsRequest) bool {
 	return string(this.unknownFields) == string(that.unknownFields)
 }
 
-func (this *GetUserPostsRequest) EqualMessageVT(thatMsg proto.Message) bool {
-	that, ok := thatMsg.(*GetUserPostsRequest)
+func (this *GetPostsOfUserRequest) EqualMessageVT(thatMsg proto.Message) bool {
+	that, ok := thatMsg.(*GetPostsOfUserRequest)
 	if !ok {
 		return false
 	}
@@ -255,7 +255,7 @@ const _ = grpc.SupportPackageIsVersion7
 type PostsServiceClient interface {
 	Ping(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	CreatePost(ctx context.Context, in *CreatePostRequest, opts ...grpc.CallOption) (*CreatePostResponse, error)
-	GetUserPosts(ctx context.Context, in *GetUserPostsRequest, opts ...grpc.CallOption) (*GetPostsResponse, error)
+	GetPostsOfUser(ctx context.Context, in *GetPostsOfUserRequest, opts ...grpc.CallOption) (*GetPostsResponse, error)
 	GetPosts(ctx context.Context, in *GetPostsRequest, opts ...grpc.CallOption) (*GetPostsResponse, error)
 }
 
@@ -285,9 +285,9 @@ func (c *postsServiceClient) CreatePost(ctx context.Context, in *CreatePostReque
 	return out, nil
 }
 
-func (c *postsServiceClient) GetUserPosts(ctx context.Context, in *GetUserPostsRequest, opts ...grpc.CallOption) (*GetPostsResponse, error) {
+func (c *postsServiceClient) GetPostsOfUser(ctx context.Context, in *GetPostsOfUserRequest, opts ...grpc.CallOption) (*GetPostsResponse, error) {
 	out := new(GetPostsResponse)
-	err := c.cc.Invoke(ctx, "/microservices.posts.PostsService/GetUserPosts", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/microservices.posts.PostsService/GetPostsOfUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -309,7 +309,7 @@ func (c *postsServiceClient) GetPosts(ctx context.Context, in *GetPostsRequest, 
 type PostsServiceServer interface {
 	Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	CreatePost(context.Context, *CreatePostRequest) (*CreatePostResponse, error)
-	GetUserPosts(context.Context, *GetUserPostsRequest) (*GetPostsResponse, error)
+	GetPostsOfUser(context.Context, *GetPostsOfUserRequest) (*GetPostsResponse, error)
 	GetPosts(context.Context, *GetPostsRequest) (*GetPostsResponse, error)
 	mustEmbedUnimplementedPostsServiceServer()
 }
@@ -324,8 +324,8 @@ func (UnimplementedPostsServiceServer) Ping(context.Context, *emptypb.Empty) (*e
 func (UnimplementedPostsServiceServer) CreatePost(context.Context, *CreatePostRequest) (*CreatePostResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreatePost not implemented")
 }
-func (UnimplementedPostsServiceServer) GetUserPosts(context.Context, *GetUserPostsRequest) (*GetPostsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUserPosts not implemented")
+func (UnimplementedPostsServiceServer) GetPostsOfUser(context.Context, *GetPostsOfUserRequest) (*GetPostsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPostsOfUser not implemented")
 }
 func (UnimplementedPostsServiceServer) GetPosts(context.Context, *GetPostsRequest) (*GetPostsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPosts not implemented")
@@ -379,20 +379,20 @@ func _PostsService_CreatePost_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PostsService_GetUserPosts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUserPostsRequest)
+func _PostsService_GetPostsOfUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPostsOfUserRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PostsServiceServer).GetUserPosts(ctx, in)
+		return srv.(PostsServiceServer).GetPostsOfUser(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/microservices.posts.PostsService/GetUserPosts",
+		FullMethod: "/microservices.posts.PostsService/GetPostsOfUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PostsServiceServer).GetUserPosts(ctx, req.(*GetUserPostsRequest))
+		return srv.(PostsServiceServer).GetPostsOfUser(ctx, req.(*GetPostsOfUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -431,8 +431,8 @@ var PostsService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _PostsService_CreatePost_Handler,
 		},
 		{
-			MethodName: "GetUserPosts",
-			Handler:    _PostsService_GetUserPosts_Handler,
+			MethodName: "GetPostsOfUser",
+			Handler:    _PostsService_GetPostsOfUser_Handler,
 		},
 		{
 			MethodName: "GetPosts",
@@ -526,7 +526,7 @@ func (m *CreatePostResponse) MarshalToSizedBufferVT(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *GetUserPostsRequest) MarshalVT() (dAtA []byte, err error) {
+func (m *GetPostsOfUserRequest) MarshalVT() (dAtA []byte, err error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -539,12 +539,12 @@ func (m *GetUserPostsRequest) MarshalVT() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *GetUserPostsRequest) MarshalToVT(dAtA []byte) (int, error) {
+func (m *GetPostsOfUserRequest) MarshalToVT(dAtA []byte) (int, error) {
 	size := m.SizeVT()
 	return m.MarshalToSizedBufferVT(dAtA[:size])
 }
 
-func (m *GetUserPostsRequest) MarshalToSizedBufferVT(dAtA []byte) (int, error) {
+func (m *GetPostsOfUserRequest) MarshalToSizedBufferVT(dAtA []byte) (int, error) {
 	if m == nil {
 		return 0, nil
 	}
@@ -756,7 +756,7 @@ func (m *CreatePostResponse) MarshalToSizedBufferVTStrict(dAtA []byte) (int, err
 	return len(dAtA) - i, nil
 }
 
-func (m *GetUserPostsRequest) MarshalVTStrict() (dAtA []byte, err error) {
+func (m *GetPostsOfUserRequest) MarshalVTStrict() (dAtA []byte, err error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -769,12 +769,12 @@ func (m *GetUserPostsRequest) MarshalVTStrict() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *GetUserPostsRequest) MarshalToVTStrict(dAtA []byte) (int, error) {
+func (m *GetPostsOfUserRequest) MarshalToVTStrict(dAtA []byte) (int, error) {
 	size := m.SizeVT()
 	return m.MarshalToSizedBufferVTStrict(dAtA[:size])
 }
 
-func (m *GetUserPostsRequest) MarshalToSizedBufferVTStrict(dAtA []byte) (int, error) {
+func (m *GetPostsOfUserRequest) MarshalToSizedBufferVTStrict(dAtA []byte) (int, error) {
 	if m == nil {
 		return 0, nil
 	}
@@ -933,7 +933,7 @@ func (m *CreatePostResponse) SizeVT() (n int) {
 	return n
 }
 
-func (m *GetUserPostsRequest) SizeVT() (n int) {
+func (m *GetPostsOfUserRequest) SizeVT() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1155,7 +1155,7 @@ func (m *CreatePostResponse) UnmarshalVT(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *GetUserPostsRequest) UnmarshalVT(dAtA []byte) error {
+func (m *GetPostsOfUserRequest) UnmarshalVT(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1178,10 +1178,10 @@ func (m *GetUserPostsRequest) UnmarshalVT(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: GetUserPostsRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: GetPostsOfUserRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: GetUserPostsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: GetPostsOfUserRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1649,7 +1649,7 @@ func (m *CreatePostResponse) UnmarshalVTUnsafe(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *GetUserPostsRequest) UnmarshalVTUnsafe(dAtA []byte) error {
+func (m *GetPostsOfUserRequest) UnmarshalVTUnsafe(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1672,10 +1672,10 @@ func (m *GetUserPostsRequest) UnmarshalVTUnsafe(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: GetUserPostsRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: GetPostsOfUserRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: GetUserPostsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: GetPostsOfUserRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:

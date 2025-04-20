@@ -7,7 +7,7 @@ import (
 
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/adapters/repositories/users/generated"
 	"github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/constants"
-	coreTypes "github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/core/types"
+	usersService "github.com/Archisman-Mridha/instagram-clone/backend/microservices/users/internal/services/users"
 	"github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/connectors"
 	sharedTypes "github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/types"
 	sharedUtils "github.com/Archisman-Mridha/instagram-clone/backend/shared/pkg/utils"
@@ -34,12 +34,12 @@ func NewUsersRepositoryAdapter(ctx context.Context,
 }
 
 func (u *UsersRepositoryAdapter) Create(ctx context.Context,
-	args *coreTypes.CreateUserArgs,
+	args *usersService.CreateUserArgs,
 ) (sharedTypes.ID, error) {
 	userID, err := u.queries.CreateUser(ctx, (*generated.CreateUserParams)(args))
 	if err != nil {
-		pgErr := err.(*pgconn.PgError)
-		if pgErr.Code == pgerrcode.UniqueViolation {
+		pgErr, ok := err.(*pgconn.PgError)
+		if ok && (pgErr.Code == pgerrcode.UniqueViolation) {
 			switch pgErr.ColumnName {
 			case "email":
 				return 0, constants.ErrDuplicateEmail
@@ -56,7 +56,7 @@ func (u *UsersRepositoryAdapter) Create(ctx context.Context,
 
 func (u *UsersRepositoryAdapter) FindByEmail(ctx context.Context,
 	email string,
-) (*coreTypes.FindUserByOperationOutput, error) {
+) (*usersService.FindUserByOperationOutput, error) {
 	userDetails, err := u.queries.FindUserByEmail(ctx, email)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -65,12 +65,12 @@ func (u *UsersRepositoryAdapter) FindByEmail(ctx context.Context,
 
 		return nil, sharedUtils.WrapError(err)
 	}
-	return (*coreTypes.FindUserByOperationOutput)(userDetails), nil
+	return (*usersService.FindUserByOperationOutput)(userDetails), nil
 }
 
 func (u *UsersRepositoryAdapter) FindByUsername(ctx context.Context,
 	username string,
-) (*coreTypes.FindUserByOperationOutput, error) {
+) (*usersService.FindUserByOperationOutput, error) {
 	userDetails, err := u.queries.FindUserByUsername(ctx, username)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -79,7 +79,7 @@ func (u *UsersRepositoryAdapter) FindByUsername(ctx context.Context,
 
 		return nil, sharedUtils.WrapError(err)
 	}
-	return (*coreTypes.FindUserByOperationOutput)(userDetails), nil
+	return (*usersService.FindUserByOperationOutput)(userDetails), nil
 }
 
 func (u *UsersRepositoryAdapter) UserIDExists(ctx context.Context, id sharedTypes.ID) (bool, error) {

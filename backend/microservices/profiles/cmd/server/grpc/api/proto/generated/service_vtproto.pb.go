@@ -31,8 +31,7 @@ func (m *SearchProfilesRequest) CloneVT() *SearchProfilesRequest {
 	}
 	r := new(SearchProfilesRequest)
 	r.Query = m.Query
-	r.Offset = m.Offset
-	r.PageSize = m.PageSize
+	r.PaginationArgs = m.PaginationArgs.CloneVT()
 	if len(m.unknownFields) > 0 {
 		r.unknownFields = make([]byte, len(m.unknownFields))
 		copy(r.unknownFields, m.unknownFields)
@@ -120,10 +119,7 @@ func (this *SearchProfilesRequest) EqualVT(that *SearchProfilesRequest) bool {
 	if this.Query != that.Query {
 		return false
 	}
-	if this.Offset != that.Offset {
-		return false
-	}
-	if this.PageSize != that.PageSize {
+	if !this.PaginationArgs.EqualVT(that.PaginationArgs) {
 		return false
 	}
 	return string(this.unknownFields) == string(that.unknownFields)
@@ -421,15 +417,15 @@ func (m *SearchProfilesRequest) MarshalToSizedBufferVT(dAtA []byte) (int, error)
 		i -= len(m.unknownFields)
 		copy(dAtA[i:], m.unknownFields)
 	}
-	if m.PageSize != 0 {
-		i = protohelpers.EncodeVarint(dAtA, i, uint64(m.PageSize))
+	if m.PaginationArgs != nil {
+		size, err := m.PaginationArgs.MarshalToSizedBufferVT(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = protohelpers.EncodeVarint(dAtA, i, uint64(size))
 		i--
-		dAtA[i] = 0x18
-	}
-	if m.Offset != 0 {
-		i = protohelpers.EncodeVarint(dAtA, i, uint64(m.Offset))
-		i--
-		dAtA[i] = 0x10
+		dAtA[i] = 0x12
 	}
 	if len(m.Query) > 0 {
 		i -= len(m.Query)
@@ -615,15 +611,15 @@ func (m *SearchProfilesRequest) MarshalToSizedBufferVTStrict(dAtA []byte) (int, 
 		i -= len(m.unknownFields)
 		copy(dAtA[i:], m.unknownFields)
 	}
-	if m.PageSize != 0 {
-		i = protohelpers.EncodeVarint(dAtA, i, uint64(m.PageSize))
+	if m.PaginationArgs != nil {
+		size, err := m.PaginationArgs.MarshalToSizedBufferVTStrict(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = protohelpers.EncodeVarint(dAtA, i, uint64(size))
 		i--
-		dAtA[i] = 0x18
-	}
-	if m.Offset != 0 {
-		i = protohelpers.EncodeVarint(dAtA, i, uint64(m.Offset))
-		i--
-		dAtA[i] = 0x10
+		dAtA[i] = 0x12
 	}
 	if len(m.Query) > 0 {
 		i -= len(m.Query)
@@ -789,11 +785,9 @@ func (m *SearchProfilesRequest) SizeVT() (n int) {
 	if l > 0 {
 		n += 1 + l + protohelpers.SizeOfVarint(uint64(l))
 	}
-	if m.Offset != 0 {
-		n += 1 + protohelpers.SizeOfVarint(uint64(m.Offset))
-	}
-	if m.PageSize != 0 {
-		n += 1 + protohelpers.SizeOfVarint(uint64(m.PageSize))
+	if m.PaginationArgs != nil {
+		l = m.PaginationArgs.SizeVT()
+		n += 1 + l + protohelpers.SizeOfVarint(uint64(l))
 	}
 	n += len(m.unknownFields)
 	return n
@@ -910,10 +904,10 @@ func (m *SearchProfilesRequest) UnmarshalVT(dAtA []byte) error {
 			m.Query = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Offset", wireType)
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PaginationArgs", wireType)
 			}
-			m.Offset = 0
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return protohelpers.ErrIntOverflow
@@ -923,30 +917,28 @@ func (m *SearchProfilesRequest) UnmarshalVT(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Offset |= uint64(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PageSize", wireType)
+			if msglen < 0 {
+				return protohelpers.ErrInvalidLength
 			}
-			m.PageSize = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return protohelpers.ErrIntOverflow
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PageSize |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return protohelpers.ErrInvalidLength
 			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.PaginationArgs == nil {
+				m.PaginationArgs = &PaginationArgs{}
+			}
+			if err := m.PaginationArgs.UnmarshalVT(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := protohelpers.Skip(dAtA[iNdEx:])
@@ -1332,10 +1324,10 @@ func (m *SearchProfilesRequest) UnmarshalVTUnsafe(dAtA []byte) error {
 			m.Query = stringValue
 			iNdEx = postIndex
 		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Offset", wireType)
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PaginationArgs", wireType)
 			}
-			m.Offset = 0
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return protohelpers.ErrIntOverflow
@@ -1345,30 +1337,28 @@ func (m *SearchProfilesRequest) UnmarshalVTUnsafe(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Offset |= uint64(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PageSize", wireType)
+			if msglen < 0 {
+				return protohelpers.ErrInvalidLength
 			}
-			m.PageSize = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return protohelpers.ErrIntOverflow
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PageSize |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return protohelpers.ErrInvalidLength
 			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.PaginationArgs == nil {
+				m.PaginationArgs = &PaginationArgs{}
+			}
+			if err := m.PaginationArgs.UnmarshalVTUnsafe(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := protohelpers.Skip(dAtA[iNdEx:])
