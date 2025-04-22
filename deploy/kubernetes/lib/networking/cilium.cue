@@ -199,4 +199,4 @@
 }
 
 // WARNING : Make sure this doesn't overlap with your VPC CIDR.
-podCIDR: "10.0.0.0/8"
+podCIDR: "192.168.0.0/16"

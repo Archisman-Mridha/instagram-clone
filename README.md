@@ -178,6 +178,12 @@ While going through the above resources, I discovered some nice tools and concep
 
 - [Manage Secrets on Kubernetes with ArgoCD and Vault](https://piotrminkowski.com/2022/08/08/manage-secrets-on-kubernetes-with-argocd-and-vault/)
 
+- [Configuring HashiCorp Vault In HA And Auto Unseal Mode For Kubernetes](https://www.youtube.com/watch?v=afxl3kOxD9A&t=59s)
+
+- [Auto-unseal Vault using AWS KMS](https://developer.hashicorp.com/vault/tutorials/auto-unseal/autounseal-aws-kms)
+
+- [Vault on Kubernetes deployment guide](https://developer.hashicorp.com/vault/tutorials/kubernetes/kubernetes-raft-deployment-guide)
+
 **GoLang** :
 
 - [Go Microservice with Clean Architecture: Application Logging](https://medium.com/@jfeng45/go-microservice-with-clean-architecture-application-logging-b43dc5839bce)

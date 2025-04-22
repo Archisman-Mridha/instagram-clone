@@ -25,16 +25,32 @@
 
   aws: {
     kms: {
+      // Providers enable Crossplane to provision infrastructure on an external service. Providers
+      // create new Kubernetes APIs and map them to external APIs.
+      //
+      // Installing a provider creates new Kubernetes resources (in this case, the Key CR)
+      // representing the Provider’s APIs. Installing a provider also creates a Provider pod that’s
+      // responsible for reconciling the Provider’s APIs into the Kubernetes cluster. Providers
+      // constantly watch the state of the desired managed resources and create any external
+      // resources that are missing.
+      //
+      // You can view all the AWS providers here :
+      // https://marketplace.upbound.io/providers/upbound/provider-family-aws/v1.21.1.
       provider: {
         metadata: name: aws-kms
         spec: package: xpkg.crossplane.io/crossplane-contrib/provider-aws-kms:v1.21.1
       }
 
-      vaultRootKey: generated.#Key & {
-        metadata: name: vault-root-key
+      vaultUnsealKey: generated.#Key & {
+        metadata: name: vault-unseal-key
 
         spec: forProvider: {
-          description: "Vault root key (used for auto-unsealing)"
+          description: "Vault unseal key"
+          region: "us-east-2"
+
+          // You cannot just delete an AWS KMS key.
+          // You can only schedule its deletion and wait for 7 - 30 days until the key gets deleted.
+          deletionWindowInDays: 7
         }
       }
     }
