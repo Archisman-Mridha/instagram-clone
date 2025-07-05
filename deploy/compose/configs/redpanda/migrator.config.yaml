@@ -1,4 +1,0 @@
-redpanda:
-  schema_registry:
-    address: redpanda-node-0
-    port: 18081

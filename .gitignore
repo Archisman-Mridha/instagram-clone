@@ -1,8 +1,0 @@
-.DS_Store
-.direnv
-
-backend/gateway/target/
-
-contracts/dependencies
-
-frontend/node_modules/

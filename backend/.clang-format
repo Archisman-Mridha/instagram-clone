@@ -1,7 +1,0 @@
-{
-  BasedOnStyle: Google,
-  AlignConsecutiveDeclarations: Consecutive,
-  AlignConsecutiveAssignments: Consecutive,
-  ColumnLimit: 0,
-  IndentWidth: 2,
-}
