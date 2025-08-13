@@ -1,6 +1,6 @@
 module github.com/Archisman-Mridha/instagram-clone/backend/gateway
 
-go 1.21.5
+go 1.23.0
 
 require (
 	github.com/99designs/gqlgen v0.17.42
@@ -16,7 +16,7 @@ require (
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.21.0
 	go.opentelemetry.io/otel/sdk v1.21.0
 	go.opentelemetry.io/otel/trace v1.21.0
-	golang.org/x/sync v0.4.0
+	golang.org/x/sync v0.16.0
 	google.golang.org/grpc v1.60.1
 	google.golang.org/protobuf v1.31.0
 )
