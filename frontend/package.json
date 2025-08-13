@@ -33,7 +33,7 @@
 		"@graphql-codegen/typescript-msw": "^2.1.0",
 		"@graphql-codegen/typescript-operations": "^4.0.1",
 		"@graphql-codegen/typescript-react-apollo": "^4.1.0",
-		"@types/node": "^20",
+		"@types/node": "^24",
 		"@types/react": "^18",
 		"@types/react-dom": "^18",
 		"@types/react-infinite-scroll-component": "^5.0.0",
