@@ -1,0 +1,37 @@
+services:
+  postgres-migrate:
+    container_name: postgres-migrate
+    image: migrate/migrate:latest
+    volumes:
+      - ../backend/sql/schema.sql:/migrations/000001_init.up.sql:ro
+    command:
+      [
+        "-path",
+        "/migrations",
+        "-database",
+        "postgres://default:pass@postgres:5432/instagram_clone?sslmode=disable",
+        "up",
+      ]
+    depends_on:
+      - postgres
+    restart: on-failure
+
+  redpanda-migrate:
+    image: docker.redpanda.com/redpandadata/redpanda:v23.3.12
+    container_name: redpanda-migrate
+    volumes:
+      - ./configs/redpanda.yaml:/etc/redpanda/redpanda.yaml:ro
+    command: [topic, create, db-events.public.users, db-events.public.posts]
+    restart: on-failure
+
+  debezium-migrate:
+    container_name: debezium-migrate
+    image: alpine:latest
+    volumes:
+      - ./scripts/create-debezium-connectors.sh:/create-connectors.sh
+      - ./configs/debezium:/debezium
+    command: /create-connectors.sh
+    depends_on:
+      - debezium
+      - postgres-migrate
+    restart: on-failure
