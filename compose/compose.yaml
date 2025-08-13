@@ -1,0 +1,9 @@
+version: "3"
+name: instagram-clone
+
+include:
+  - path: tools.compose.yaml
+  - path: migrations.compose.yaml
+  # - path: apps.compose.yaml
+  # - path: dashboards.compose.yaml
+  # - path: observability.compose.yaml
