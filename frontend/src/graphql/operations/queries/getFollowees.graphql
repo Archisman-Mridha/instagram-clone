@@ -1,0 +1,10 @@
+query GetFollowees($input: GetFolloweesRequestBody!) {
+  getFollowees(input: $input) {
+    count
+    followees {
+      id
+      name
+      username
+    }
+  }
+}

@@ -1,0 +1,16 @@
+query GetPostsByAuthor($input: GetPostsByAuthorRequestBody!) {
+  getPostsByAuthor(input: $input) {
+    count
+    posts {
+      id
+      imageURL
+      description
+      authorID
+      authorProfilePreview {
+        id
+        name
+        username
+      }
+    }
+  }
+}

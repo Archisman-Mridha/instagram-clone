@@ -1,0 +1,16 @@
+query GetFeed($input: GetFeedRequestBody!) {
+  getFeed(input: $input) {
+    count
+    posts {
+      id
+      imageURL
+      description
+      authorID
+      authorProfilePreview {
+        id
+        name
+        username
+      }
+    }
+  }
+}

@@ -1,0 +1,10 @@
+query SearchProfiles($input: SearchProfilesRequestBody!) {
+  searchProfiles(input: $input) {
+    count
+    profilePreviews {
+      id
+      name
+      username
+    }
+  }
+}

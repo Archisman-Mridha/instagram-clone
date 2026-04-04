@@ -1,0 +1,12 @@
+query GetNotifications($input: GetNotificationsRequestBody!) {
+  getNotifications(input: $input) {
+    count
+    notifications {
+      _id
+      userID
+      kind
+      seen
+      createdAt
+    }
+  }
+}

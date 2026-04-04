@@ -22,10 +22,6 @@ input CreateUserRequestBody {
   username: String!
 }
 
-type CreateUserResponseBody {
-  id: ID!
-}
-
 input DeleteFollowshipRequestBody {
   followeeID: Int!
 }
@@ -86,7 +82,7 @@ type GetPostsByAuthorResponseBody {
 
 type Mutation {
   createPost(input: CreatePostRequestBody!): CreatePostResponseBody!
-  createUser(input: CreateUserRequestBody!): CreateUserResponseBody!
+  createUser(input: CreateUserRequestBody!): SigninOutput!
   follow(input: CreateFollowshipRequestBody!): Boolean!
   getPresignedPostImageURL: String!
   unfollow(input: DeleteFollowshipRequestBody!): Boolean!

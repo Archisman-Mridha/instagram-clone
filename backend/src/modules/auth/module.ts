@@ -6,10 +6,10 @@ import { PassportModule } from "@nestjs/passport"
 import { ConfigSchema } from "src/config/config"
 import z from "zod"
 import { AuthResolver } from "./resolver"
-import { AuthService } from "./service"
 import { JWTAuthGuard } from "./strategies/jwt"
 import { JWTAuthStrategy } from "./strategies/jwt"
 import { LocalAuthStrategy } from "./strategies/local"
+import { SigninHandler } from "./queries/signin"
 
 @Module({
   imports: [
@@ -40,7 +40,9 @@ import { LocalAuthStrategy } from "./strategies/local"
     { provide: APP_GUARD, useClass: JWTAuthGuard },
 
     AuthResolver,
-    AuthService
+
+    // Queries.
+    SigninHandler
   ]
 })
 export class AuthModule {}

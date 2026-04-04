@@ -1,0 +1,5 @@
+mutation CreatePost($input: CreatePostRequestBody!) {
+  createPost(input: $input) {
+    id
+  }
+}

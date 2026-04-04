@@ -9,7 +9,8 @@
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "oxlint --fix-suggestions",
-    "lint:fix": "oxlint --fix"
+    "lint:fix": "oxlint --fix",
+    "graphql-codegen": "graphql-codegen --config graphql-codegen.ts"
   },
   "dependencies": {
     "@apollo/server": "^5.4.0",
@@ -70,7 +71,8 @@
   },
   "devDependencies": {
     "@effect/language-service": "^0.80.0",
-    "@graphql-codegen/cli": "^6.2.1",
+    "@graphql-codegen/cli": "6.2.1",
+    "@graphql-codegen/client-preset": "5.2.4",
     "@nestjs/cli": "^11.0.0",
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.1.16",

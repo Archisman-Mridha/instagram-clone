@@ -1,0 +1,5 @@
+mutation CreateUser($input: CreateUserRequestBody!) {
+  createUser(input: $input) {
+    accessToken
+  }
+}
