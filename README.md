@@ -1,4 +1,10 @@
+## TODOs
+
+- [ ] Configure `Hot Module Replacement (HMR)` for `NestJS`.
+
 ## REFERENCEs
+
+### NestJS
 
 - [NestJS Authentication + Refresh Token With Passport.js](https://www.youtube.com/watch?v=S8Cjx5ua2JU)
 
@@ -9,8 +15,6 @@
 - [OpenTelemetry NestJS Implementation Guide: Complete Setup for Production [2026]](https://signoz.io/blog/opentelemetry-nestjs/)
 
 - [Designing Notifications Service for Instagram](https://www.youtube.com/watch?v=kIP8L-CSl2Y)
-
-### GraphQL
 
 - [GraphQL Authentication: JWT, login, signup, and more! | NestJS PassportJS Tutorial](https://www.youtube.com/watch?v=XPSSgAPjTb4)
 
@@ -24,4 +28,4 @@
 
 - [Nest.js GraphQL Integration Testing Tutorial](https://www.youtube.com/watch?v=pm3bLJZlkEw)
 
-- [https://www.youtube.com/watch?v=svQjC6EXEQ4](https://www.youtube.com/watch?v=svQjC6EXEQ4)
+- [Build GraphQL Microservices With Nest.js & Apollo Federation 2](https://www.youtube.com/watch?v=svQjC6EXEQ4)

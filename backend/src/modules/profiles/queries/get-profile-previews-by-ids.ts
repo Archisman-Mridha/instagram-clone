@@ -1,8 +1,8 @@
 import { IQueryHandler, Query, QueryHandler } from "@nestjs/cqrs"
 import { InjectRepository } from "@nestjs/typeorm"
 import { In, Repository } from "typeorm"
-import { ProfilePreview } from "../types"
 import { ProfileEntity } from "../entity"
+import { ProfilePreview } from "../types"
 
 export interface GetProfilePreviewsByIDsInput {
   ids: Array<number>

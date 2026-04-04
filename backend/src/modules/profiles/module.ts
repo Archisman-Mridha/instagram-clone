@@ -7,10 +7,10 @@ import z from "zod"
 import { CreateProfileHandler } from "./commands/create-profile"
 import { IndexProfileHandler } from "./commands/index-profile"
 import { ProfileEntity } from "./entity"
-import { SearchProfilesHandler } from "./queries/search-profiles"
-import { ProfilesResolver } from "./resolver"
 import { GetProfilePreviewHandler } from "./queries/get-profile-preview"
 import { GetProfilePreviewsByIDsHandler } from "./queries/get-profile-previews-by-ids"
+import { SearchProfilesHandler } from "./queries/search-profiles"
+import { ProfilesResolver } from "./resolver"
 
 @Module({
   imports: [

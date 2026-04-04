@@ -1,6 +1,9 @@
-import { Mutation, Query, ResolveField, Resolver } from "@nestjs/graphql"
+import { CommandBus, QueryBus } from "@nestjs/cqrs"
+import { Mutation, Query, Resolver } from "@nestjs/graphql"
 import { CurrentUser } from "src/decorators/current-user"
 import { Input } from "src/utils/graphql"
+import { CreatePostCommand } from "./commands/create-post"
+import { GetPresignedPostImageURLCommand } from "./commands/get-presigned-post-image-url"
 import {
   CreatePostRequestBody,
   CreatePostResponseBody,
@@ -8,10 +11,7 @@ import {
   GetPostsByAuthorResponseBody
 } from "./dtos"
 import { PostEntity } from "./entity"
-import { CommandBus, QueryBus } from "@nestjs/cqrs"
 import { GetPostsByAuthorQuery } from "./queries/get-posts-by-author"
-import { CreatePostCommand } from "./commands/create-post"
-import { GetPresignedPostImageURLCommand } from "./commands/get-presigned-post-image-url"
 
 @Resolver(() => PostEntity)
 export class PostsResolver {

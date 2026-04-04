@@ -1,0 +1,9 @@
+.DS_Store
+
+.nx
+node_modules
+dist
+
+.env*
+
+vitest.config.*.timestamp*

@@ -1,7 +1,0 @@
-node_modules
-dist
-.env*
-tests
-*.config.ts
-bun.lock
-README.md

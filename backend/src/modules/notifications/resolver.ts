@@ -1,14 +1,14 @@
+import { CommandBus, QueryBus } from "@nestjs/cqrs"
 import { Query, Resolver } from "@nestjs/graphql"
 import { EventPattern, Payload } from "@nestjs/microservices"
 import { CurrentUser } from "src/decorators/current-user"
 import { Input } from "src/utils/graphql"
-import { type FollowshipCreatedEvent } from "../followships/events"
 import { KafkaTopic } from "../../utils/kafka"
-import { GetNotificationsRequestBody, GetNotificationsResponseBody } from "./dtos"
-import { Notification } from "./schema"
+import { type FollowshipCreatedEvent } from "../followships/events"
 import { CreateNotificationCommand } from "./commands/create-notification"
-import { CommandBus, QueryBus } from "@nestjs/cqrs"
+import { GetNotificationsRequestBody, GetNotificationsResponseBody } from "./dtos"
 import { GetNotificationsQuery } from "./queries/get-notifications"
+import { Notification } from "./schema"
 
 @Resolver(() => Notification)
 export class NotificationsResolver {

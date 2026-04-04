@@ -98,7 +98,7 @@ const GRAPHQL_SCHEMA_FILE_PATH = "generated/graphql/schema.graphql"
         // Indicates if database schema should be auto created on every application launch.
         // NOTE : Be careful with this option and don't use this in production - otherwise you can
         //        loose production data.
-        synchronize: isDevelopmentEnvironment,
+        synchronize: isDevelopmentEnvironment
         // logging: isDevelopmentEnvironment
       })
     }),
@@ -133,8 +133,8 @@ export class RootModule {}
 function getGraphQLServerPlugins(graphQLSchemaHost: GraphQLSchemaHost): ApolloServerPlugin[] {
   const plugins: ApolloServerPlugin[] = []
 
-  if (isDevelopmentEnvironment) plugins.push(ApolloServerPluginLandingPageLocalDefault())
-  else plugins.push(new GraphQLQueryComplexityPlugin(graphQLSchemaHost))
+  if (isDevelopmentEnvironment) plugins.concat([ApolloServerPluginLandingPageLocalDefault()])
+  else plugins.concat([new GraphQLQueryComplexityPlugin(graphQLSchemaHost)])
 
   return plugins
 }

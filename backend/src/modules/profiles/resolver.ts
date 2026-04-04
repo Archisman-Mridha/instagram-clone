@@ -1,15 +1,15 @@
 import { Injectable } from "@nestjs/common"
+import { CommandBus, QueryBus } from "@nestjs/cqrs"
 import { Query, Resolver } from "@nestjs/graphql"
 import { EventPattern, Payload } from "@nestjs/microservices"
 import { Input } from "src/utils/graphql"
 import { KafkaTopic } from "../../utils/kafka"
 import { UserCreatedEvent } from "../users/events"
+import { CreateProfileCommand } from "./commands/create-profile"
+import { IndexProfileCommand } from "./commands/index-profile"
 import { SearchProfilesRequestBody, SearchProfilesResponseBody } from "./dtos"
 import { ProfileEntity } from "./entity"
 import { ProfileCreatedEvent } from "./events"
-import { CommandBus, QueryBus } from "@nestjs/cqrs"
-import { CreateProfileCommand } from "./commands/create-profile"
-import { IndexProfileCommand } from "./commands/index-profile"
 import { SearchProfilesQuery } from "./queries/search-profiles"
 
 @Injectable()

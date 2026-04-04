@@ -1,6 +1,10 @@
+import { CommandBus, QueryBus } from "@nestjs/cqrs"
 import { Mutation, Query, Resolver } from "@nestjs/graphql"
 import { CurrentUser } from "src/decorators/current-user"
 import { Input } from "src/utils/graphql"
+import { GetProfilePreviewsByIDsQuery } from "../profiles/queries/get-profile-previews-by-ids"
+import { CreateFollowshipCommand } from "./commands/create-followship"
+import { DeleteFollowshipCommand } from "./commands/delete-followship"
 import {
   CreateFollowshipRequestBody,
   DeleteFollowshipRequestBody,
@@ -10,12 +14,8 @@ import {
   GetFollowersResponseBody
 } from "./dtos"
 import { FollowshipEntity } from "./entity"
-import { CommandBus, QueryBus } from "@nestjs/cqrs"
-import { CreateFollowshipCommand } from "./commands/create-followship"
-import { DeleteFollowshipCommand } from "./commands/delete-followship"
-import { GetFollowersQuery } from "./queries/get-followers"
 import { GetFolloweesQuery } from "./queries/get-followees"
-import { GetProfilePreviewsByIDsQuery } from "../profiles/queries/get-profile-previews-by-ids"
+import { GetFollowersQuery } from "./queries/get-followers"
 
 @Resolver(() => FollowshipEntity)
 export class FollowshipsResolver {

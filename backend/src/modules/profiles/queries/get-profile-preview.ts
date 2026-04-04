@@ -1,9 +1,9 @@
+import { NotFoundException } from "@nestjs/common"
 import { QueryHandler, IQueryHandler, Query } from "@nestjs/cqrs"
 import { InjectRepository } from "@nestjs/typeorm"
+import { Repository } from "typeorm"
 import { ProfileEntity } from "../entity"
 import { ProfilePreview } from "../types"
-import { Repository } from "typeorm"
-import { NotFoundException } from "@nestjs/common"
 
 export interface GetProfilePreviewInput {
   profileID: number
@@ -28,8 +28,7 @@ export class GetProfilePreviewHandler implements IQueryHandler<GetProfilePreview
       select: ["id", "name", "username"]
     })
 
-    if(!profilePreview)
-      throw new NotFoundException()
+    if (!profilePreview) throw new NotFoundException()
 
     return profilePreview
   }

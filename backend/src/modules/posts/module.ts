@@ -5,8 +5,8 @@ import { CreatePostHandler } from "./commands/create-post"
 import { GetPresignedPostImageURLHandler } from "./commands/get-presigned-post-image-url"
 import { PostEntity } from "./entity"
 import { GetPostsByAuthorHandler } from "./queries/get-posts-by-author"
-import { PostsResolver } from "./resolver"
 import { GetPostsByIDsHandler } from "./queries/get-posts-by-ids"
+import { PostsResolver } from "./resolver"
 
 @Module({
   imports: [S3Module, TypeOrmModule.forFeature([PostEntity])],

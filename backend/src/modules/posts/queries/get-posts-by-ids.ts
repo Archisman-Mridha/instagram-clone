@@ -1,7 +1,7 @@
 import { IQueryHandler, Query, QueryHandler } from "@nestjs/cqrs"
 import { InjectRepository } from "@nestjs/typeorm"
-import { PostEntity } from "../entity"
 import { In, Repository } from "typeorm"
+import { PostEntity } from "../entity"
 
 export interface GetPostsByIDsInput {
   ids: Array<number>
