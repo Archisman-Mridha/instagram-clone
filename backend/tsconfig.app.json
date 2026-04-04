@@ -8,7 +8,9 @@
     "emitDecoratorMetadata": true,
     "target": "es2021",
     "moduleResolution": "node",
-    "baseUrl": "."
+    "paths": {
+      "src/*": ["backend/src/*"]
+    }
   },
   "include": ["src/**/*.ts"],
   "exclude": [

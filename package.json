@@ -73,11 +73,14 @@
     "@nx/js": "22.6.4",
     "@nx/nest": "22.6.4",
     "@nx/node": "22.6.4",
+    "@nx/rspack": "^22.6.4",
     "@nx/vite": "22.6.4",
     "@nx/vitest": "22.6.4",
     "@nx/web": "22.6.4",
-    "@nx/webpack": "22.6.4",
     "@nx/workspace": "22.6.4",
+    "@rspack/cli": "^1.7.11",
+    "@rspack/core": "1.6.8",
+    "@rspack/dev-server": "^1.1.4",
     "@swc-node/register": "~1.11.1",
     "@swc/cli": "^0.8.0",
     "@swc/core": "^1.15.18",
@@ -92,8 +95,6 @@
     "oxfmt": "^0.40.0",
     "oxlint": "^1.55.0",
     "oxlint-tsgolint": "^0.16.0",
-    "prettier": "~3.6.2",
-    "run-script-webpack-plugin": "^0.2.3",
     "supertest": "^7.2.2",
     "swc-loader": "^0.2.7",
     "ts-loader": "^9.5.4",
@@ -101,9 +102,6 @@
     "typescript": "^5.7.3",
     "unplugin-swc": "^1.5.9",
     "vite": "^8.0.0",
-    "vitest": "^4.1.0",
-    "webpack": "^5.105.4",
-    "webpack-cli": "^7.0.2",
-    "webpack-node-externals": "^3.0.0"
+    "vitest": "^4.1.0"
   }
 }
