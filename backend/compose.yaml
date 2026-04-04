@@ -1,0 +1,95 @@
+name: instagram-clone
+
+networks:
+  instagram-clone: {}
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./hack/seed.sql:/docker-entrypoint-initdb.d/seed.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+
+  dragonfly:
+    image: docker.dragonflydb.io/dragonflydb/dragonfly:latest
+    command: --cluster_mode=emulated --requirepass ${REDIS_PASSWORD}
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a ${REDIS_PASSWORD} ping"]
+
+  zincsearch:
+    image: public.ecr.aws/zinclabs/zincsearch:latest
+    environment:
+      ZINC_FIRST_ADMIN_USER: ${ZINCSEARCH_USER}
+      ZINC_FIRST_ADMIN_PASSWORD: ${ZINCSEARCH_PASSWORD}
+      ZINC_DATA_PATH: /data
+    ports:
+      - "4080:4080"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:4080/healthz"]
+
+  redpanda:
+    image: redpandadata/redpanda:latest
+    entrypoint:
+      - bash
+      - -c
+    command:
+      - |
+        rpk redpanda start \
+          --kafka-addr internal://0.0.0.0:9092,external://0.0.0.0:19092 \
+          --advertise-kafka-addr internal://redpanda:9092,external://localhost:19092 \
+          --pandaproxy-addr internal://0.0.0.0:8082,external://0.0.0.0:18082 \
+          --advertise-pandaproxy-addr internal://redpanda:8082,external://localhost:18082 \
+          --schema-registry-addr internal://0.0.0.0:8081,external://0.0.0.0:18081 \
+          --rpc-addr redpanda:33145 \
+          --advertise-rpc-addr redpanda:33145 \
+          --mode dev-container \
+          --default-log-level=warn
+    ports:
+      - "19092:19092"
+      - "18082:18082"
+      - "18081:18081"
+      - "9644:9644"
+    healthcheck:
+      test:
+        ["CMD-SHELL", "rpk cluster health | grep -E 'Healthy:.+true' || exit 1"]
+
+  rustfs:
+    image: rustfs/rustfs:latest
+    environment:
+      RUSTFS_ACCESS_KEY: ${AWS_ACCESS_KEY_ID}
+      RUSTFS_SECRET_KEY: ${AWS_SECRET_ACCESS_KEY}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:9000/minio/health/live"]
+
+  mongo:
+    image: mongo:8-noble
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DB}
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+
+  openobserve:
+    image: public.ecr.aws/zinclabs/openobserve:latest
+    environment:
+      ZO_ROOT_USER_EMAIL: ${OPENOBSERVE_EMAIL}
+      ZO_ROOT_USER_PASSWORD: ${OPENOBSERVE_PASSWORD}
+    ports:
+      - "5080:5080"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:5080/healthz"]

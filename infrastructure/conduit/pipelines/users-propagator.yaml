@@ -1,0 +1,34 @@
+pipelines:
+  id: users-propagator
+  name: Users propagator
+  descrption: |
+    Propagates activities in the "users" table in Postgres to the "events.users" topic in Kafka.
+
+  status: running
+
+  connectors:
+    - id: postgres
+      type: source
+      plugin: builtin:postgres
+      settings:
+        url: "postgres://instagram-clone:!Ha1uQ8@2o0@localhost:5432/instagram-clone?sslmode=disable"
+        tables: "users"
+
+        sdk.schema.extract.payload.enabled: false
+        sdk.schema.extract.key.enabled: false
+      processors:
+        - id: default
+          plugin: builtin:filter
+          condition: '{{ eq .Operation "create" }}'
+
+    - id: kafka
+      type: destination
+      plugin: builtin:kafka
+      settings:
+        servers: "localhost:19092"
+
+        topic: "events.users"
+
+        saslMechanism: "scram-sha-256"
+        saslUsername: "instagram-clone"
+        saslPassword: "NMJjZEp6hCgNdWGt"
