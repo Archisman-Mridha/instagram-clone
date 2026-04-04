@@ -9,7 +9,7 @@
     "target": "es2021",
     "moduleResolution": "node",
     "paths": {
-      "src/*": ["backend/src/*"]
+      "src/*": ["./backend/src/*"]
     }
   },
   "include": ["src/**/*.ts"],
