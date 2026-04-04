@@ -6,5 +6,15 @@ export default defineConfig({
     typeCheck: true
   },
 
-  plugins: ["import", "promise", "vitest"]
+  plugins: [
+    "import",
+
+    "promise",
+
+    "vitest",
+
+    "react",
+    "react-perf",
+    "nextjs"
+  ]
 })

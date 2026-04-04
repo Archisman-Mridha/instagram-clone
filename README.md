@@ -29,3 +29,11 @@
 - [Nest.js GraphQL Integration Testing Tutorial](https://www.youtube.com/watch?v=pm3bLJZlkEw)
 
 - [Build GraphQL Microservices With Nest.js & Apollo Federation 2](https://www.youtube.com/watch?v=svQjC6EXEQ4)
+
+### Miscellaneous
+
+- [Help: NX with Nest [Webpack -> Rspack]](https://github.com/nrwl/nx/discussions/30443#discussioncomment-14201114)
+
+- [Crash when running tsgolint: Option 'baseUrl' has been removed.](https://github.com/oxc-project/tsgolint/issues/351#issuecomment-3520969492)
+
+- [[feature] nest hot reload ](https://github.com/nrwl/nx/issues/1992)

@@ -29,7 +29,7 @@ import { UsersModule } from "../users/module"
 
 export const isDevelopmentEnvironment = process.env.NODE_ENV === "development"
 
-const GRAPHQL_SCHEMA_FILE_PATH = "generated/graphql/schema.graphql"
+const GRAPHQL_SCHEMA_FILE_PATH = "backend/generated/graphql/schema.graphql"
 
 @Module({
   imports: [

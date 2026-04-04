@@ -3,7 +3,8 @@
     "target": "es2017",
     "parser": {
       "syntax": "typescript",
-      "decorators": true
+      "decorators": true,
+      "dynamicImport": true
     },
     "transform": {
       "decoratorMetadata": true,
@@ -23,6 +24,7 @@
     ".*\\.test.tsx?$",
     "./src/jest-setup.ts$",
     "./**/jest-setup.ts$",
-    ".*.js$"
+    ".*.js$",
+    ".*.d.ts$"
   ]
 }
