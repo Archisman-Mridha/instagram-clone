@@ -66,3 +66,12 @@ export class GetFollowersArgs extends PaginatedInput {
   @Field(() => Int)
   followeeID: number
 }
+
+@InputType()
+export class FollowshipExistsArgs {
+  @Field(() => Int)
+  followerID: number
+
+  @Field(() => Int)
+  followeeID: number
+}

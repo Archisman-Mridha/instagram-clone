@@ -6,6 +6,9 @@ import { ProfileEntity } from "./entity"
 
 @ObjectType()
 export class Profile extends ProfileEntity {
+  @Field()
+  isFollowee: boolean
+
   // NOTE : Resolved by the GraphQL server.
   @Field(() => FollowshipCounts)
   followshipCounts?: FollowshipCounts & {}

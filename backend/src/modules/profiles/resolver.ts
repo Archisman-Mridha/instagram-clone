@@ -2,12 +2,15 @@ import { Injectable } from "@nestjs/common"
 import { CommandBus, QueryBus } from "@nestjs/cqrs"
 import { Parent, Query, ResolveField, Resolver } from "@nestjs/graphql"
 import { EventPattern, Payload } from "@nestjs/microservices"
+import { CurrentUser } from "src/decorators/current-user"
 import { Args } from "src/utils/graphql"
 import { KafkaTopic } from "../../utils/kafka"
 import { FollowshipCounts } from "../followships/dtos"
+import { FollowshipExistsQuery } from "../followships/queries/followship-exists"
 import { GetFollowshipCountsQuery } from "../followships/queries/get-followship-counts"
 import { Post } from "../posts/dtos"
 import { GetPostsByAuthorQuery } from "../posts/queries/get-posts-by-author"
+import { UserEntity } from "../users/entity"
 import { UserCreatedEvent } from "../users/events"
 import { CreateProfileCommand } from "./commands/create-profile"
 import { IndexProfileCommand } from "./commands/index-profile"
@@ -40,8 +43,24 @@ export class ProfilesResolver {
   }
 
   @Query(() => Profile)
-  async getProfileByID(@Args() args: GetProfileByIDArgs): Promise<Profile> {
-    return this.queryBus.execute(new GetProfileByIDQuery(args))
+  async getProfileByID(
+    @CurrentUser() user: UserEntity,
+    @Args() args: GetProfileByIDArgs
+  ): Promise<Profile> {
+    const profileEntity = await this.queryBus.execute(new GetProfileByIDQuery(args))
+
+    // Find out whethe the current user follows this profile.
+    // Or in other words, whether this profile is a followee of the user.
+    const isFollowee = await this.queryBus.execute(new FollowshipExistsQuery({
+      followerID: user.id,
+      followeeID: profileEntity.id
+    }))
+
+    const profile = {
+      ...profileEntity,
+      isFollowee
+    }
+    return profile
   }
 
   @ResolveField(() => [Post])
@@ -51,9 +70,9 @@ export class ProfilesResolver {
 
   @ResolveField(() => [Post])
   async posts(@Parent() profile: Profile): Promise<Array<Post>> {
-    const { posts } = await this.queryBus.execute(
-      new GetPostsByAuthorQuery({ authorID: profile.id })
-    )
+    const { posts } = await this.queryBus.execute(new GetPostsByAuthorQuery({
+      authorID: profile.id
+    }))
     return posts
   }
 }
