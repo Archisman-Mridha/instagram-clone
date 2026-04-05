@@ -14,34 +14,40 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
-    "mutation CreatePost($input: CreatePostRequestBody!) {\n  createPost(input: $input) {\n    id\n  }\n}": typeof types.CreatePostDocument,
-    "mutation CreateUser($input: CreateUserRequestBody!) {\n  createUser(input: $input) {\n    accessToken\n  }\n}": typeof types.CreateUserDocument,
-    "mutation Follow($input: CreateFollowshipRequestBody!) {\n  follow(input: $input)\n}": typeof types.FollowDocument,
+    "fragment ProfilePreviewFragment on ProfilePreview {\n  id\n  name\n  username\n}": typeof types.ProfilePreviewFragmentFragmentDoc,
+    "fragment PostFragment on Post {\n  id\n  imageURL\n  description\n  authorProfilePreview {\n    ...ProfilePreviewFragment\n  }\n}": typeof types.PostFragmentFragmentDoc,
+    "mutation CreatePost($args: CreatePostArgs!) {\n  createPost(args: $args)\n}": typeof types.CreatePostDocument,
+    "mutation CreateUser($args: CreateUserArgs!) {\n  createUser(args: $args) {\n    accessToken\n    userID\n  }\n}": typeof types.CreateUserDocument,
+    "mutation Follow($args: CreateFollowshipArgs!) {\n  follow(args: $args)\n}": typeof types.FollowDocument,
     "mutation GetPresignedPostImageURL {\n  getPresignedPostImageURL\n}": typeof types.GetPresignedPostImageUrlDocument,
-    "mutation Unfollow($input: DeleteFollowshipRequestBody!) {\n  unfollow(input: $input)\n}": typeof types.UnfollowDocument,
-    "query GetFeed($input: GetFeedRequestBody!) {\n  getFeed(input: $input) {\n    count\n    posts {\n      id\n      imageURL\n      description\n      authorID\n      authorProfilePreview {\n        id\n        name\n        username\n      }\n    }\n  }\n}": typeof types.GetFeedDocument,
-    "query GetFollowees($input: GetFolloweesRequestBody!) {\n  getFollowees(input: $input) {\n    count\n    followees {\n      id\n      name\n      username\n    }\n  }\n}": typeof types.GetFolloweesDocument,
-    "query GetFollowers($input: GetFollowersRequestBody!) {\n  getFollowers(input: $input) {\n    count\n    followers {\n      id\n      name\n      username\n    }\n  }\n}": typeof types.GetFollowersDocument,
-    "query GetNotifications($input: GetNotificationsRequestBody!) {\n  getNotifications(input: $input) {\n    count\n    notifications {\n      _id\n      userID\n      kind\n      seen\n      createdAt\n    }\n  }\n}": typeof types.GetNotificationsDocument,
-    "query GetPostsByAuthor($input: GetPostsByAuthorRequestBody!) {\n  getPostsByAuthor(input: $input) {\n    count\n    posts {\n      id\n      imageURL\n      description\n      authorID\n      authorProfilePreview {\n        id\n        name\n        username\n      }\n    }\n  }\n}": typeof types.GetPostsByAuthorDocument,
+    "mutation Unfollow($args: DeleteFollowshipArgs!) {\n  unfollow(args: $args)\n}": typeof types.UnfollowDocument,
+    "query GetFeed($args: GetFeedArgs!) {\n  getFeed(args: $args) {\n    count\n    postIDs\n    posts {\n      ...PostFragment\n    }\n  }\n}": typeof types.GetFeedDocument,
+    "query GetFollowees($args: GetFolloweesArgs!) {\n  getFollowees(args: $args) {\n    count\n    followees {\n      id\n      profilePreview {\n        ...ProfilePreviewFragment\n      }\n    }\n  }\n}": typeof types.GetFolloweesDocument,
+    "query GetFollowers($args: GetFollowersArgs!) {\n  getFollowers(args: $args) {\n    count\n    followers {\n      id\n      profilePreview {\n        ...ProfilePreviewFragment\n      }\n    }\n  }\n}": typeof types.GetFollowersDocument,
+    "query GetPostByID($args: GetPostArgs!) {\n  getPostByID(args: $args) {\n    ...PostFragment\n  }\n}": typeof types.GetPostByIdDocument,
+    "query GetPostsByAuthor($args: GetPostsByAuthorArgs!) {\n  getPostsByAuthor(args: $args) {\n    count\n    posts {\n      ...PostFragment\n    }\n  }\n}": typeof types.GetPostsByAuthorDocument,
+    "query GetProfileByID($args: GetProfileByIDArgs!) {\n  getProfileByID(args: $args) {\n    id\n    name\n    username\n    bio\n    followshipCounts {\n      followeeCount\n      followerCount\n    }\n    posts {\n      ...PostFragment\n    }\n  }\n}": typeof types.GetProfileByIdDocument,
     "query Ping {\n  ping\n}": typeof types.PingDocument,
-    "query SearchProfiles($input: SearchProfilesRequestBody!) {\n  searchProfiles(input: $input) {\n    count\n    profilePreviews {\n      id\n      name\n      username\n    }\n  }\n}": typeof types.SearchProfilesDocument,
-    "query Signin($input: SigninInput!) {\n  signin(input: $input) {\n    accessToken\n  }\n}": typeof types.SigninDocument,
+    "query SearchProfiles($args: SearchProfilesArgs!) {\n  searchProfiles(args: $args) {\n    count\n    profilePreviews {\n      ...ProfilePreviewFragment\n    }\n  }\n}": typeof types.SearchProfilesDocument,
+    "query Signin($args: SigninArgs!) {\n  signin(args: $args) {\n    accessToken\n    userID\n  }\n}": typeof types.SigninDocument,
 };
 const documents: Documents = {
-    "mutation CreatePost($input: CreatePostRequestBody!) {\n  createPost(input: $input) {\n    id\n  }\n}": types.CreatePostDocument,
-    "mutation CreateUser($input: CreateUserRequestBody!) {\n  createUser(input: $input) {\n    accessToken\n  }\n}": types.CreateUserDocument,
-    "mutation Follow($input: CreateFollowshipRequestBody!) {\n  follow(input: $input)\n}": types.FollowDocument,
+    "fragment ProfilePreviewFragment on ProfilePreview {\n  id\n  name\n  username\n}": types.ProfilePreviewFragmentFragmentDoc,
+    "fragment PostFragment on Post {\n  id\n  imageURL\n  description\n  authorProfilePreview {\n    ...ProfilePreviewFragment\n  }\n}": types.PostFragmentFragmentDoc,
+    "mutation CreatePost($args: CreatePostArgs!) {\n  createPost(args: $args)\n}": types.CreatePostDocument,
+    "mutation CreateUser($args: CreateUserArgs!) {\n  createUser(args: $args) {\n    accessToken\n    userID\n  }\n}": types.CreateUserDocument,
+    "mutation Follow($args: CreateFollowshipArgs!) {\n  follow(args: $args)\n}": types.FollowDocument,
     "mutation GetPresignedPostImageURL {\n  getPresignedPostImageURL\n}": types.GetPresignedPostImageUrlDocument,
-    "mutation Unfollow($input: DeleteFollowshipRequestBody!) {\n  unfollow(input: $input)\n}": types.UnfollowDocument,
-    "query GetFeed($input: GetFeedRequestBody!) {\n  getFeed(input: $input) {\n    count\n    posts {\n      id\n      imageURL\n      description\n      authorID\n      authorProfilePreview {\n        id\n        name\n        username\n      }\n    }\n  }\n}": types.GetFeedDocument,
-    "query GetFollowees($input: GetFolloweesRequestBody!) {\n  getFollowees(input: $input) {\n    count\n    followees {\n      id\n      name\n      username\n    }\n  }\n}": types.GetFolloweesDocument,
-    "query GetFollowers($input: GetFollowersRequestBody!) {\n  getFollowers(input: $input) {\n    count\n    followers {\n      id\n      name\n      username\n    }\n  }\n}": types.GetFollowersDocument,
-    "query GetNotifications($input: GetNotificationsRequestBody!) {\n  getNotifications(input: $input) {\n    count\n    notifications {\n      _id\n      userID\n      kind\n      seen\n      createdAt\n    }\n  }\n}": types.GetNotificationsDocument,
-    "query GetPostsByAuthor($input: GetPostsByAuthorRequestBody!) {\n  getPostsByAuthor(input: $input) {\n    count\n    posts {\n      id\n      imageURL\n      description\n      authorID\n      authorProfilePreview {\n        id\n        name\n        username\n      }\n    }\n  }\n}": types.GetPostsByAuthorDocument,
+    "mutation Unfollow($args: DeleteFollowshipArgs!) {\n  unfollow(args: $args)\n}": types.UnfollowDocument,
+    "query GetFeed($args: GetFeedArgs!) {\n  getFeed(args: $args) {\n    count\n    postIDs\n    posts {\n      ...PostFragment\n    }\n  }\n}": types.GetFeedDocument,
+    "query GetFollowees($args: GetFolloweesArgs!) {\n  getFollowees(args: $args) {\n    count\n    followees {\n      id\n      profilePreview {\n        ...ProfilePreviewFragment\n      }\n    }\n  }\n}": types.GetFolloweesDocument,
+    "query GetFollowers($args: GetFollowersArgs!) {\n  getFollowers(args: $args) {\n    count\n    followers {\n      id\n      profilePreview {\n        ...ProfilePreviewFragment\n      }\n    }\n  }\n}": types.GetFollowersDocument,
+    "query GetPostByID($args: GetPostArgs!) {\n  getPostByID(args: $args) {\n    ...PostFragment\n  }\n}": types.GetPostByIdDocument,
+    "query GetPostsByAuthor($args: GetPostsByAuthorArgs!) {\n  getPostsByAuthor(args: $args) {\n    count\n    posts {\n      ...PostFragment\n    }\n  }\n}": types.GetPostsByAuthorDocument,
+    "query GetProfileByID($args: GetProfileByIDArgs!) {\n  getProfileByID(args: $args) {\n    id\n    name\n    username\n    bio\n    followshipCounts {\n      followeeCount\n      followerCount\n    }\n    posts {\n      ...PostFragment\n    }\n  }\n}": types.GetProfileByIdDocument,
     "query Ping {\n  ping\n}": types.PingDocument,
-    "query SearchProfiles($input: SearchProfilesRequestBody!) {\n  searchProfiles(input: $input) {\n    count\n    profilePreviews {\n      id\n      name\n      username\n    }\n  }\n}": types.SearchProfilesDocument,
-    "query Signin($input: SigninInput!) {\n  signin(input: $input) {\n    accessToken\n  }\n}": types.SigninDocument,
+    "query SearchProfiles($args: SearchProfilesArgs!) {\n  searchProfiles(args: $args) {\n    count\n    profilePreviews {\n      ...ProfilePreviewFragment\n    }\n  }\n}": types.SearchProfilesDocument,
+    "query Signin($args: SigninArgs!) {\n  signin(args: $args) {\n    accessToken\n    userID\n  }\n}": types.SigninDocument,
 };
 
 /**
@@ -61,15 +67,23 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "mutation CreatePost($input: CreatePostRequestBody!) {\n  createPost(input: $input) {\n    id\n  }\n}"): (typeof documents)["mutation CreatePost($input: CreatePostRequestBody!) {\n  createPost(input: $input) {\n    id\n  }\n}"];
+export function graphql(source: "fragment ProfilePreviewFragment on ProfilePreview {\n  id\n  name\n  username\n}"): (typeof documents)["fragment ProfilePreviewFragment on ProfilePreview {\n  id\n  name\n  username\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "mutation CreateUser($input: CreateUserRequestBody!) {\n  createUser(input: $input) {\n    accessToken\n  }\n}"): (typeof documents)["mutation CreateUser($input: CreateUserRequestBody!) {\n  createUser(input: $input) {\n    accessToken\n  }\n}"];
+export function graphql(source: "fragment PostFragment on Post {\n  id\n  imageURL\n  description\n  authorProfilePreview {\n    ...ProfilePreviewFragment\n  }\n}"): (typeof documents)["fragment PostFragment on Post {\n  id\n  imageURL\n  description\n  authorProfilePreview {\n    ...ProfilePreviewFragment\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "mutation Follow($input: CreateFollowshipRequestBody!) {\n  follow(input: $input)\n}"): (typeof documents)["mutation Follow($input: CreateFollowshipRequestBody!) {\n  follow(input: $input)\n}"];
+export function graphql(source: "mutation CreatePost($args: CreatePostArgs!) {\n  createPost(args: $args)\n}"): (typeof documents)["mutation CreatePost($args: CreatePostArgs!) {\n  createPost(args: $args)\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation CreateUser($args: CreateUserArgs!) {\n  createUser(args: $args) {\n    accessToken\n    userID\n  }\n}"): (typeof documents)["mutation CreateUser($args: CreateUserArgs!) {\n  createUser(args: $args) {\n    accessToken\n    userID\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation Follow($args: CreateFollowshipArgs!) {\n  follow(args: $args)\n}"): (typeof documents)["mutation Follow($args: CreateFollowshipArgs!) {\n  follow(args: $args)\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -77,27 +91,31 @@ export function graphql(source: "mutation GetPresignedPostImageURL {\n  getPresi
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "mutation Unfollow($input: DeleteFollowshipRequestBody!) {\n  unfollow(input: $input)\n}"): (typeof documents)["mutation Unfollow($input: DeleteFollowshipRequestBody!) {\n  unfollow(input: $input)\n}"];
+export function graphql(source: "mutation Unfollow($args: DeleteFollowshipArgs!) {\n  unfollow(args: $args)\n}"): (typeof documents)["mutation Unfollow($args: DeleteFollowshipArgs!) {\n  unfollow(args: $args)\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query GetFeed($input: GetFeedRequestBody!) {\n  getFeed(input: $input) {\n    count\n    posts {\n      id\n      imageURL\n      description\n      authorID\n      authorProfilePreview {\n        id\n        name\n        username\n      }\n    }\n  }\n}"): (typeof documents)["query GetFeed($input: GetFeedRequestBody!) {\n  getFeed(input: $input) {\n    count\n    posts {\n      id\n      imageURL\n      description\n      authorID\n      authorProfilePreview {\n        id\n        name\n        username\n      }\n    }\n  }\n}"];
+export function graphql(source: "query GetFeed($args: GetFeedArgs!) {\n  getFeed(args: $args) {\n    count\n    postIDs\n    posts {\n      ...PostFragment\n    }\n  }\n}"): (typeof documents)["query GetFeed($args: GetFeedArgs!) {\n  getFeed(args: $args) {\n    count\n    postIDs\n    posts {\n      ...PostFragment\n    }\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query GetFollowees($input: GetFolloweesRequestBody!) {\n  getFollowees(input: $input) {\n    count\n    followees {\n      id\n      name\n      username\n    }\n  }\n}"): (typeof documents)["query GetFollowees($input: GetFolloweesRequestBody!) {\n  getFollowees(input: $input) {\n    count\n    followees {\n      id\n      name\n      username\n    }\n  }\n}"];
+export function graphql(source: "query GetFollowees($args: GetFolloweesArgs!) {\n  getFollowees(args: $args) {\n    count\n    followees {\n      id\n      profilePreview {\n        ...ProfilePreviewFragment\n      }\n    }\n  }\n}"): (typeof documents)["query GetFollowees($args: GetFolloweesArgs!) {\n  getFollowees(args: $args) {\n    count\n    followees {\n      id\n      profilePreview {\n        ...ProfilePreviewFragment\n      }\n    }\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query GetFollowers($input: GetFollowersRequestBody!) {\n  getFollowers(input: $input) {\n    count\n    followers {\n      id\n      name\n      username\n    }\n  }\n}"): (typeof documents)["query GetFollowers($input: GetFollowersRequestBody!) {\n  getFollowers(input: $input) {\n    count\n    followers {\n      id\n      name\n      username\n    }\n  }\n}"];
+export function graphql(source: "query GetFollowers($args: GetFollowersArgs!) {\n  getFollowers(args: $args) {\n    count\n    followers {\n      id\n      profilePreview {\n        ...ProfilePreviewFragment\n      }\n    }\n  }\n}"): (typeof documents)["query GetFollowers($args: GetFollowersArgs!) {\n  getFollowers(args: $args) {\n    count\n    followers {\n      id\n      profilePreview {\n        ...ProfilePreviewFragment\n      }\n    }\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query GetNotifications($input: GetNotificationsRequestBody!) {\n  getNotifications(input: $input) {\n    count\n    notifications {\n      _id\n      userID\n      kind\n      seen\n      createdAt\n    }\n  }\n}"): (typeof documents)["query GetNotifications($input: GetNotificationsRequestBody!) {\n  getNotifications(input: $input) {\n    count\n    notifications {\n      _id\n      userID\n      kind\n      seen\n      createdAt\n    }\n  }\n}"];
+export function graphql(source: "query GetPostByID($args: GetPostArgs!) {\n  getPostByID(args: $args) {\n    ...PostFragment\n  }\n}"): (typeof documents)["query GetPostByID($args: GetPostArgs!) {\n  getPostByID(args: $args) {\n    ...PostFragment\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query GetPostsByAuthor($input: GetPostsByAuthorRequestBody!) {\n  getPostsByAuthor(input: $input) {\n    count\n    posts {\n      id\n      imageURL\n      description\n      authorID\n      authorProfilePreview {\n        id\n        name\n        username\n      }\n    }\n  }\n}"): (typeof documents)["query GetPostsByAuthor($input: GetPostsByAuthorRequestBody!) {\n  getPostsByAuthor(input: $input) {\n    count\n    posts {\n      id\n      imageURL\n      description\n      authorID\n      authorProfilePreview {\n        id\n        name\n        username\n      }\n    }\n  }\n}"];
+export function graphql(source: "query GetPostsByAuthor($args: GetPostsByAuthorArgs!) {\n  getPostsByAuthor(args: $args) {\n    count\n    posts {\n      ...PostFragment\n    }\n  }\n}"): (typeof documents)["query GetPostsByAuthor($args: GetPostsByAuthorArgs!) {\n  getPostsByAuthor(args: $args) {\n    count\n    posts {\n      ...PostFragment\n    }\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "query GetProfileByID($args: GetProfileByIDArgs!) {\n  getProfileByID(args: $args) {\n    id\n    name\n    username\n    bio\n    followshipCounts {\n      followeeCount\n      followerCount\n    }\n    posts {\n      ...PostFragment\n    }\n  }\n}"): (typeof documents)["query GetProfileByID($args: GetProfileByIDArgs!) {\n  getProfileByID(args: $args) {\n    id\n    name\n    username\n    bio\n    followshipCounts {\n      followeeCount\n      followerCount\n    }\n    posts {\n      ...PostFragment\n    }\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -105,11 +123,11 @@ export function graphql(source: "query Ping {\n  ping\n}"): (typeof documents)["
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query SearchProfiles($input: SearchProfilesRequestBody!) {\n  searchProfiles(input: $input) {\n    count\n    profilePreviews {\n      id\n      name\n      username\n    }\n  }\n}"): (typeof documents)["query SearchProfiles($input: SearchProfilesRequestBody!) {\n  searchProfiles(input: $input) {\n    count\n    profilePreviews {\n      id\n      name\n      username\n    }\n  }\n}"];
+export function graphql(source: "query SearchProfiles($args: SearchProfilesArgs!) {\n  searchProfiles(args: $args) {\n    count\n    profilePreviews {\n      ...ProfilePreviewFragment\n    }\n  }\n}"): (typeof documents)["query SearchProfiles($args: SearchProfilesArgs!) {\n  searchProfiles(args: $args) {\n    count\n    profilePreviews {\n      ...ProfilePreviewFragment\n    }\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query Signin($input: SigninInput!) {\n  signin(input: $input) {\n    accessToken\n  }\n}"): (typeof documents)["query Signin($input: SigninInput!) {\n  signin(input: $input) {\n    accessToken\n  }\n}"];
+export function graphql(source: "query Signin($args: SigninArgs!) {\n  signin(args: $args) {\n    accessToken\n    userID\n  }\n}"): (typeof documents)["query Signin($args: SigninArgs!) {\n  signin(args: $args) {\n    accessToken\n    userID\n  }\n}"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

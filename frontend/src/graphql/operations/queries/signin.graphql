@@ -1,5 +1,6 @@
-query Signin($input: SigninInput!) {
-  signin(input: $input) {
+query Signin($args: SigninArgs!) {
+  signin(args: $args) {
     accessToken
+    userID
   }
 }

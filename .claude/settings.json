@@ -2,10 +2,8 @@
   "enabledPlugins": {
     "context-mode@context-mode": true,
     "claude-mem@thedotmack": true,
-
     "nx@nx-claude-plugins": true
   },
-
   "extraKnownMarketplaces": {
     "nx-claude-plugins": {
       "source": {

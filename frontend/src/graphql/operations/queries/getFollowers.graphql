@@ -1,10 +1,11 @@
-query GetFollowers($input: GetFollowersRequestBody!) {
-  getFollowers(input: $input) {
+query GetFollowers($args: GetFollowersArgs!) {
+  getFollowers(args: $args) {
     count
     followers {
       id
-      name
-      username
+      profilePreview {
+        ...ProfilePreviewFragment
+      }
     }
   }
 }

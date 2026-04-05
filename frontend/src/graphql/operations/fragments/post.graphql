@@ -1,0 +1,8 @@
+fragment PostFragment on Post {
+  id
+  imageURL
+  description
+  authorProfilePreview {
+    ...ProfilePreviewFragment
+  }
+}

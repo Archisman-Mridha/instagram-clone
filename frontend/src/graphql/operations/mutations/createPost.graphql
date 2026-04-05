@@ -1,5 +1,3 @@
-mutation CreatePost($input: CreatePostRequestBody!) {
-  createPost(input: $input) {
-    id
-  }
+mutation CreatePost($args: CreatePostArgs!) {
+  createPost(args: $args)
 }

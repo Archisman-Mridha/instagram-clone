@@ -11,8 +11,6 @@
   any UI can be rendered.
 */
 
-import { FunctionComponent } from "react"
-
-export const Loader: FunctionComponent = () => {
+export default function Loading() {
   return null
 }

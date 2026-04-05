@@ -1,10 +1,8 @@
-query SearchProfiles($input: SearchProfilesRequestBody!) {
-  searchProfiles(input: $input) {
+query SearchProfiles($args: SearchProfilesArgs!) {
+  searchProfiles(args: $args) {
     count
     profilePreviews {
-      id
-      name
-      username
+      ...ProfilePreviewFragment
     }
   }
 }

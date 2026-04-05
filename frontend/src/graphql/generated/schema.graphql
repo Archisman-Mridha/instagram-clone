@@ -1,0 +1,179 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input CreateFollowshipArgs {
+  followeeID: Int!
+}
+
+input CreatePostArgs {
+  description: String
+  imageURL: String!
+}
+
+input CreateUserArgs {
+  email: String!
+  name: String!
+  password: String!
+  username: String!
+}
+
+input DeleteFollowshipArgs {
+  followeeID: Int!
+}
+
+type Feed {
+  count: Int!
+  postIDs: [Float!]!
+  posts: [Post!]!
+}
+
+type Followee {
+  id: Int!
+  profilePreview: ProfilePreview!
+}
+
+type Followees {
+  count: Int!
+  followees: [Followee!]!
+}
+
+type Follower {
+  id: Int!
+  profilePreview: ProfilePreview!
+}
+
+type Followers {
+  count: Int!
+  followers: [Follower!]!
+}
+
+type FollowshipCounts {
+  followeeCount: Int!
+  followerCount: Int!
+}
+
+input GetFeedArgs {
+  skip: Int! = 0
+  take: Int! = 25
+  userID: Int!
+}
+
+input GetFolloweesArgs {
+  followerID: Int!
+  skip: Int! = 0
+  take: Int! = 25
+}
+
+input GetFollowersArgs {
+  followeeID: Int!
+  skip: Int! = 0
+  take: Int! = 25
+}
+
+input GetNotificationsArgs {
+  skip: Int! = 0
+  take: Int! = 25
+}
+
+input GetPostArgs {
+  id: Int!
+}
+
+input GetPostsByAuthorArgs {
+  authorID: Int!
+  skip: Int! = 0
+  take: Int! = 25
+}
+
+input GetProfileByIDArgs {
+  id: Int!
+}
+
+type Mutation {
+  createPost(args: CreatePostArgs!): Float!
+  createUser(args: CreateUserArgs!): SigninOutput!
+  follow(args: CreateFollowshipArgs!): Boolean!
+  getPresignedPostImageURL: String!
+  unfollow(args: DeleteFollowshipArgs!): Boolean!
+}
+
+type Notification {
+  _id: ID!
+  createdAt: Timestamp!
+  kind: Float!
+  seen: Boolean!
+  userID: Int!
+}
+
+type Notifications {
+  count: Int!
+  notifications: [Notification!]!
+}
+
+type Post {
+  authorID: Int!
+  authorProfilePreview: ProfilePreview!
+  description: String
+  id: ID!
+  imageURL: String!
+}
+
+type Posts {
+  count: Int!
+  posts: [Post!]!
+}
+
+type Profile {
+  bio: String
+  followshipCounts: FollowshipCounts!
+  id: ID!
+  name: String!
+  posts: [Post!]!
+  username: String!
+}
+
+type ProfilePreview {
+  id: ID!
+  name: String!
+  username: String!
+}
+
+type ProfilePreviews {
+  count: Int!
+  profilePreviews: [ProfilePreview!]!
+}
+
+type Query {
+  getFeed(args: GetFeedArgs!): Feed!
+  getFollowees(args: GetFolloweesArgs!): Followees!
+  getFollowers(args: GetFollowersArgs!): Followers!
+  getNotifications(args: GetNotificationsArgs!): Notifications!
+  getPostByID(args: GetPostArgs!): Post!
+  getPostsByAuthor(args: GetPostsByAuthorArgs!): Posts!
+  getProfileByID(args: GetProfileByIDArgs!): Profile!
+  ping: String!
+  searchProfiles(args: SearchProfilesArgs!): ProfilePreviews!
+  signin(args: SigninArgs!): SigninOutput!
+}
+
+input SearchProfilesArgs {
+  query: String!
+  skip: Int! = 0
+  take: Int! = 25
+}
+
+input SigninArgs {
+  email: String!
+  password: String!
+}
+
+type SigninOutput {
+  accessToken: String!
+  userID: ID!
+}
+
+"""
+`Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp

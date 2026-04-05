@@ -16,6 +16,8 @@
 
 - [Designing Notifications Service for Instagram](https://www.youtube.com/watch?v=kIP8L-CSl2Y)
 
+### GraphQL
+
 - [GraphQL Authentication: JWT, login, signup, and more! | NestJS PassportJS Tutorial](https://www.youtube.com/watch?v=XPSSgAPjTb4)
 
 - [Implementing pagination with GraphQL in NestJS](https://blog.logrocket.com/implementing-pagination-graphql-nestjs/)
@@ -30,6 +32,14 @@
 
 - [Build GraphQL Microservices With Nest.js & Apollo Federation 2](https://www.youtube.com/watch?v=svQjC6EXEQ4)
 
+- [Demystifying Cache Normalization](https://www.apollographql.com/blog/demystifying-cache-normalization)
+
+- [More resilient code with data masking in Apollo Client 3.12](https://www.apollographql.com/blog/more-resilient-code-with-data-masking-in-apollo-client-3-12)
+
+### NextJS
+
+- [Composition, Caching, and Architecture in modern Next.js](https://www.youtube.com/watch?v=iRGc8KQDyQ8)
+
 ### Miscellaneous
 
 - [Help: NX with Nest [Webpack -> Rspack]](https://github.com/nrwl/nx/discussions/30443#discussioncomment-14201114)
@@ -37,3 +47,5 @@
 - [Crash when running tsgolint: Option 'baseUrl' has been removed.](https://github.com/oxc-project/tsgolint/issues/351#issuecomment-3520969492)
 
 - [[feature] nest hot reload ](https://github.com/nrwl/nx/issues/1992)
+
+- [Code-first approach future compatibility with ESM modules](https://github.com/nestjs/graphql/issues/2568#issuecomment-1655658256)

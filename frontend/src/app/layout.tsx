@@ -11,7 +11,7 @@
 
     (2) Client Components and the RSC Payload are used to prerender HTML.
 
-  Then, on the client:
+  Then, on the client (on first load):
 
     (1) HTML is used to immediately show a fast non-interactive preview of the route to the user.
 
@@ -20,7 +20,10 @@
     (3) JavaScript is used to hydrate Client Components and make the application interactive.
         Hydration is React's process for attaching event handlers to the DOM, to make the static
         HTML interactive.
- 
+
+        Hydration is React's process for attaching event handlers to the DOM, to make the static
+        HTML interactive.
+
   On subsequent navigations, the RSC Payload is prefetched and cached for instant navigation.
   Client Components are rendered entirely on the client, without the server-rendered HTML.
 */

@@ -1,16 +1,9 @@
-query GetFeed($input: GetFeedRequestBody!) {
-  getFeed(input: $input) {
+query GetFeed($args: GetFeedArgs!) {
+  getFeed(args: $args) {
     count
+    postIDs
     posts {
-      id
-      imageURL
-      description
-      authorID
-      authorProfilePreview {
-        id
-        name
-        username
-      }
+      ...PostFragment
     }
   }
 }
