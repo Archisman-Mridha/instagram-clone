@@ -2,11 +2,11 @@ import { Injectable } from "@nestjs/common"
 import { CommandBus, QueryBus } from "@nestjs/cqrs"
 import { Mutation, Resolver } from "@nestjs/graphql"
 import { PublicRoute } from "src/decorators/public-route"
+import { Args } from "src/utils/graphql"
 import { SigninOutput } from "../auth/dtos"
 import { SigninQuery } from "../auth/queries/signin"
 import { CreateUserCommand } from "./commands/create-user"
 import { CreateUserArgs } from "./dtos"
-import { Args } from "src/utils/graphql"
 
 @Injectable()
 @Resolver()

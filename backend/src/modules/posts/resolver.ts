@@ -1,6 +1,7 @@
 import { CommandBus, QueryBus } from "@nestjs/cqrs"
 import { Mutation, Parent, Query, ResolveField, Resolver } from "@nestjs/graphql"
 import { CurrentUser } from "src/decorators/current-user"
+import { Args } from "src/utils/graphql"
 import { ProfilePreview } from "../profiles/dtos"
 import { GetProfilePreviewByIDQuery } from "../profiles/queries/get-profile-preview-by-id"
 import { CreatePostCommand } from "./commands/create-post"
@@ -8,7 +9,6 @@ import { GetPresignedPostImageURLCommand } from "./commands/get-presigned-post-i
 import { CreatePostArgs, GetPostArgs, GetPostsByAuthorArgs, Post, Posts } from "./dtos"
 import { GetPostByIDQuery } from "./queries/get-post-by-id"
 import { GetPostsByAuthorQuery } from "./queries/get-posts-by-author"
-import { Args } from "src/utils/graphql"
 
 @Resolver(() => Post)
 export class PostsResolver {

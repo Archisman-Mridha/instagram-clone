@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common"
 import { QueryBus } from "@nestjs/cqrs"
 import { Query, Resolver } from "@nestjs/graphql"
+import { Args } from "src/utils/graphql"
 import { Feed, GetFeedArgs } from "./dtos"
 import { GetFeedQuery } from "./queries/get-feed"
-import { Args } from "src/utils/graphql"
 
 @Injectable()
 @Resolver()

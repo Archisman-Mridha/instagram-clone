@@ -1,6 +1,7 @@
 import { QueryBus, CommandBus } from "@nestjs/cqrs"
 import { Mutation, Parent, Query, ResolveField, Resolver } from "@nestjs/graphql"
 import { CurrentUser } from "src/decorators/current-user"
+import { Args } from "src/utils/graphql"
 import { ProfilePreview } from "../profiles/dtos"
 import { GetProfilePreviewByIDQuery } from "../profiles/queries/get-profile-preview-by-id"
 import { CreateFollowshipCommand } from "./commands/create-followship"
@@ -17,7 +18,6 @@ import {
 } from "./dtos"
 import { GetFolloweesQuery } from "./queries/get-followees"
 import { GetFollowersQuery } from "./queries/get-followers"
-import { Args } from "src/utils/graphql"
 
 @Resolver(() => Follower)
 export class FollowerResolver {
