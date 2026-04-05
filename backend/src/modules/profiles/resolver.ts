@@ -1,19 +1,22 @@
 import { Injectable } from "@nestjs/common"
 import { CommandBus, QueryBus } from "@nestjs/cqrs"
-import { Query, Resolver } from "@nestjs/graphql"
+import { Args, Parent, Query, ResolveField, Resolver } from "@nestjs/graphql"
 import { EventPattern, Payload } from "@nestjs/microservices"
-import { Input } from "src/utils/graphql"
 import { KafkaTopic } from "../../utils/kafka"
+import { FollowshipCounts } from "../followships/dtos"
+import { GetFollowshipCountsQuery } from "../followships/queries/get-followship-counts"
+import { Post } from "../posts/dtos"
+import { GetPostsByAuthorQuery } from "../posts/queries/get-posts-by-author"
 import { UserCreatedEvent } from "../users/events"
 import { CreateProfileCommand } from "./commands/create-profile"
 import { IndexProfileCommand } from "./commands/index-profile"
-import { SearchProfilesRequestBody, SearchProfilesResponseBody } from "./dtos"
-import { ProfileEntity } from "./entity"
+import { GetProfileByIDArgs, Profile, ProfilePreviews, SearchProfilesArgs } from "./dtos"
 import { ProfileCreatedEvent } from "./events"
+import { GetProfileByIDQuery } from "./queries/get-profile-by-id"
 import { SearchProfilesQuery } from "./queries/search-profiles"
 
 @Injectable()
-@Resolver(() => ProfileEntity)
+@Resolver(() => Profile)
 export class ProfilesResolver {
   constructor(
     private readonly commandBus: CommandBus,
@@ -30,10 +33,26 @@ export class ProfilesResolver {
     await this.commandBus.execute(new IndexProfileCommand(event.payload.after))
   }
 
-  @Query(() => SearchProfilesResponseBody)
-  async searchProfiles(
-    @Input() input: SearchProfilesRequestBody
-  ): Promise<SearchProfilesResponseBody> {
-    return this.queryBus.execute(new SearchProfilesQuery(input))
+  @Query(() => ProfilePreviews)
+  async searchProfiles(@Args() args: SearchProfilesArgs): Promise<ProfilePreviews> {
+    return this.queryBus.execute(new SearchProfilesQuery(args))
+  }
+
+  @Query(() => Profile)
+  async getProfileByID(@Args() args: GetProfileByIDArgs): Promise<Profile> {
+    return this.queryBus.execute(new GetProfileByIDQuery(args))
+  }
+
+  @ResolveField(() => [Post])
+  async followshipCounts(@Parent() profile: Profile): Promise<FollowshipCounts> {
+    return this.queryBus.execute(new GetFollowshipCountsQuery({ profileID: profile.id }))
+  }
+
+  @ResolveField(() => [Post])
+  async posts(@Parent() profile: Profile): Promise<Array<Post>> {
+    const { posts } = await this.queryBus.execute(
+      new GetPostsByAuthorQuery({ authorID: profile.id })
+    )
+    return posts
   }
 }

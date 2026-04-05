@@ -9,11 +9,7 @@ export interface CreatePostInput {
   decription?: string
 }
 
-export interface CreatePostOutput {
-  id: number
-}
-
-export class CreatePostCommand extends Command<CreatePostOutput> {
+export class CreatePostCommand extends Command<PostEntity> {
   constructor(readonly input: CreatePostInput) {
     super()
   }
@@ -26,10 +22,10 @@ export class CreatePostHandler implements ICommandHandler<CreatePostCommand> {
     private readonly postsRepository: Repository<PostEntity>
   ) {}
 
-  async execute({ input }: CreatePostCommand): Promise<CreatePostOutput> {
+  async execute({ input }: CreatePostCommand): Promise<PostEntity> {
     let post = this.postsRepository.create(input)
     post = await this.postsRepository.save(post)
 
-    return { id: post.id }
+    return post
   }
 }

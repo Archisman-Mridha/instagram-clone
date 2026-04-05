@@ -29,7 +29,7 @@ import { UsersModule } from "../users/module"
 
 export const isDevelopmentEnvironment = process.env.NODE_ENV === "development"
 
-const GRAPHQL_SCHEMA_FILE_PATH = "backend/generated/graphql/schema.graphql"
+const GRAPHQL_SCHEMA_FILE_PATH = "frontend/src/graphql/generated/schema.graphql"
 
 @Module({
   imports: [
@@ -75,7 +75,7 @@ const GRAPHQL_SCHEMA_FILE_PATH = "backend/generated/graphql/schema.graphql"
           ttl: null
         },
 
-        autoSchemaFile: GRAPHQL_SCHEMA_FILE_PATH,
+        autoSchemaFile: isDevelopmentEnvironment ? GRAPHQL_SCHEMA_FILE_PATH : true,
         sortSchema: true,
 
         introspection: true,
@@ -133,8 +133,8 @@ export class RootModule {}
 function getGraphQLServerPlugins(graphQLSchemaHost: GraphQLSchemaHost): ApolloServerPlugin[] {
   const plugins: ApolloServerPlugin[] = []
 
-  if (isDevelopmentEnvironment) plugins.concat([ApolloServerPluginLandingPageLocalDefault()])
-  else plugins.concat([new GraphQLQueryComplexityPlugin(graphQLSchemaHost)])
+  if (isDevelopmentEnvironment) plugins.push(ApolloServerPluginLandingPageLocalDefault())
+  else plugins.concat(new GraphQLQueryComplexityPlugin(graphQLSchemaHost))
 
   return plugins
 }

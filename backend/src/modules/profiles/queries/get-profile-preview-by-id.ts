@@ -1,33 +1,32 @@
 import { NotFoundException } from "@nestjs/common"
-import { QueryHandler, IQueryHandler, Query } from "@nestjs/cqrs"
+import { IQueryHandler, Query, QueryHandler } from "@nestjs/cqrs"
 import { InjectRepository } from "@nestjs/typeorm"
 import { Repository } from "typeorm"
 import { ProfileEntity } from "../entity"
 import { ProfilePreview } from "../types"
 
-export interface GetProfilePreviewInput {
-  profileID: number
+export interface GetProfilePreviewByIDInput {
+  id: number
 }
 
-export class GetProfilePreviewQuery extends Query<ProfilePreview> {
-  constructor(readonly input: GetProfilePreviewInput) {
+export class GetProfilePreviewByIDQuery extends Query<ProfilePreview> {
+  constructor(readonly input: GetProfilePreviewByIDInput) {
     super()
   }
 }
 
-@QueryHandler(GetProfilePreviewQuery)
-export class GetProfilePreviewHandler implements IQueryHandler<GetProfilePreviewQuery> {
+@QueryHandler(GetProfilePreviewByIDQuery)
+export class GetProfilePreviewByIDHandler implements IQueryHandler<GetProfilePreviewByIDQuery> {
   constructor(
     @InjectRepository(ProfileEntity)
     private readonly profilesRepository: Repository<ProfileEntity>
   ) {}
 
-  async execute({ input }: GetProfilePreviewQuery): Promise<ProfilePreview> {
+  async execute({ input }: GetProfilePreviewByIDQuery): Promise<ProfilePreview> {
     const profilePreview = await this.profilesRepository.findOne({
-      where: { id: input.profileID },
+      where: { id: input.id },
       select: ["id", "name", "username"]
     })
-
     if (!profilePreview) throw new NotFoundException()
 
     return profilePreview

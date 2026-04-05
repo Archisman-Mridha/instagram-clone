@@ -1,25 +1,32 @@
-import { Field, InputType, Int, ObjectType, PickType } from "@nestjs/graphql"
+import { Field, ArgsType, Int, ObjectType, PickType } from "@nestjs/graphql"
 import { PaginatedInput, PaginatedOutput } from "src/utils/pagination"
+import { ProfilePreview } from "../profiles/dtos"
 import { PostEntity } from "./entity"
 
-@InputType()
-export class CreatePostRequestBody extends PickType(
-  PostEntity,
-  ["imageURL", "description"],
-  InputType
-) {}
+@ObjectType()
+export class Post extends PostEntity {
+  // NOTE : Resolved by the GraphQL server.
+  @Field(() => ProfilePreview)
+  authorProfilePreview?: ProfilePreview
+}
 
 @ObjectType()
-export class CreatePostResponseBody extends PickType(PostEntity, ["id"]) {}
+export class Posts extends PaginatedOutput {
+  @Field(() => [Post])
+  posts: Array<Post>
+}
 
-@InputType()
-export class GetPostsByAuthorRequestBody extends PaginatedInput {
+@ArgsType()
+export class CreatePostArgs extends PickType(Post, ["imageURL", "description"], ArgsType) {}
+
+@ArgsType()
+export class GetPostsByAuthorArgs extends PaginatedInput {
   @Field(() => Int)
   authorID: number
 }
 
-@ObjectType()
-export class GetPostsByAuthorResponseBody extends PaginatedOutput {
-  @Field(() => [PostEntity])
-  posts: Array<PostEntity>
+@ArgsType()
+export class GetPostArgs {
+  @Field(() => Int)
+  id: number
 }

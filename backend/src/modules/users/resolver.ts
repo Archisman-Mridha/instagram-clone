@@ -1,16 +1,14 @@
 import { Injectable } from "@nestjs/common"
-import { Mutation, Resolver } from "@nestjs/graphql"
-import { PublicRoute } from "src/decorators/public-route"
-import { Input } from "src/utils/graphql"
-import { CreateUserRequestBody } from "./dtos"
-import { UserEntity } from "./entity"
-import { SigninOutput } from "../auth/dtos"
 import { CommandBus, QueryBus } from "@nestjs/cqrs"
+import { Args, Mutation, Resolver } from "@nestjs/graphql"
+import { PublicRoute } from "src/decorators/public-route"
+import { SigninOutput } from "../auth/dtos"
 import { SigninQuery } from "../auth/queries/signin"
 import { CreateUserCommand } from "./commands/create-user"
+import { CreateUserArgs } from "./dtos"
 
 @Injectable()
-@Resolver(() => UserEntity)
+@Resolver()
 export class UsersResolver {
   constructor(
     private readonly commandBus: CommandBus,
@@ -19,8 +17,8 @@ export class UsersResolver {
 
   @PublicRoute()
   @Mutation(() => SigninOutput)
-  async createUser(@Input() input: CreateUserRequestBody): Promise<SigninOutput> {
-    const user = await this.commandBus.execute(new CreateUserCommand(input))
+  async createUser(@Args() args: CreateUserArgs): Promise<SigninOutput> {
+    const user = await this.commandBus.execute(new CreateUserCommand(args))
 
     return this.queryBus.execute(new SigninQuery(user))
   }

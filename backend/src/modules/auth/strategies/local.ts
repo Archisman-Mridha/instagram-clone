@@ -34,7 +34,7 @@ export class LocalAuthGuard extends AuthGuard("local") {
     const graphQLContext = graphQLExecutionContext.getContext(),
       graphQLArgs = graphQLExecutionContext.getArgs()
 
-    graphQLContext.req.body = { ...graphQLContext.req.body, ...graphQLArgs.input }
+    graphQLContext.req.body = { ...graphQLContext.req.body, ...graphQLArgs }
 
     return graphQLContext.req
   }

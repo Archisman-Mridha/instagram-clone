@@ -1,15 +1,19 @@
-import { Field, InputType, Int, ObjectType } from "@nestjs/graphql"
+import { Field, ArgsType, Int, ObjectType } from "@nestjs/graphql"
 import { PaginatedInput, PaginatedOutput } from "src/utils/pagination"
-import { PostEntity } from "../posts/entity"
-
-@InputType()
-export class GetFeedRequestBody extends PaginatedInput {
-  @Field(() => Int)
-  userID: number
-}
+import { Post } from "../posts/dtos"
 
 @ObjectType()
-export class GetFeedResponseBody extends PaginatedOutput {
-  @Field(() => [PostEntity])
-  posts?: Array<PostEntity>
+export class Feed extends PaginatedOutput {
+  @Field(() => [Number])
+  postIDs: Array<number>
+
+  // NOTE : Resolved by the GraphQL server.
+  @Field(() => [Post])
+  posts?: Array<Post>
+}
+
+@ArgsType()
+export class GetFeedArgs extends PaginatedInput {
+  @Field(() => Int)
+  userID: number
 }

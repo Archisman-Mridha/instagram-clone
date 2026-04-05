@@ -1,16 +1,14 @@
 import { CommandBus, QueryBus } from "@nestjs/cqrs"
-import { Query, Resolver } from "@nestjs/graphql"
+import { Args, Query, Resolver } from "@nestjs/graphql"
 import { EventPattern, Payload } from "@nestjs/microservices"
 import { CurrentUser } from "src/decorators/current-user"
-import { Input } from "src/utils/graphql"
 import { KafkaTopic } from "../../utils/kafka"
 import { type FollowshipCreatedEvent } from "../followships/events"
 import { CreateNotificationCommand } from "./commands/create-notification"
-import { GetNotificationsRequestBody, GetNotificationsResponseBody } from "./dtos"
+import { GetNotificationsArgs, Notifications } from "./dtos"
 import { GetNotificationsQuery } from "./queries/get-notifications"
-import { Notification } from "./schema"
 
-@Resolver(() => Notification)
+@Resolver()
 export class NotificationsResolver {
   constructor(
     private readonly commandBus: CommandBus,
@@ -22,11 +20,11 @@ export class NotificationsResolver {
     return this.commandBus.execute(new CreateNotificationCommand(event))
   }
 
-  @Query(() => GetNotificationsResponseBody)
+  @Query(() => Notifications)
   async getNotifications(
     @CurrentUser() userID: number,
-    @Input() input: GetNotificationsRequestBody
-  ): Promise<GetNotificationsResponseBody> {
-    return this.queryBus.execute(new GetNotificationsQuery({ userID, ...input }))
+    @Args() args: GetNotificationsArgs
+  ): Promise<Notifications> {
+    return this.queryBus.execute(new GetNotificationsQuery({ userID, ...args }))
   }
 }

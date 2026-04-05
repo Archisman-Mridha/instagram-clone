@@ -1,23 +1,44 @@
-import { CommandBus, QueryBus } from "@nestjs/cqrs"
-import { Mutation, Query, Resolver } from "@nestjs/graphql"
+import { QueryBus, CommandBus } from "@nestjs/cqrs"
+import { Args, Mutation, Parent, Query, ResolveField, Resolver } from "@nestjs/graphql"
 import { CurrentUser } from "src/decorators/current-user"
-import { Input } from "src/utils/graphql"
-import { GetProfilePreviewsByIDsQuery } from "../profiles/queries/get-profile-previews-by-ids"
+import { ProfilePreview } from "../profiles/dtos"
+import { GetProfilePreviewByIDQuery } from "../profiles/queries/get-profile-preview-by-id"
 import { CreateFollowshipCommand } from "./commands/create-followship"
 import { DeleteFollowshipCommand } from "./commands/delete-followship"
 import {
-  CreateFollowshipRequestBody,
-  DeleteFollowshipRequestBody,
-  GetFolloweesRequestBody,
-  GetFolloweesResponseBody,
-  GetFollowersRequestBody,
-  GetFollowersResponseBody
+  CreateFollowshipArgs,
+  DeleteFollowshipArgs,
+  Followee,
+  Followees,
+  Follower,
+  Followers,
+  GetFolloweesArgs,
+  GetFollowersArgs
 } from "./dtos"
-import { FollowshipEntity } from "./entity"
 import { GetFolloweesQuery } from "./queries/get-followees"
 import { GetFollowersQuery } from "./queries/get-followers"
 
-@Resolver(() => FollowshipEntity)
+@Resolver(() => Follower)
+export class FollowerResolver {
+  constructor(private readonly queryBus: QueryBus) {}
+
+  @ResolveField(() => ProfilePreview)
+  async profilePreview(@Parent() follower: Follower): Promise<ProfilePreview> {
+    return this.queryBus.execute(new GetProfilePreviewByIDQuery({ id: follower.id }))
+  }
+}
+
+@Resolver(() => Followee)
+export class FolloweeResolver {
+  constructor(private readonly queryBus: QueryBus) {}
+
+  @ResolveField(() => ProfilePreview)
+  async profilePreview(@Parent() followee: Followee): Promise<ProfilePreview> {
+    return this.queryBus.execute(new GetProfilePreviewByIDQuery({ id: followee.id }))
+  }
+}
+
+@Resolver()
 export class FollowshipsResolver {
   constructor(
     private readonly commandBus: CommandBus,
@@ -27,9 +48,9 @@ export class FollowshipsResolver {
   @Mutation(() => Boolean)
   async follow(
     @CurrentUser() followerID: number,
-    @Input() input: CreateFollowshipRequestBody
+    @Args() args: CreateFollowshipArgs
   ): Promise<boolean> {
-    await this.commandBus.execute(new CreateFollowshipCommand({ followerID, ...input }))
+    await this.commandBus.execute(new CreateFollowshipCommand({ followerID, ...args }))
 
     return true
   }
@@ -37,37 +58,33 @@ export class FollowshipsResolver {
   @Mutation(() => Boolean)
   async unfollow(
     @CurrentUser() followerID: number,
-    @Input() input: DeleteFollowshipRequestBody
+    @Args() args: DeleteFollowshipArgs
   ): Promise<boolean> {
-    await this.commandBus.execute(new DeleteFollowshipCommand({ followerID, ...input }))
+    await this.commandBus.execute(new DeleteFollowshipCommand({ followerID, ...args }))
 
     return true
   }
 
-  @Query(() => GetFollowersResponseBody)
-  async getFollowers(@Input() input: GetFollowersRequestBody): Promise<GetFollowersResponseBody> {
-    const { followerIDs } = await this.queryBus.execute(new GetFollowersQuery(input))
+  @Query(() => Followers)
+  async getFollowers(@Args() args: GetFollowersArgs): Promise<Followers> {
+    const { count, followerIDs } = await this.queryBus.execute(new GetFollowersQuery(args))
 
-    const { profilePreviews: followers } = await this.queryBus.execute(
-      new GetProfilePreviewsByIDsQuery({ ids: followerIDs })
-    )
+    const followers = followerIDs.map((followerID) => ({ id: followerID }))
 
     return {
-      count: followers.length,
+      count,
       followers
     }
   }
 
-  @Query(() => GetFolloweesResponseBody)
-  async getFollowees(@Input() input: GetFolloweesRequestBody): Promise<GetFolloweesResponseBody> {
-    const { followeeIDs } = await this.queryBus.execute(new GetFolloweesQuery(input))
+  @Query(() => Followees)
+  async getFollowees(@Args() args: GetFolloweesArgs): Promise<Followees> {
+    const { count, followeeIDs } = await this.queryBus.execute(new GetFolloweesQuery(args))
 
-    const { profilePreviews: followees } = await this.queryBus.execute(
-      new GetProfilePreviewsByIDsQuery({ ids: followeeIDs })
-    )
+    const followees = followeeIDs.map((followeeID) => ({ id: followeeID }))
 
     return {
-      count: followees.length,
+      count,
       followees
     }
   }

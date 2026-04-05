@@ -28,11 +28,14 @@ export class GetFeedHandler implements IQueryHandler<GetFeedQuery> {
   async execute({ input }: GetFeedQuery): Promise<GetFeedOutput> {
     const key = `feeds.${input.userID}`
 
-    const unparsedPostIDs = await this.redisClusterClient.lRange(key, input.skip, input.take)
+    const [unparsedPostIDs, count] = await Promise.all([
+      this.redisClusterClient.lRange(key, input.skip, input.take),
+      this.redisClusterClient.lLen(key)
+    ])
     const postIDs = unparsedPostIDs.map((postID) => Number(postID))
 
     return {
-      count: postIDs.length,
+      count,
       postIDs
     }
   }

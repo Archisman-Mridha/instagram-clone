@@ -1,10 +1,9 @@
 import { Field, ID, Int, ObjectType } from "@nestjs/graphql"
 import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm"
-import { ProfilePreview } from "../profiles/dtos"
 
 const DESCRIPTION_MAX_LENGTH = 100
 
-@ObjectType()
+@ObjectType({ isAbstract: true })
 @Entity({ name: "posts" })
 export class PostEntity {
   @Field(() => ID)
@@ -15,9 +14,6 @@ export class PostEntity {
   @Index()
   @Column({ type: "integer" })
   authorID: number
-
-  @Field(() => ProfilePreview)
-  authorProfilePreview: ProfilePreview
 
   @Field()
   @Column({ type: "text" })

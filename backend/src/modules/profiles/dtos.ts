@@ -1,18 +1,37 @@
-import { Field, InputType, ObjectType, PickType } from "@nestjs/graphql"
+import { Field, ArgsType, Int, ObjectType, PickType } from "@nestjs/graphql"
 import { PaginatedInput, PaginatedOutput } from "src/utils/pagination"
+import { FollowshipCounts } from "../followships/dtos"
+import { Post } from "../posts/dtos"
 import { ProfileEntity } from "./entity"
 
-@InputType()
-export class SearchProfilesRequestBody extends PaginatedInput {
-  @Field()
-  query: string
+@ObjectType()
+export class Profile extends ProfileEntity {
+  // NOTE : Resolved by the GraphQL server.
+  @Field(() => FollowshipCounts)
+  followshipCounts?: FollowshipCounts & {}
+
+  // NOTE : Resolved by the GraphQL server.
+  @Field(() => [Post])
+  posts?: Array<Post>
 }
 
 @ObjectType()
-export class SearchProfilesResponseBody extends PaginatedOutput {
+export class ProfilePreview extends PickType(Profile, ["id", "name", "username"]) {}
+
+@ObjectType()
+export class ProfilePreviews extends PaginatedOutput {
   @Field(() => [ProfilePreview])
   profilePreviews: Array<ProfilePreview>
 }
 
-@ObjectType()
-export class ProfilePreview extends PickType(ProfileEntity, ["id", "name", "username"]) {}
+@ArgsType()
+export class SearchProfilesArgs extends PaginatedInput {
+  @Field()
+  query: string
+}
+
+@ArgsType()
+export class GetProfileByIDArgs {
+  @Field(() => Int)
+  id: number
+}

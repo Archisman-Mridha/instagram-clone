@@ -1,13 +1,12 @@
 import { Injectable, UseGuards } from "@nestjs/common"
-import { Query, Resolver } from "@nestjs/graphql"
+import { QueryBus } from "@nestjs/cqrs"
+import { Args, Query, Resolver } from "@nestjs/graphql"
 import { CurrentUser } from "src/decorators/current-user"
 import { PublicRoute } from "src/decorators/public-route"
-import { Input } from "src/utils/graphql"
 import { UserEntity } from "../users/entity"
-import { SigninInput, SigninOutput } from "./dtos"
-import { LocalAuthGuard } from "./strategies/local"
-import { QueryBus } from "@nestjs/cqrs"
+import { SigninArgs, SigninOutput } from "./dtos"
 import { SigninQuery } from "./queries/signin"
+import { LocalAuthGuard } from "./strategies/local"
 
 @Injectable()
 @Resolver()
@@ -17,9 +16,7 @@ export class AuthResolver {
   @PublicRoute()
   @UseGuards(LocalAuthGuard)
   @Query(() => SigninOutput)
-  async signin(@CurrentUser() user: UserEntity, @Input() _: SigninInput): Promise<SigninOutput> {
-    // TODO : Save the JWT in cookies.
-
+  async signin(@CurrentUser() user: UserEntity, @Args() _: SigninArgs): Promise<SigninOutput> {
     return this.queryBus.execute(new SigninQuery(user))
   }
 }

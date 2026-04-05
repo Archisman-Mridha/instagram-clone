@@ -6,7 +6,7 @@ import { UsernameValidator } from "../users/validators"
 
 const BIO_MAX_LENGTH = 100
 
-@ObjectType()
+@ObjectType({ isAbstract: true })
 @Entity({ name: "profiles" })
 export class ProfileEntity {
   @Field(() => ID)

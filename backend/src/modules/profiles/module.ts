@@ -7,8 +7,8 @@ import z from "zod"
 import { CreateProfileHandler } from "./commands/create-profile"
 import { IndexProfileHandler } from "./commands/index-profile"
 import { ProfileEntity } from "./entity"
-import { GetProfilePreviewHandler } from "./queries/get-profile-preview"
-import { GetProfilePreviewsByIDsHandler } from "./queries/get-profile-previews-by-ids"
+import { GetProfileByIDHandler } from "./queries/get-profile-by-id"
+import { GetProfilePreviewByIDHandler } from "./queries/get-profile-preview-by-id"
 import { SearchProfilesHandler } from "./queries/search-profiles"
 import { ProfilesResolver } from "./resolver"
 
@@ -34,8 +34,8 @@ import { ProfilesResolver } from "./resolver"
 
     // Queries.
     SearchProfilesHandler,
-    GetProfilePreviewHandler,
-    GetProfilePreviewsByIDsHandler
+    GetProfilePreviewByIDHandler,
+    GetProfileByIDHandler
   ]
 })
 export class ProfilesModule {}

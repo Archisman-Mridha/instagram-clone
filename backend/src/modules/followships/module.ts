@@ -5,12 +5,15 @@ import { DeleteFollowshipHandler } from "./commands/delete-followship"
 import { FollowshipEntity } from "./entity"
 import { GetFolloweesHandler } from "./queries/get-followees"
 import { GetFollowersHandler } from "./queries/get-followers"
-import { FollowshipsResolver } from "./resolver"
+import { GetFollowshipCountsHandler } from "./queries/get-followship-counts"
+import { FolloweeResolver, FollowerResolver, FollowshipsResolver } from "./resolver"
 
 @Module({
   imports: [TypeOrmModule.forFeature([FollowshipEntity])],
   providers: [
     FollowshipsResolver,
+    FollowerResolver,
+    FolloweeResolver,
 
     // Commands.
     CreateFollowshipHandler,
@@ -18,7 +21,8 @@ import { FollowshipsResolver } from "./resolver"
 
     // Queries.
     GetFollowersHandler,
-    GetFolloweesHandler
+    GetFolloweesHandler,
+    GetFollowshipCountsHandler
   ]
 })
 export class FollowshipsModule {}

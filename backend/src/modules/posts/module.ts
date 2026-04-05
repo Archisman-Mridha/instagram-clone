@@ -4,8 +4,8 @@ import { S3Module } from "../s3/module"
 import { CreatePostHandler } from "./commands/create-post"
 import { GetPresignedPostImageURLHandler } from "./commands/get-presigned-post-image-url"
 import { PostEntity } from "./entity"
+import { GetPostByIDHandler } from "./queries/get-post-by-id"
 import { GetPostsByAuthorHandler } from "./queries/get-posts-by-author"
-import { GetPostsByIDsHandler } from "./queries/get-posts-by-ids"
 import { PostsResolver } from "./resolver"
 
 @Module({
@@ -19,7 +19,7 @@ import { PostsResolver } from "./resolver"
 
     // Queries.
     GetPostsByAuthorHandler,
-    GetPostsByIDsHandler
+    GetPostByIDHandler
   ]
 })
 export class PostsModule {}

@@ -17,7 +17,7 @@ const HASHED_PASSWORD_MAX_LENGTH = 200
 
 const SALT_GENERATION_ROUNDS = 10
 
-@ObjectType()
+@ObjectType({ isAbstract: true })
 @Entity({ name: "users" })
 export class UserEntity {
   @Field(() => ID)

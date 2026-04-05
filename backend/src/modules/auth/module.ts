@@ -5,11 +5,11 @@ import { JwtModule } from "@nestjs/jwt"
 import { PassportModule } from "@nestjs/passport"
 import { ConfigSchema } from "src/config/config"
 import z from "zod"
+import { SigninHandler } from "./queries/signin"
 import { AuthResolver } from "./resolver"
 import { JWTAuthGuard } from "./strategies/jwt"
 import { JWTAuthStrategy } from "./strategies/jwt"
 import { LocalAuthStrategy } from "./strategies/local"
-import { SigninHandler } from "./queries/signin"
 
 @Module({
   imports: [
