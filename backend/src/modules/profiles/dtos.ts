@@ -1,4 +1,4 @@
-import { Field, ArgsType, Int, ObjectType, PickType } from "@nestjs/graphql"
+import { Field, InputType, Int, ObjectType, PickType } from "@nestjs/graphql"
 import { PaginatedInput, PaginatedOutput } from "src/utils/pagination"
 import { FollowshipCounts } from "../followships/dtos"
 import { Post } from "../posts/dtos"
@@ -24,13 +24,13 @@ export class ProfilePreviews extends PaginatedOutput {
   profilePreviews: Array<ProfilePreview>
 }
 
-@ArgsType()
+@InputType()
 export class SearchProfilesArgs extends PaginatedInput {
   @Field()
   query: string
 }
 
-@ArgsType()
+@InputType()
 export class GetProfileByIDArgs {
   @Field(() => Int)
   id: number

@@ -1,5 +1,5 @@
 import { CommandBus, QueryBus } from "@nestjs/cqrs"
-import { Args, Query, Resolver } from "@nestjs/graphql"
+import { Query, Resolver } from "@nestjs/graphql"
 import { EventPattern, Payload } from "@nestjs/microservices"
 import { CurrentUser } from "src/decorators/current-user"
 import { KafkaTopic } from "../../utils/kafka"
@@ -7,6 +7,7 @@ import { type FollowshipCreatedEvent } from "../followships/events"
 import { CreateNotificationCommand } from "./commands/create-notification"
 import { GetNotificationsArgs, Notifications } from "./dtos"
 import { GetNotificationsQuery } from "./queries/get-notifications"
+import { Args } from "src/utils/graphql"
 
 @Resolver()
 export class NotificationsResolver {

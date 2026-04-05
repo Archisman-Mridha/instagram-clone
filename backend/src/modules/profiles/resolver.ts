@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common"
 import { CommandBus, QueryBus } from "@nestjs/cqrs"
-import { Args, Parent, Query, ResolveField, Resolver } from "@nestjs/graphql"
+import { Parent, Query, ResolveField, Resolver } from "@nestjs/graphql"
 import { EventPattern, Payload } from "@nestjs/microservices"
 import { KafkaTopic } from "../../utils/kafka"
 import { FollowshipCounts } from "../followships/dtos"
@@ -14,6 +14,7 @@ import { GetProfileByIDArgs, Profile, ProfilePreviews, SearchProfilesArgs } from
 import { ProfileCreatedEvent } from "./events"
 import { GetProfileByIDQuery } from "./queries/get-profile-by-id"
 import { SearchProfilesQuery } from "./queries/search-profiles"
+import { Args } from "src/utils/graphql"
 
 @Injectable()
 @Resolver(() => Profile)

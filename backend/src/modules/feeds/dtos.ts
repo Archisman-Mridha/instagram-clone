@@ -1,4 +1,4 @@
-import { Field, ArgsType, Int, ObjectType } from "@nestjs/graphql"
+import { Field, InputType, Int, ObjectType } from "@nestjs/graphql"
 import { PaginatedInput, PaginatedOutput } from "src/utils/pagination"
 import { Post } from "../posts/dtos"
 
@@ -12,7 +12,7 @@ export class Feed extends PaginatedOutput {
   posts?: Array<Post>
 }
 
-@ArgsType()
+@InputType()
 export class GetFeedArgs extends PaginatedInput {
   @Field(() => Int)
   userID: number

@@ -1,12 +1,13 @@
 import { Injectable, UseGuards } from "@nestjs/common"
 import { QueryBus } from "@nestjs/cqrs"
-import { Args, Query, Resolver } from "@nestjs/graphql"
+import { Query, Resolver } from "@nestjs/graphql"
 import { CurrentUser } from "src/decorators/current-user"
 import { PublicRoute } from "src/decorators/public-route"
 import { UserEntity } from "../users/entity"
 import { SigninArgs, SigninOutput } from "./dtos"
 import { SigninQuery } from "./queries/signin"
 import { LocalAuthGuard } from "./strategies/local"
+import { Args } from "src/utils/graphql"
 
 @Injectable()
 @Resolver()

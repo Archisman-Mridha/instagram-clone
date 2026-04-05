@@ -1,12 +1,12 @@
-import { ArgsType, ObjectType, PickType } from "@nestjs/graphql"
+import { InputType, ObjectType, PickType } from "@nestjs/graphql"
 import { UserEntity } from "./entity"
 
 @ObjectType()
 export class User extends UserEntity {}
 
-@ArgsType()
+@InputType()
 export class CreateUserArgs extends PickType(
   User,
   ["name", "email", "username", "password"],
-  ArgsType
+  InputType
 ) {}

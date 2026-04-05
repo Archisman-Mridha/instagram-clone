@@ -1,4 +1,4 @@
-import { Field, ArgsType, Int, ObjectType } from "@nestjs/graphql"
+import { Field, InputType, Int, ObjectType } from "@nestjs/graphql"
 import { PaginatedInput, PaginatedOutput } from "src/utils/pagination"
 import { ProfilePreview } from "../profiles/dtos"
 
@@ -43,25 +43,25 @@ export class FollowshipCounts {
   followeeCount: number
 }
 
-@ArgsType()
+@InputType()
 export class CreateFollowshipArgs {
   @Field(() => Int)
   followeeID: number
 }
 
-@ArgsType()
+@InputType()
 export class DeleteFollowshipArgs {
   @Field(() => Int)
   followeeID: number
 }
 
-@ArgsType()
+@InputType()
 export class GetFolloweesArgs extends PaginatedInput {
   @Field(() => Int)
   followerID: number
 }
 
-@ArgsType()
+@InputType()
 export class GetFollowersArgs extends PaginatedInput {
   @Field(() => Int)
   followeeID: number

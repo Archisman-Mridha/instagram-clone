@@ -1,4 +1,4 @@
-import { ArgsType, Field, ObjectType } from "@nestjs/graphql"
+import { InputType, Field, ObjectType } from "@nestjs/graphql"
 import { PaginatedInput, PaginatedOutput } from "src/utils/pagination"
 import { Notification } from "./schema"
 
@@ -8,5 +8,5 @@ export class Notifications extends PaginatedOutput {
   notifications: Array<Notification>
 }
 
-@ArgsType()
+@InputType()
 export class GetNotificationsArgs extends PaginatedInput {}

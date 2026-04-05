@@ -1,4 +1,4 @@
-import { Field, ArgsType, Int, ObjectType, PickType } from "@nestjs/graphql"
+import { Field, InputType, Int, ObjectType, PickType } from "@nestjs/graphql"
 import { PaginatedInput, PaginatedOutput } from "src/utils/pagination"
 import { ProfilePreview } from "../profiles/dtos"
 import { PostEntity } from "./entity"
@@ -16,16 +16,16 @@ export class Posts extends PaginatedOutput {
   posts: Array<Post>
 }
 
-@ArgsType()
-export class CreatePostArgs extends PickType(Post, ["imageURL", "description"], ArgsType) {}
+@InputType()
+export class CreatePostArgs extends PickType(Post, ["imageURL", "description"], InputType) {}
 
-@ArgsType()
+@InputType()
 export class GetPostsByAuthorArgs extends PaginatedInput {
   @Field(() => Int)
   authorID: number
 }
 
-@ArgsType()
+@InputType()
 export class GetPostArgs {
   @Field(() => Int)
   id: number
