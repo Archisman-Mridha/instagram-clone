@@ -51,10 +51,12 @@ export class ProfilesResolver {
 
     // Find out whethe the current user follows this profile.
     // Or in other words, whether this profile is a followee of the user.
-    const isFollowee = await this.queryBus.execute(new FollowshipExistsQuery({
-      followerID: user.id,
-      followeeID: profileEntity.id
-    }))
+    const isFollowee = await this.queryBus.execute(
+      new FollowshipExistsQuery({
+        followerID: user.id,
+        followeeID: profileEntity.id
+      })
+    )
 
     const profile = {
       ...profileEntity,
@@ -70,9 +72,11 @@ export class ProfilesResolver {
 
   @ResolveField(() => [Post])
   async posts(@Parent() profile: Profile): Promise<Array<Post>> {
-    const { posts } = await this.queryBus.execute(new GetPostsByAuthorQuery({
-      authorID: profile.id
-    }))
+    const { posts } = await this.queryBus.execute(
+      new GetPostsByAuthorQuery({
+        authorID: profile.id
+      })
+    )
     return posts
   }
 }

@@ -2,19 +2,9 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../dist/out-tsc",
-    "module": "commonjs",
-    "types": ["node"],
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "target": "es2021",
-    "moduleResolution": "node",
-    "paths": {
-      "src/*": ["backend/src/*"],
-      "@instagram-clone/lib/*": ["lib/src/*"]
-    }
+    "types": ["vitest/globals", "vitest/importMeta", "vite/client", "node", "vitest"]
   },
-  "include": ["src/**/*.ts"],
-  "exclude": [
+  "include": [
     "vite.config.ts",
     "vite.config.mts",
     "vitest.config.ts",
@@ -26,6 +16,7 @@
     "src/**/*.test.js",
     "src/**/*.spec.js",
     "src/**/*.test.jsx",
-    "src/**/*.spec.jsx"
+    "src/**/*.spec.jsx",
+    "src/**/*.d.ts"
   ]
 }

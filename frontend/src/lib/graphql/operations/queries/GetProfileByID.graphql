@@ -8,6 +8,7 @@ query GetProfileByID($args: GetProfileByIDArgs!) {
       followeeCount
       followerCount
     }
+    isFollowee
     posts {
       ...PostFragment
     }

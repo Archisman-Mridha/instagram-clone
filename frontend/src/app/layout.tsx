@@ -32,6 +32,7 @@
 import "server-only"
 import "./global.css"
 import { Metadata } from "next"
+import { ContextProviders } from "./_components/context-providers/component"
 
 export const metadata: Metadata = {
   title: "Instagram Clone",
@@ -41,7 +42,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <ContextProviders>{children}</ContextProviders>
+      </body>
     </html>
   )
 }

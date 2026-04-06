@@ -29,19 +29,22 @@
          have them overlap.
 */
 
-import { HttpLink } from "@apollo/client"
-import {
-  ApolloClient,
-  InMemoryCache,
-  registerApolloClient
-} from "@apollo/client-integration-nextjs"
+import { HttpLink, setLogVerbosity } from "@apollo/client"
+import { ApolloClient, InMemoryCache } from "@apollo/client-integration-nextjs"
 
-const apolloClient = new ApolloClient({
-  cache: new InMemoryCache(),
+export const ACCESS_TOKEN_LOCAL_STORAGE_KEY = "access-token"
 
-  link: new HttpLink({
-    uri: process.env.GRAPHQL_SERVER_URL
+export const createApolloClient = () =>
+  new ApolloClient({
+    cache: new InMemoryCache(),
+
+    link: new HttpLink({
+      uri: process.env.GRAPHQL_SERVER_URL,
+
+      // Tell the network interface to send the cookie along with every request, for
+      // authentication.
+      credentials: "include"
+    })
   })
-})
 
-export const { getClient, query, PreloadQuery } = registerApolloClient(() => apolloClient)
+if (process.env.NODE_ENV === "development") setLogVerbosity("debug")

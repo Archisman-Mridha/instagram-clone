@@ -18,3 +18,5 @@ out
 
 .claude/worktrees
 .claude/settings.local.json
+
+*.tsxc

@@ -2,16 +2,8 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../dist/out-tsc",
-    "module": "commonjs",
-    "types": ["node"],
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "target": "es2021",
-    "moduleResolution": "node",
-    "paths": {
-      "src/*": ["backend/src/*"],
-      "@instagram-clone/lib/*": ["lib/src/*"]
-    }
+    "declaration": true,
+    "types": ["node"]
   },
   "include": ["src/**/*.ts"],
   "exclude": [

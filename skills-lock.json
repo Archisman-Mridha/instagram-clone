@@ -76,6 +76,51 @@
       "sourceType": "github",
       "computedHash": "d27174128aebe583d5ca15747389c84e286daed589bfa2b99847392a012719b5"
     },
+    "safe-action-advanced": {
+      "source": "next-safe-action/skills",
+      "sourceType": "github",
+      "computedHash": "8f6a02c788c3979bb1214dbcdb08bba1887d3901a341ffa0671ab11bcc99da5d"
+    },
+    "safe-action-client": {
+      "source": "next-safe-action/skills",
+      "sourceType": "github",
+      "computedHash": "dd14193532532bd15905ea14e2656643c6dbef797334cf1728e0ebf0034c6c80"
+    },
+    "safe-action-forms": {
+      "source": "next-safe-action/skills",
+      "sourceType": "github",
+      "computedHash": "62d8ccbd47b01c0e9cd78301a963c1b304ebfc8473178d27b97076ade0ef739d"
+    },
+    "safe-action-hooks": {
+      "source": "next-safe-action/skills",
+      "sourceType": "github",
+      "computedHash": "5a959ef154d9fce38397b7114b90905b1af469e8ba383523d0f3c7da47ab43ec"
+    },
+    "safe-action-middleware": {
+      "source": "next-safe-action/skills",
+      "sourceType": "github",
+      "computedHash": "d30dd70b3e0248cbdd94575d5fa5d9469ed3df60537406ab1643c56aba619b24"
+    },
+    "safe-action-tanstack-query": {
+      "source": "next-safe-action/skills",
+      "sourceType": "github",
+      "computedHash": "733364d3bb6f042c382c8a06e28c0745f9cae9dc43f717d55bd81e292b6f0781"
+    },
+    "safe-action-testing": {
+      "source": "next-safe-action/skills",
+      "sourceType": "github",
+      "computedHash": "ca3760d8921f7179891744f4c9dc55ad805e537c2f16e8b81e21b01fa432d839"
+    },
+    "safe-action-validation-errors": {
+      "source": "next-safe-action/skills",
+      "sourceType": "github",
+      "computedHash": "98cd9da8b23ff0211fc02066dcc89c1414d2f0d5b9e438655d7eab29b6417c86"
+    },
+    "shadcn": {
+      "source": "shadcn/ui",
+      "sourceType": "github",
+      "computedHash": "507f011a70e8b3ae242bdc0bb5b39fd91a1d4049a0f3c281991ccf84973d591c"
+    },
     "skill-creator": {
       "source": "apollographql/skills",
       "sourceType": "github",

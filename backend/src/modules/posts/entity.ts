@@ -1,7 +1,6 @@
+import { POST_DESCRIPTION_MAX_LENGTH } from "@instagram-clone/lib/validators/validators"
 import { Field, ID, Int, ObjectType } from "@nestjs/graphql"
 import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm"
-
-const DESCRIPTION_MAX_LENGTH = 100
 
 @ObjectType({ isAbstract: true })
 @Entity({ name: "posts" })
@@ -20,6 +19,6 @@ export class PostEntity {
   imageURL: string
 
   @Field({ nullable: true })
-  @Column({ type: "varchar", nullable: true, length: DESCRIPTION_MAX_LENGTH })
+  @Column({ type: "varchar", nullable: true, length: POST_DESCRIPTION_MAX_LENGTH })
   description?: string
 }

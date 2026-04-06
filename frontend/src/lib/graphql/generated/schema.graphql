@@ -128,6 +128,7 @@ type Profile {
   bio: String
   followshipCounts: FollowshipCounts!
   id: ID!
+  isFollowee: Boolean!
   name: String!
   posts: [Post!]!
   username: String!
