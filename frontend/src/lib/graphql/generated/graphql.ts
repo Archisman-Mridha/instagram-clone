@@ -82,7 +82,6 @@ export type FollowshipCounts = {
 export type GetFeedArgs = {
   skip?: Scalars["Int"]["input"]
   take?: Scalars["Int"]["input"]
-  userID: Scalars["Int"]["input"]
 }
 
 export type GetFolloweesArgs = {

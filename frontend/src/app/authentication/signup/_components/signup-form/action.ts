@@ -5,7 +5,6 @@ import { CreateUserDocument } from "@instagram-clone/frontend/lib/graphql/genera
 import { getClient } from "@instagram-clone/frontend/lib/graphql/server-side-client"
 import { actionClient } from "@instagram-clone/frontend/lib/safe-action"
 import { createUserArgsValidator } from "@instagram-clone/lib/validators/validators"
-import { UnrecognizedActionError } from "next/dist/client/components/unrecognized-action-error"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 
@@ -17,12 +16,13 @@ export const signupAction = actionClient
       variables: { args: parsedInput }
     })
 
-    if(error || !data)
-      throw new UnrecognizedActionError
+    if (error || !data) throw new Error("unhandled")
 
     // Store the user id and access token in cookies.
 
-    const { createUser: { userID, accessToken } } = data
+    const {
+      createUser: { userID, accessToken }
+    } = data
 
     const cookieStore = await cookies()
 

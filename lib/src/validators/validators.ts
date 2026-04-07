@@ -52,21 +52,19 @@ export const createUserArgsValidator = z.object({
   password: passwordValidator
 })
 
-export type CreateUserArgsSchema = z.infer<typeof createUserArgsValidator>
-
 export const signinArgsValidator = z.object({
   email: z.email(),
   password: passwordValidator
 })
 
-export type SigninArgsSchema = z.infer<typeof signinArgsValidator>
+export const getProfileValidator = z.object({
+  id: z.number().int()
+})
 
 export const createPostValidator = z.object({
   description: postDescriptionValidator,
   imageURL: z.url()
 })
-
-export type CreatePostSchema = z.infer<typeof createPostValidator>
 
 function isAlphabetic(character: string) {
   return (character >= "a" && character <= "z") || (character >= "A" && character <= "Z")

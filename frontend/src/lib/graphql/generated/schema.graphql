@@ -56,7 +56,6 @@ type FollowshipCounts {
 input GetFeedArgs {
   skip: Int! = 0
   take: Int! = 25
-  userID: Int!
 }
 
 input GetFolloweesArgs {
