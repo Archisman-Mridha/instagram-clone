@@ -76,6 +76,11 @@
       "sourceType": "github",
       "computedHash": "d27174128aebe583d5ca15747389c84e286daed589bfa2b99847392a012719b5"
     },
+    "rspack-best-practices": {
+      "source": "rstackjs/agent-skills",
+      "sourceType": "github",
+      "computedHash": "1fa1f81e135ff913271a538f995aa378649b22775a588a573c861cf7f507ebd5"
+    },
     "safe-action-advanced": {
       "source": "next-safe-action/skills",
       "sourceType": "github",

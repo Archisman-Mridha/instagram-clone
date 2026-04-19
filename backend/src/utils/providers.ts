@@ -1,5 +1,0 @@
-export enum Provider {
-  S3_CLIENT = "S3_CLIENT",
-
-  REDIS_CLUSTER_CLIENT = "REDIS_CLUSTER_CLIENT"
-}

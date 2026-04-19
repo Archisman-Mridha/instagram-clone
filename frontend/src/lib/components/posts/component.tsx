@@ -32,7 +32,7 @@ export const Posts: FunctionComponent<PostsProps> = ({ initialPosts, totalCount,
 
         startTransition(async () => {
           const newPosts = await fetchMore(postFragments.length)
-          setPostFragments(prev => [...prev, ...newPosts])
+          setPostFragments((prev) => [...prev, ...newPosts])
         })
       },
       { rootMargin: "200px" }

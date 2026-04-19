@@ -44,10 +44,6 @@
 
 - [ ] Handle GraphQL operation errors in the frontend.
 
-- [ ] Configure `Hot Module Replacement (HMR)` for `NestJS`.
-
-- [ ] Shift from using `cookies` to `sessions` for authentication.
-
 ## REFERENCEs
 
 ### NestJS

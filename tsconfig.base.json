@@ -15,10 +15,18 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@instagram-clone/backend/*": ["backend/src/*"],
-      "@instagram-clone/frontend/*": ["frontend/src/*"],
-      "@instagram-clone/lib/*": ["lib/src/*"]
+      "@instagram-clone/backend/gateway*": ["backend/gateway/src/*"],
+
+      "@instagram-clone/microservices/auth*": ["backend/microservices/auth/src/*"],
+      "@instagram-clone/microservices/profiles*": ["backend/microservices/profiles/src/*"],
+      "@instagram-clone/microservices/followships*": ["backend/microservices/followships/src/*"],
+      "@instagram-clone/microservices/posts*": ["backend/microservices/posts/src/*"],
+      "@instagram-clone/microservices/feeds*": ["backend/microservices/feeds/src/*"],
+
+      "@instagram-clone/lib/*": ["lib/src/*"],
+
+      "@instagram-clone/frontend/*": ["frontend/src/*"]
     }
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": ["node_modules"]
 }

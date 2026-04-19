@@ -1,0 +1,29 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Mutation {
+  signup(args: SignupArgs!): SigninOutput!
+}
+
+type Query {
+  ping: String!
+  signin(args: SigninArgs!): SigninOutput!
+}
+
+input SigninArgs {
+  email: String!
+  password: String!
+}
+
+type SigninOutput {
+  accessToken: String!
+  userID: ID!
+}
+
+input SignupArgs {
+  email: String!
+  name: String!
+  password: String!
+  username: String!
+}

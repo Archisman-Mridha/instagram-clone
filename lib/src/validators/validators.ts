@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { isNumber, isAlphabetic } from "../utils/utils"
 
 export const NAME_MIN_LENGTH = 3,
   NAME_MAX_LENGTH = 30
@@ -45,7 +46,7 @@ export const POST_DESCRIPTION_MAX_LENGTH = 100
 
 const postDescriptionValidator = z.string().max(POST_DESCRIPTION_MAX_LENGTH)
 
-export const createUserArgsValidator = z.object({
+export const signupArgsValidator = z.object({
   name: nameValidator,
   username: usernameValidator,
   email: z.email(),
@@ -65,11 +66,3 @@ export const createPostValidator = z.object({
   description: postDescriptionValidator,
   imageURL: z.url()
 })
-
-function isAlphabetic(character: string) {
-  return (character >= "a" && character <= "z") || (character >= "A" && character <= "Z")
-}
-
-function isNumber(character: string) {
-  return character >= "0" && character <= "9"
-}
