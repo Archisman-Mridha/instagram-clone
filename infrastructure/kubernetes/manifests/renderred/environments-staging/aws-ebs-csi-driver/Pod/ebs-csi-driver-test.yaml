@@ -4,8 +4,7 @@ metadata:
   annotations:
     helm.sh/hook: test
     helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded,hook-failed
-    ignore-check.kube-linter.io/no-read-only-root-fs: test pod requires privileged
-      access
+    ignore-check.kube-linter.io/no-read-only-root-fs: test pod requires privileged access
     ignore-check.kube-linter.io/run-as-non-root: kubetest2 image runs as root
   labels:
     app.kubernetes.io/managed-by: Helmraiser
@@ -14,55 +13,55 @@ metadata:
   namespace: default
 spec:
   containers:
-  - args:
-    - |
-      cp /etc/config/storageclass.yaml /workspace/storageclass.yaml
-      kubectl config set-cluster cluster --server=https://kubernetes.default --certificate-authority=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-      kubectl config set-context kubetest2 --cluster=cluster
-      kubectl config set-credentials sa --token=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
-      kubectl config set-context kubetest2 --user=sa && kubectl config use-context kubetest2
-      export FOCUS_REGEX='\bebs.csi.aws.com\b.+(validate content|resize volume|offline PVC|AllowedTopologies|store data'
-      if kubectl get crd volumesnapshots.snapshot.storage.k8s.io; then
-        FOCUS_REGEX="${FOCUS_REGEX}|snapshot fields)"
-      else
-        FOCUS_REGEX="${FOCUS_REGEX})"
-      fi
+    - args:
+        - |
+          cp /etc/config/storageclass.yaml /workspace/storageclass.yaml
+          kubectl config set-cluster cluster --server=https://kubernetes.default --certificate-authority=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+          kubectl config set-context kubetest2 --cluster=cluster
+          kubectl config set-credentials sa --token=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+          kubectl config set-context kubetest2 --user=sa && kubectl config use-context kubetest2
+          export FOCUS_REGEX='\bebs.csi.aws.com\b.+(validate content|resize volume|offline PVC|AllowedTopologies|store data'
+          if kubectl get crd volumesnapshots.snapshot.storage.k8s.io; then
+            FOCUS_REGEX="${FOCUS_REGEX}|snapshot fields)"
+          else
+            FOCUS_REGEX="${FOCUS_REGEX})"
+          fi
 
-      echo "Detecting Kubernetes server version"
-      export KUBE_VERSION=$(kubectl version --output json | jq -r '.serverVersion.major + "." + .serverVersion.minor' | sed 's/[^0-9.]*$//')
-      echo "Detected KUBE_VERSION=${KUBE_VERSION}"
+          echo "Detecting Kubernetes server version"
+          export KUBE_VERSION=$(kubectl version --output json | jq -r '.serverVersion.major + "." + .serverVersion.minor' | sed 's/[^0-9.]*$//')
+          echo "Detected KUBE_VERSION=${KUBE_VERSION}"
 
-      echo "Fetching the stable test package version for KUBE_VERSION=${KUBE_VERSION}"
-      test_package_version=$(curl -L https://dl.k8s.io/release/stable-${KUBE_VERSION}.txt 2>/dev/null)
+          echo "Fetching the stable test package version for KUBE_VERSION=${KUBE_VERSION}"
+          test_package_version=$(curl -L https://dl.k8s.io/release/stable-${KUBE_VERSION}.txt 2>/dev/null)
 
-      if echo "$test_package_version" | grep -q "Error"; then
-        echo "Error: Failed to fetch test package version for KUBE_VERSION=${KUBE_VERSION}. Exiting."
-        exit 1
-      fi
-      echo "Fetched test package version ${test_package_version}"
+          if echo "$test_package_version" | grep -q "Error"; then
+            echo "Error: Failed to fetch test package version for KUBE_VERSION=${KUBE_VERSION}. Exiting."
+            exit 1
+          fi
+          echo "Fetched test package version ${test_package_version}"
 
-      echo "Starting kubetest2 with ginkgo tests..."
-      kubetest2 noop --run-id='e2e-kubernetes' --test=ginkgo -- --test-package-version="$test_package_version" --skip-regex='[Disruptive]|[Serial]' --focus-regex="$FOCUS_REGEX" --parallel=25 --test-args='-storage.testdriver=/etc/config/manifests.yaml'
-      echo "kubetest2 test run completed."
-    command:
-    - /bin/sh
-    - -c
-    image: us-central1-docker.pkg.dev/k8s-staging-test-infra/images/kubekins-e2e:v20260512-1f34ef0df3-master
-    name: kubetest2
-    resources:
-      limits:
-        memory: 8Gi
-      requests:
-        cpu: 2000m
-        memory: 8Gi
-    volumeMounts:
-    - mountPath: /etc/config
-      name: config-vol
+          echo "Starting kubetest2 with ginkgo tests..."
+          kubetest2 noop --run-id='e2e-kubernetes' --test=ginkgo -- --test-package-version="$test_package_version" --skip-regex='[Disruptive]|[Serial]' --focus-regex="$FOCUS_REGEX" --parallel=25 --test-args='-storage.testdriver=/etc/config/manifests.yaml'
+          echo "kubetest2 test run completed."
+      command:
+        - /bin/sh
+        - -c
+      image: us-central1-docker.pkg.dev/k8s-staging-test-infra/images/kubekins-e2e:v20260512-1f34ef0df3-master
+      name: kubetest2
+      resources:
+        limits:
+          memory: 8Gi
+        requests:
+          cpu: 2000m
+          memory: 8Gi
+      volumeMounts:
+        - mountPath: /etc/config
+          name: config-vol
   nodeSelector:
     kubernetes.io/os: linux
   restartPolicy: Never
   serviceAccountName: ebs-csi-driver-test
   volumes:
-  - configMap:
-      name: ebs-csi-driver-test
-    name: config-vol
+    - configMap:
+        name: ebs-csi-driver-test
+      name: config-vol

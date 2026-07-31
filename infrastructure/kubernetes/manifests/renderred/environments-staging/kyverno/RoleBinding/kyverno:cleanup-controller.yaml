@@ -17,6 +17,6 @@ roleRef:
   kind: Role
   name: kyverno:cleanup-controller
 subjects:
-- kind: ServiceAccount
-  name: kyverno-cleanup-controller
-  namespace: kyverno
+  - kind: ServiceAccount
+    name: kyverno-cleanup-controller
+    namespace: kyverno

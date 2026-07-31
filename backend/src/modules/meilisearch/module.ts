@@ -12,10 +12,11 @@ const MEILISEARCH_OPTIONS = Symbol("MEILISEARCH_OPTIONS")
 
 interface MeilisearchModuleAsyncOptions extends Pick<ModuleMetadata, "imports"> {
 	inject?: FactoryProvider["inject"]
-	useFactory: (...args: any[]) => Config | Promise<Config>
+	useFactory: FactoryProvider<Config>["useFactory"]
 }
 
 @Module({})
+// biome-ignore lint/complexity/noStaticOnlyClass: required by the NestJS dynamic module pattern.
 export class MeilisearchModule {
 	static register(config: Config): DynamicModule {
 		return {

@@ -26,76 +26,76 @@ spec:
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-          - podAffinityTerm:
-              labelSelector:
-                matchExpressions:
-                - key: control-plane
-                  operator: In
-                  values:
-                  - controller-manager
-              topologyKey: kubernetes.io/hostname
-            weight: 100
+            - podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: control-plane
+                      operator: In
+                      values:
+                        - controller-manager
+                topologyKey: kubernetes.io/hostname
+              weight: 100
       containers:
-      - args:
-        - --enable-leader-election
-        - --metrics-addr=:8080
-        - --health-probe-addr=:8000
-        - --logtostderr=true
-        - --leader-election-namespace=kruise-system
-        - --v=4
-        - --feature-gates=ImagePullJobGate=true
-        - --sync-period=0
-        command:
-        - /manager
-        env:
-        - name: POD_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        - name: WEBHOOK_PORT
-          value: "9876"
-        image: openkruise/kruise-manager:v1.9.0-alpha3
-        imagePullPolicy: Always
-        name: manager
-        ports:
-        - containerPort: 9876
-          name: webhook-server
-          protocol: TCP
-        - containerPort: 8080
-          name: metrics
-          protocol: TCP
-        - containerPort: 8000
-          name: health
-          protocol: TCP
-        readinessProbe:
-          httpGet:
-            path: readyz
-            port: 8000
-        resources:
-          limits:
-            cpu: 200m
-            memory: 512Mi
-          requests:
-            cpu: 100m
-            memory: 256Mi
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            add:
-            - NET_BIND_SERVICE
-            drop:
-            - all
-          runAsNonRoot: true
-          runAsUser: 65534
+        - args:
+            - --enable-leader-election
+            - --metrics-addr=:8080
+            - --health-probe-addr=:8000
+            - --logtostderr=true
+            - --leader-election-namespace=kruise-system
+            - --v=4
+            - --feature-gates=ImagePullJobGate=true
+            - --sync-period=0
+          command:
+            - /manager
+          env:
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: WEBHOOK_PORT
+              value: "9876"
+          image: openkruise/kruise-manager:v1.9.0-alpha3
+          imagePullPolicy: Always
+          name: manager
+          ports:
+            - containerPort: 9876
+              name: webhook-server
+              protocol: TCP
+            - containerPort: 8080
+              name: metrics
+              protocol: TCP
+            - containerPort: 8000
+              name: health
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: readyz
+              port: 8000
+          resources:
+            limits:
+              cpu: 200m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              add:
+                - NET_BIND_SERVICE
+              drop:
+                - all
+            runAsNonRoot: true
+            runAsUser: 65534
       hostNetwork: false
       serviceAccountName: kruise-manager
       terminationGracePeriodSeconds: 10
       topologySpreadConstraints:
-      - labelSelector:
-          matchLabels:
-            control-plane: controller-manager
-        matchLabelKeys:
-        - pod-template-hash
-        maxSkew: 1
-        topologyKey: topology.kubernetes.io/zone
-        whenUnsatisfiable: ScheduleAnyway
+        - labelSelector:
+            matchLabels:
+              control-plane: controller-manager
+          matchLabelKeys:
+            - pod-template-hash
+          maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway

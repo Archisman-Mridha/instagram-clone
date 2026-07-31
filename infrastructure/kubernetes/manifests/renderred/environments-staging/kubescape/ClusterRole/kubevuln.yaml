@@ -15,26 +15,26 @@ metadata:
     tier: ks-control-plane
   name: kubevuln
 rules:
-- apiGroups:
-  - spdx.softwarecomposition.kubescape.io
-  resources:
-  - vulnerabilitymanifests
-  - vulnerabilitymanifestsummaries
-  - openvulnerabilityexchangecontainers
-  - sbomsyfts
-  - sbomsyftfiltereds
-  verbs:
-  - create
-  - get
-  - update
-  - watch
-  - list
-  - patch
-- apiGroups:
-  - spdx.softwarecomposition.kubescape.io
-  resources:
-  - containerprofiles
-  verbs:
-  - get
-  - watch
-  - list
+  - apiGroups:
+      - spdx.softwarecomposition.kubescape.io
+    resources:
+      - vulnerabilitymanifests
+      - vulnerabilitymanifestsummaries
+      - openvulnerabilityexchangecontainers
+      - sbomsyfts
+      - sbomsyftfiltereds
+    verbs:
+      - create
+      - get
+      - update
+      - watch
+      - list
+      - patch
+  - apiGroups:
+      - spdx.softwarecomposition.kubescape.io
+    resources:
+      - containerprofiles
+    verbs:
+      - get
+      - watch
+      - list

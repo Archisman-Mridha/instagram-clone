@@ -12,38 +12,38 @@ metadata:
     helm.sh/chart: argo-cd-9.5.19
   name: argo-cd-argocd-notifications-controller
 rules:
-- apiGroups:
-  - argoproj.io
-  resources:
-  - applications
-  - appprojects
-  verbs:
-  - get
-  - list
-  - watch
-  - update
-  - patch
-- apiGroups:
-  - ""
-  resources:
-  - configmaps
-  - secrets
-  verbs:
-  - list
-  - watch
-- apiGroups:
-  - ""
-  resourceNames:
-  - argocd-notifications-cm
-  resources:
-  - configmaps
-  verbs:
-  - get
-- apiGroups:
-  - ""
-  resourceNames:
-  - argocd-notifications-secret
-  resources:
-  - secrets
-  verbs:
-  - get
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - applications
+      - appprojects
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+      - patch
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+      - secrets
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resourceNames:
+      - argocd-notifications-cm
+    resources:
+      - configmaps
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resourceNames:
+      - argocd-notifications-secret
+    resources:
+      - secrets
+    verbs:
+      - get

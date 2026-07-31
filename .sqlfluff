@@ -1,0 +1,10 @@
+[sqlfluff]
+dialect = postgres
+max_line_length = 100
+
+[sqlfluff:indentation]
+tab_space_size = 2
+
+[sqlfluff:rules:references.keywords]
+# Both are unreserved keywords in PostgreSQL, and thus legal as unquoted identifiers.
+ignore_words = name,password

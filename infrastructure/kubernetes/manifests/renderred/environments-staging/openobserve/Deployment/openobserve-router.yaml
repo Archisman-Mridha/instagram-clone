@@ -28,66 +28,65 @@ spec:
         role: router
     spec:
       containers:
-      - env:
-        - name: ZO_NODE_ROLE
-          value: router
-        envFrom:
-        - configMapRef:
-            name: openobserve
-        - configMapRef:
-            name: openobserve-router
-        - secretRef:
-            name: openobserve-auth-credentials
-        image: o2cr.ai/openobserve/openobserve-enterprise:v0.80.2
-        imagePullPolicy: IfNotPresent
-        livenessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /healthz
-            port: 5080
-          initialDelaySeconds: 10
-          periodSeconds: 10
-          successThreshold: 1
-          terminationGracePeriodSeconds: 30
-          timeoutSeconds: 5
-        name: openobserve-router
-        ports:
-        - containerPort: 5080
-          name: http
-        - containerPort: 5081
-          name: grpc
-        readinessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /healthz
-            port: 5080
-          initialDelaySeconds: 10
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 5
-        resources: {}
-        securityContext: {}
-        startupProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /healthz
-            port: 5080
-          initialDelaySeconds: 10
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 5
+        - env:
+            - name: ZO_NODE_ROLE
+              value: router
+          envFrom:
+            - configMapRef:
+                name: openobserve
+            - configMapRef:
+                name: openobserve-router
+            - secretRef:
+                name: openobserve-auth-credentials
+          image: o2cr.ai/openobserve/openobserve-enterprise:v0.80.2
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 5080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            terminationGracePeriodSeconds: 30
+            timeoutSeconds: 5
+          name: openobserve-router
+          ports:
+            - containerPort: 5080
+              name: http
+            - containerPort: 5081
+              name: grpc
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 5080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources: {}
+          securityContext: {}
+          startupProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 5080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
       initContainers:
-      - command:
-        - sh
-        - -c
-        - ' until nc -zv openobserve-nats 4222; do echo "Waiting for NATS to be ready...";
-          sleep 2; done; '
-        image: public.ecr.aws/docker/library/busybox:1.36.1
-        name: check-nats
-        resources:
-          limits:
-            cpu: 50m
-            memory: 50Mi
+        - command:
+            - sh
+            - -c
+            - " until nc -zv openobserve-nats 4222; do echo \"Waiting for NATS to be ready...\"; sleep 2; done; "
+          image: public.ecr.aws/docker/library/busybox:1.36.1
+          name: check-nats
+          resources:
+            limits:
+              cpu: 50m
+              memory: 50Mi
       securityContext:
         fsGroup: 2000
         runAsGroup: 3000

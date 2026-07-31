@@ -16,6 +16,6 @@ roleRef:
   kind: Role
   name: ebs-csi-leases-role
 subjects:
-- kind: ServiceAccount
-  name: ebs-csi-controller-sa
-  namespace: aws
+  - kind: ServiceAccount
+    name: ebs-csi-controller-sa
+    namespace: aws

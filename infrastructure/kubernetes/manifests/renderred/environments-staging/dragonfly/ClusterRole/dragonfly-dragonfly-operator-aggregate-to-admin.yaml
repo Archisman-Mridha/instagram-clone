@@ -13,24 +13,24 @@ metadata:
     rbac.authorization.k8s.io/aggregate-to-admin: "true"
   name: dragonfly-dragonfly-operator-aggregate-to-admin
 rules:
-- apiGroups:
-  - dragonflydb.io
-  resources:
-  - dragonflies
-  verbs:
-  - create
-  - delete
-  - deletecollection
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - dragonflydb.io
-  resources:
-  - dragonflies/status
-  verbs:
-  - get
-  - list
-  - watch
+  - apiGroups:
+      - dragonflydb.io
+    resources:
+      - dragonflies
+    verbs:
+      - create
+      - delete
+      - deletecollection
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - dragonflydb.io
+    resources:
+      - dragonflies/status
+    verbs:
+      - get
+      - list
+      - watch

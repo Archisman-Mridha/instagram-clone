@@ -32,94 +32,94 @@ spec:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
-            - matchExpressions:
-              - key: eks.amazonaws.com/compute-type
-                operator: NotIn
-                values:
-                - fargate
+              - matchExpressions:
+                  - key: eks.amazonaws.com/compute-type
+                    operator: NotIn
+                    values:
+                      - fargate
       containers:
-      - env:
-        - name: NODE_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: spec.nodeName
-        - name: POD_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.name
-        - name: NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        - name: ENABLE_PROBES_SERVER
-          value: "false"
-        - name: PROBES_SERVER_PORT
-          value: "8080"
-        - name: PROBES_SERVER_ENDPOINT
-          value: /healthz
-        - name: LOG_LEVEL
-          value: info
-        - name: JSON_LOGGING
-          value: "false"
-        - name: LOG_FORMAT_VERSION
-          value: "1"
-        - name: ENABLE_PROMETHEUS_SERVER
-          value: "true"
-        - name: PROMETHEUS_SERVER_PORT
-          value: "9092"
-        - name: METADATA_TRIES
-          value: "3"
-        - name: DRY_RUN
-          value: "false"
-        - name: CORDON_ONLY
-          value: "false"
-        - name: TAINT_NODE
-          value: "false"
-        - name: ENABLE_OUT_OF_SERVICE_TAINT
-          value: "false"
-        - name: EXCLUDE_FROM_LOAD_BALANCERS
-          value: "false"
-        - name: DELETE_LOCAL_DATA
-          value: "true"
-        - name: IGNORE_DAEMON_SETS
-          value: "true"
-        - name: POD_TERMINATION_GRACE_PERIOD
-          value: "-1"
-        - name: NODE_TERMINATION_GRACE_PERIOD
-          value: "120"
-        - name: EMIT_KUBERNETES_EVENTS
-          value: "true"
-        - name: ENABLE_SPOT_INTERRUPTION_DRAINING
-          value: "true"
-        - name: ENABLE_ASG_LIFECYCLE_DRAINING
-          value: "true"
-        - name: ENABLE_SCHEDULED_EVENT_DRAINING
-          value: "true"
-        - name: ENABLE_REBALANCE_MONITORING
-          value: "false"
-        - name: ENABLE_REBALANCE_DRAINING
-          value: "false"
-        - name: ENABLE_SQS_TERMINATION_DRAINING
-          value: "false"
-        - name: UPTIME_FROM_FILE
-          value: /proc/uptime
-        image: public.ecr.aws/aws-ec2/aws-node-termination-handler:v1.25.6
-        imagePullPolicy: IfNotPresent
-        name: aws-node-termination-handler
-        ports:
-        - containerPort: 9092
-          name: http-metrics
-          protocol: TCP
-        securityContext:
-          allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
-          runAsGroup: 1000
-          runAsNonRoot: true
-          runAsUser: 1000
-        volumeMounts:
-        - mountPath: /proc/uptime
-          name: uptime
-          readOnly: true
+        - env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: ENABLE_PROBES_SERVER
+              value: "false"
+            - name: PROBES_SERVER_PORT
+              value: "8080"
+            - name: PROBES_SERVER_ENDPOINT
+              value: /healthz
+            - name: LOG_LEVEL
+              value: info
+            - name: JSON_LOGGING
+              value: "false"
+            - name: LOG_FORMAT_VERSION
+              value: "1"
+            - name: ENABLE_PROMETHEUS_SERVER
+              value: "true"
+            - name: PROMETHEUS_SERVER_PORT
+              value: "9092"
+            - name: METADATA_TRIES
+              value: "3"
+            - name: DRY_RUN
+              value: "false"
+            - name: CORDON_ONLY
+              value: "false"
+            - name: TAINT_NODE
+              value: "false"
+            - name: ENABLE_OUT_OF_SERVICE_TAINT
+              value: "false"
+            - name: EXCLUDE_FROM_LOAD_BALANCERS
+              value: "false"
+            - name: DELETE_LOCAL_DATA
+              value: "true"
+            - name: IGNORE_DAEMON_SETS
+              value: "true"
+            - name: POD_TERMINATION_GRACE_PERIOD
+              value: "-1"
+            - name: NODE_TERMINATION_GRACE_PERIOD
+              value: "120"
+            - name: EMIT_KUBERNETES_EVENTS
+              value: "true"
+            - name: ENABLE_SPOT_INTERRUPTION_DRAINING
+              value: "true"
+            - name: ENABLE_ASG_LIFECYCLE_DRAINING
+              value: "true"
+            - name: ENABLE_SCHEDULED_EVENT_DRAINING
+              value: "true"
+            - name: ENABLE_REBALANCE_MONITORING
+              value: "false"
+            - name: ENABLE_REBALANCE_DRAINING
+              value: "false"
+            - name: ENABLE_SQS_TERMINATION_DRAINING
+              value: "false"
+            - name: UPTIME_FROM_FILE
+              value: /proc/uptime
+          image: public.ecr.aws/aws-ec2/aws-node-termination-handler:v1.25.6
+          imagePullPolicy: IfNotPresent
+          name: aws-node-termination-handler
+          ports:
+            - containerPort: 9092
+              name: http-metrics
+              protocol: TCP
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsGroup: 1000
+            runAsNonRoot: true
+            runAsUser: 1000
+          volumeMounts:
+            - mountPath: /proc/uptime
+              name: uptime
+              readOnly: true
       dnsPolicy: ClusterFirstWithHostNet
       hostNetwork: true
       nodeSelector:
@@ -129,11 +129,11 @@ spec:
         fsGroup: 1000
       serviceAccountName: aws-node-termination-handler
       tolerations:
-      - operator: Exists
+        - operator: Exists
       volumes:
-      - hostPath:
-          path: /proc/uptime
-        name: uptime
+        - hostPath:
+            path: /proc/uptime
+          name: uptime
   updateStrategy:
     rollingUpdate:
       maxUnavailable: 25%

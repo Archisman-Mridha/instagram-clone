@@ -1,0 +1,70 @@
+apiVersion: db.atlasgo.io/v1alpha1
+kind: AtlasSchema
+metadata:
+  labels:
+    app.tanka.grafana.com: openmedia
+  name: openmedia
+  namespace: openmedia
+spec:
+  urlFrom:
+    policy:
+      lint:
+        destructive:
+          error: true
+    schema:
+      sql: |
+        -- NOTE : Adding a unique constraint will automatically create a unique B-tree index on the column
+        --        or group of columns listed in the constraint.
+
+        CREATE TABLE users (
+          id SERIAL PRIMARY KEY,
+
+          name VARCHAR(30) NOT NULL,
+          email VARCHAR(320) NOT NULL UNIQUE,
+          username VARCHAR(30) NOT NULL UNIQUE,
+          password VARCHAR(200) NOT NULL -- hashed
+        );
+
+        CREATE TABLE profiles (
+          id INTEGER PRIMARY KEY,
+
+          name VARCHAR(30) NOT NULL,
+          username VARCHAR(30) NOT NULL UNIQUE
+        );
+
+        CREATE TABLE followships (
+          id SERIAL,
+
+          follower_id INTEGER NOT NULL,
+          followee_id INTEGER NOT NULL
+        );
+
+        CREATE INDEX followers_index ON followships (follower_id, followee_id);
+        CREATE INDEX followees_index ON followships (followee_id, follower_id);
+
+        CREATE TABLE posts (
+          id SERIAL PRIMARY KEY,
+
+          author_id INTEGER NOT NULL,
+
+          description VARCHAR(150) NOT NULL
+        );
+
+        CREATE INDEX author_posts_index ON posts (author_id);
+
+        CREATE TABLE feeds (
+          id SERIAL,
+
+          consumer_id INTEGER NOT NULL,
+
+          post_id INTEGER NOT NULL,
+          post_author_id INTEGER NOT NULL,
+          post_created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+
+          UNIQUE (consumer_id, post_id)
+        );
+
+        CREATE INDEX consumer_feed_posts_index ON feeds (consumer_id, post_created_at);
+    secretKeyRef:
+      key: url
+      name: openmedia-credentials

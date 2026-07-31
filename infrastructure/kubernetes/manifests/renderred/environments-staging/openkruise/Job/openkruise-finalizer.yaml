@@ -26,8 +26,8 @@ spec:
       name: openkruise-finalizer
     spec:
       containers:
-      - image: openkruise/kruise-helm-hook:v0.1.0
-        imagePullPolicy: IfNotPresent
-        name: pre-delete-job
+        - image: openkruise/kruise-helm-hook:v0.1.0
+          imagePullPolicy: IfNotPresent
+          name: pre-delete-job
       restartPolicy: Never
       serviceAccountName: kruise-helm-hook

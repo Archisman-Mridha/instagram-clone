@@ -9,29 +9,29 @@ metadata:
 spec:
   authorization:
     acls:
-    - host: '*'
-      operations:
-      - Describe
-      - Read
-      - Write
-      resource:
-        name: events.users.created
-        patternType: literal
-        type: topic
-    - host: '*'
-      operations:
-      - Describe
-      - Read
-      - Write
-      resource:
-        name: events.profiles.created
-        patternType: literal
-        type: topic
-    - host: '*'
-      operations:
-      - Read
-      resource:
-        name: openmedia-backend
-        patternType: prefix
-        type: group
+      - host: "*"
+        operations:
+          - Describe
+          - Read
+          - Write
+        resource:
+          name: events.users.created
+          patternType: literal
+          type: topic
+      - host: "*"
+        operations:
+          - Describe
+          - Read
+          - Write
+        resource:
+          name: events.profiles.created
+          patternType: literal
+          type: topic
+      - host: "*"
+        operations:
+          - Read
+        resource:
+          name: openmedia-backend
+          patternType: prefix
+          type: group
     type: simple

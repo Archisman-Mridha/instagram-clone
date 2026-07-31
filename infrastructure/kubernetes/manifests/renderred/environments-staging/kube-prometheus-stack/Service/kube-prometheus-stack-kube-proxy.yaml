@@ -17,10 +17,10 @@ metadata:
 spec:
   clusterIP: None
   ports:
-  - name: http-metrics
-    port: 10249
-    protocol: TCP
-    targetPort: 10249
+    - name: http-metrics
+      port: 10249
+      protocol: TCP
+      targetPort: 10249
   selector:
     k8s-app: kube-proxy
   type: ClusterIP

@@ -28,38 +28,37 @@ spec:
         role: compactor
     spec:
       containers:
-      - env:
-        - name: ZO_NODE_ROLE
-          value: compactor
-        envFrom:
-        - configMapRef:
-            name: openobserve
-        - configMapRef:
-            name: openobserve-compactor
-        - secretRef:
-            name: openobserve-auth-credentials
-        image: o2cr.ai/openobserve/openobserve-enterprise:v0.80.2
-        imagePullPolicy: IfNotPresent
-        name: openobserve-compactor
-        ports:
-        - containerPort: 5080
-          name: http
-        - containerPort: 5081
-          name: grpc
-        resources: {}
-        securityContext: {}
+        - env:
+            - name: ZO_NODE_ROLE
+              value: compactor
+          envFrom:
+            - configMapRef:
+                name: openobserve
+            - configMapRef:
+                name: openobserve-compactor
+            - secretRef:
+                name: openobserve-auth-credentials
+          image: o2cr.ai/openobserve/openobserve-enterprise:v0.80.2
+          imagePullPolicy: IfNotPresent
+          name: openobserve-compactor
+          ports:
+            - containerPort: 5080
+              name: http
+            - containerPort: 5081
+              name: grpc
+          resources: {}
+          securityContext: {}
       initContainers:
-      - command:
-        - sh
-        - -c
-        - ' until nc -zv openobserve-nats 4222; do echo "Waiting for NATS to be ready...";
-          sleep 2; done; '
-        image: public.ecr.aws/docker/library/busybox:1.36.1
-        name: check-nats
-        resources:
-          limits:
-            cpu: 50m
-            memory: 50Mi
+        - command:
+            - sh
+            - -c
+            - " until nc -zv openobserve-nats 4222; do echo \"Waiting for NATS to be ready...\"; sleep 2; done; "
+          image: public.ecr.aws/docker/library/busybox:1.36.1
+          name: check-nats
+          resources:
+            limits:
+              cpu: 50m
+              memory: 50Mi
       securityContext:
         fsGroup: 2000
         runAsGroup: 3000

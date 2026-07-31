@@ -20,24 +20,24 @@ spec:
         kubearmor-app: kubearmor-relay
     spec:
       containers:
-      - args:
-        - --tlsEnabled=false
-        env:
-        - name: ENABLE_STDOUT_LOGS
-          value: "false"
-        - name: ENABLE_STDOUT_ALERTS
-          value: "false"
-        - name: ENABLE_STDOUT_MSGS
-          value: "false"
-        image: docker.io/kubearmor/kubearmor-relay-server:latest
-        imagePullPolicy: Always
-        name: kubearmor-relay-server
-        ports:
-        - containerPort: 32767
-        resources:
-          requests:
-            cpu: 10m
-            memory: 64Mi
+        - args:
+            - --tlsEnabled=false
+          env:
+            - name: ENABLE_STDOUT_LOGS
+              value: "false"
+            - name: ENABLE_STDOUT_ALERTS
+              value: "false"
+            - name: ENABLE_STDOUT_MSGS
+              value: "false"
+          image: docker.io/kubearmor/kubearmor-relay-server:latest
+          imagePullPolicy: Always
+          name: kubearmor-relay-server
+          ports:
+            - containerPort: 32767
+          resources:
+            requests:
+              cpu: 10m
+              memory: 64Mi
       nodeSelector:
         kubernetes.io/os: linux
       serviceAccountName: kubearmor-relay

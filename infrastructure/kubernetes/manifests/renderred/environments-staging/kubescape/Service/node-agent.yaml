@@ -17,10 +17,10 @@ metadata:
   namespace: kubescape
 spec:
   ports:
-  - name: prometheus
-    port: 8080
-    protocol: TCP
-    targetPort: 8080
+    - name: prometheus
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
   selector:
     app.kubernetes.io/component: node-agent
     app.kubernetes.io/instance: kubescape

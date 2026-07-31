@@ -11,36 +11,36 @@ metadata:
     release: strimzi
   name: strimzi-entity-operator
 rules:
-- apiGroups:
-  - kafka.strimzi.io
-  resources:
-  - kafkatopics
-  - kafkatopics/status
-  - kafkausers
-  - kafkausers/status
-  verbs:
-  - get
-  - list
-  - watch
-  - create
-  - patch
-  - update
-  - delete
-- apiGroups:
-  - ""
-  resources:
-  - events
-  verbs:
-  - create
-- apiGroups:
-  - ""
-  resources:
-  - secrets
-  verbs:
-  - get
-  - list
-  - watch
-  - create
-  - delete
-  - patch
-  - update
+  - apiGroups:
+      - kafka.strimzi.io
+    resources:
+      - kafkatopics
+      - kafkatopics/status
+      - kafkausers
+      - kafkausers/status
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - patch
+      - update
+      - delete
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - create
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - delete
+      - patch
+      - update

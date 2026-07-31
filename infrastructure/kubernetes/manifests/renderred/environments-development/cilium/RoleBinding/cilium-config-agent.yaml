@@ -12,6 +12,6 @@ roleRef:
   kind: Role
   name: cilium-config-agent
 subjects:
-- kind: ServiceAccount
-  name: cilium
-  namespace: cilium
+  - kind: ServiceAccount
+    name: cilium
+    namespace: cilium

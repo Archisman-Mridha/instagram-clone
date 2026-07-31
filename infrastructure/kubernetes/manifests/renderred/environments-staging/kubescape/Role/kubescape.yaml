@@ -16,15 +16,15 @@ metadata:
   name: kubescape
   namespace: kubescape
 rules:
-- apiGroups:
-  - apps
-  resources:
-  - daemonsets
-  verbs:
-  - create
-  - get
-  - update
-  - watch
-  - list
-  - patch
-  - delete
+  - apiGroups:
+      - apps
+    resources:
+      - daemonsets
+    verbs:
+      - create
+      - get
+      - update
+      - watch
+      - list
+      - patch
+      - delete

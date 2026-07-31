@@ -16,6 +16,6 @@ roleRef:
   kind: ClusterRole
   name: strimzi-cluster-operator-watched
 subjects:
-- kind: ServiceAccount
-  name: strimzi-cluster-operator
-  namespace: strimzi
+  - kind: ServiceAccount
+    name: strimzi-cluster-operator
+    namespace: strimzi

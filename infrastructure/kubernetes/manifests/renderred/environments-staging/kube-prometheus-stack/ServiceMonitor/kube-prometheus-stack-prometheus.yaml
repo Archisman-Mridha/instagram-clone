@@ -15,13 +15,13 @@ metadata:
   namespace: kube-prometheus-stack
 spec:
   endpoints:
-  - path: /metrics
-    port: http-web
-  - path: /metrics
-    port: reloader-web
+    - path: /metrics
+      port: http-web
+    - path: /metrics
+      port: reloader-web
   namespaceSelector:
     matchNames:
-    - kube-prometheus-stack
+      - kube-prometheus-stack
   selector:
     matchLabels:
       app: kube-prometheus-stack-prometheus

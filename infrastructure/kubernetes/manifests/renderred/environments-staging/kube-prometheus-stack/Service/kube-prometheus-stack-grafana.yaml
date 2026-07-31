@@ -12,10 +12,10 @@ metadata:
   namespace: kube-prometheus-stack
 spec:
   ports:
-  - name: http-web
-    port: 80
-    protocol: TCP
-    targetPort: grafana
+    - name: http-web
+      port: 80
+      protocol: TCP
+      targetPort: grafana
   selector:
     app.kubernetes.io/instance: kube-prometheus-stack
     app.kubernetes.io/name: grafana

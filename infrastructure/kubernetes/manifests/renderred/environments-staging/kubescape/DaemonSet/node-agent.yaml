@@ -45,149 +45,149 @@ spec:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
-            - matchExpressions:
-              - key: kubernetes.io/os
-                operator: In
-                values:
-                - linux
+              - matchExpressions:
+                  - key: kubernetes.io/os
+                    operator: In
+                    values:
+                      - linux
       automountServiceAccountToken: true
       containers:
-      - image: quay.io/kubescape/klamav:1.3.1-34_alpha
-        imagePullPolicy: IfNotPresent
-        name: clamav
-        resources:
-          limits:
-            cpu: 300m
-            memory: 512Mi
-          requests:
-            cpu: 100m
-            memory: 256Mi
-        securityContext:
-          capabilities:
-            add:
-            - SYS_PTRACE
-          runAsUser: 0
-        volumeMounts:
-        - mountPath: /var/lib/clamav-tmp
-          name: clamdb
-        - mountPath: /run/clamav
-          name: clamrun
-        - mountPath: /etc/clamav
-          name: etc
-          readOnly: true
-      - env:
-        - name: GOMEMLIMIT
-          value: 1120MiB
-        - name: HOST_ROOT
-          value: /host
-        - name: KS_LOGGER_LEVEL
-          value: info
-        - name: KS_LOGGER_NAME
-          value: zap
-        - name: CLAMAV_SOCKET
-          value: /clamav/clamd.sock
-        - name: NODE_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: spec.nodeName
-        - name: POD_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.name
-        - name: NAMESPACE_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        - name: KUBELET_ROOT
-          value: /var/lib/kubelet
-        - name: AGENT_VERSION
-          value: v0.3.119
-        - name: NodeName
-          valueFrom:
-            fieldRef:
-              fieldPath: spec.nodeName
-        image: quay.io/kubescape/node-agent:v0.3.119
-        imagePullPolicy: IfNotPresent
-        livenessProbe:
-          httpGet:
-            path: /livez
-            port: 7888
-          periodSeconds: 3
-        name: node-agent
-        readinessProbe:
-          httpGet:
-            path: /readyz
-            port: 7888
-          periodSeconds: 3
-        resources:
-          limits:
-            cpu: 500m
-            memory: 1400Mi
-          requests:
-            cpu: 100m
-            memory: 180Mi
-        securityContext:
-          capabilities:
-            add:
-            - SYS_ADMIN
-            - SYS_PTRACE
-            - NET_ADMIN
-            - SYSLOG
-            - SYS_RESOURCE
-            - IPC_LOCK
-            - NET_RAW
-          privileged: false
-          runAsUser: 0
-          seLinuxOptions:
-            type: spc_t
-        startupProbe:
-          failureThreshold: 30
-          httpGet:
-            path: /readyz
-            port: 7888
-          periodSeconds: 10
-          timeoutSeconds: 1
-        volumeMounts:
-        - mountPath: /host
-          name: host
-          readOnly: true
-        - mountPath: /var/lib/kubelet
-          name: kubeletdir
-        - mountPath: /run
-          name: run
-        - mountPath: /var
-          name: var
-          readOnly: true
-        - mountPath: /lib/modules
-          name: modules
-          readOnly: true
-        - mountPath: /sys/kernel/debug
-          name: debugfs
-        - mountPath: /sys/fs/cgroup
-          name: cgroup
-          readOnly: true
-        - mountPath: /sys/fs/bpf
-          name: bpffs
-        - mountPath: /data
-          name: data
-        - mountPath: /profiles
-          name: profiles
-        - mountPath: /boot
-          name: boot
-          readOnly: true
-        - mountPath: /clamav
-          name: clamrun
-        - mountPath: /etc/credentials
-          name: cloud-secret
-          readOnly: true
-        - mountPath: /etc/config/clusterData.json
-          name: ks-cloud-config
-          readOnly: true
-          subPath: clusterData.json
-        - mountPath: /etc/config/config.json
-          name: config
-          readOnly: true
-          subPath: config.json
+        - image: quay.io/kubescape/klamav:1.3.1-34_alpha
+          imagePullPolicy: IfNotPresent
+          name: clamav
+          resources:
+            limits:
+              cpu: 300m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+          securityContext:
+            capabilities:
+              add:
+                - SYS_PTRACE
+            runAsUser: 0
+          volumeMounts:
+            - mountPath: /var/lib/clamav-tmp
+              name: clamdb
+            - mountPath: /run/clamav
+              name: clamrun
+            - mountPath: /etc/clamav
+              name: etc
+              readOnly: true
+        - env:
+            - name: GOMEMLIMIT
+              value: 1120MiB
+            - name: HOST_ROOT
+              value: /host
+            - name: KS_LOGGER_LEVEL
+              value: info
+            - name: KS_LOGGER_NAME
+              value: zap
+            - name: CLAMAV_SOCKET
+              value: /clamav/clamd.sock
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: NAMESPACE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: KUBELET_ROOT
+              value: /var/lib/kubelet
+            - name: AGENT_VERSION
+              value: v0.3.119
+            - name: NodeName
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          image: quay.io/kubescape/node-agent:v0.3.119
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /livez
+              port: 7888
+            periodSeconds: 3
+          name: node-agent
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 7888
+            periodSeconds: 3
+          resources:
+            limits:
+              cpu: 500m
+              memory: 1400Mi
+            requests:
+              cpu: 100m
+              memory: 180Mi
+          securityContext:
+            capabilities:
+              add:
+                - SYS_ADMIN
+                - SYS_PTRACE
+                - NET_ADMIN
+                - SYSLOG
+                - SYS_RESOURCE
+                - IPC_LOCK
+                - NET_RAW
+            privileged: false
+            runAsUser: 0
+            seLinuxOptions:
+              type: spc_t
+          startupProbe:
+            failureThreshold: 30
+            httpGet:
+              path: /readyz
+              port: 7888
+            periodSeconds: 10
+            timeoutSeconds: 1
+          volumeMounts:
+            - mountPath: /host
+              name: host
+              readOnly: true
+            - mountPath: /var/lib/kubelet
+              name: kubeletdir
+            - mountPath: /run
+              name: run
+            - mountPath: /var
+              name: var
+              readOnly: true
+            - mountPath: /lib/modules
+              name: modules
+              readOnly: true
+            - mountPath: /sys/kernel/debug
+              name: debugfs
+            - mountPath: /sys/fs/cgroup
+              name: cgroup
+              readOnly: true
+            - mountPath: /sys/fs/bpf
+              name: bpffs
+            - mountPath: /data
+              name: data
+            - mountPath: /profiles
+              name: profiles
+            - mountPath: /boot
+              name: boot
+              readOnly: true
+            - mountPath: /clamav
+              name: clamrun
+            - mountPath: /etc/credentials
+              name: cloud-secret
+              readOnly: true
+            - mountPath: /etc/config/clusterData.json
+              name: ks-cloud-config
+              readOnly: true
+              subPath: clusterData.json
+            - mountPath: /etc/config/config.json
+              name: config
+              readOnly: true
+              subPath: config.json
       hostPID: true
       nodeSelector:
         kubernetes.io/os: linux
@@ -198,65 +198,65 @@ spec:
       serviceAccountName: node-agent
       tolerations: null
       volumes:
-      - hostPath:
-          path: /
-        name: host
-      - hostPath:
-          path: /var/lib/kubelet
-        name: kubeletdir
-      - hostPath:
-          path: /run
-        name: run
-      - hostPath:
-          path: /var
-        name: var
-      - hostPath:
-          path: /sys/fs/cgroup
-        name: cgroup
-      - hostPath:
-          path: /lib/modules
-        name: modules
-      - hostPath:
-          path: /sys/fs/bpf
-        name: bpffs
-      - hostPath:
-          path: /sys/kernel/debug
-        name: debugfs
-      - hostPath:
-          path: /boot
-        name: boot
-      - emptyDir: null
-        name: data
-      - emptyDir: null
-        name: profiles
-      - hostPath:
-          path: /
-          type: Directory
-        name: host-filesystem
-      - emptyDir: {}
-        name: clamdb
-      - emptyDir: {}
-        name: clamrun
-      - configMap:
-          items:
-          - key: clamd.conf
-            path: clamd.conf
-          - key: freshclam.conf
-            path: freshclam.conf
-          name: clamav
-        name: etc
-      - name: cloud-secret
-        secret:
-          secretName: cloud-secret
-      - configMap:
-          items:
-          - key: clusterData
-            path: clusterData.json
+        - hostPath:
+            path: /
+          name: host
+        - hostPath:
+            path: /var/lib/kubelet
+          name: kubeletdir
+        - hostPath:
+            path: /run
+          name: run
+        - hostPath:
+            path: /var
+          name: var
+        - hostPath:
+            path: /sys/fs/cgroup
+          name: cgroup
+        - hostPath:
+            path: /lib/modules
+          name: modules
+        - hostPath:
+            path: /sys/fs/bpf
+          name: bpffs
+        - hostPath:
+            path: /sys/kernel/debug
+          name: debugfs
+        - hostPath:
+            path: /boot
+          name: boot
+        - emptyDir: null
+          name: data
+        - emptyDir: null
+          name: profiles
+        - hostPath:
+            path: /
+            type: Directory
+          name: host-filesystem
+        - emptyDir: {}
+          name: clamdb
+        - emptyDir: {}
+          name: clamrun
+        - configMap:
+            items:
+              - key: clamd.conf
+                path: clamd.conf
+              - key: freshclam.conf
+                path: freshclam.conf
+            name: clamav
+          name: etc
+        - name: cloud-secret
+          secret:
+            secretName: cloud-secret
+        - configMap:
+            items:
+              - key: clusterData
+                path: clusterData.json
+            name: ks-cloud-config
           name: ks-cloud-config
-        name: ks-cloud-config
-      - configMap:
-          items:
-          - key: config.json
-            path: config.json
-          name: node-agent
-        name: config
+        - configMap:
+            items:
+              - key: config.json
+                path: config.json
+            name: node-agent
+          name: config

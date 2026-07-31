@@ -42,7 +42,7 @@ local clusterName = 'staging.openmedia',
 (import 'openkruise.libsonnet') +
 
 (import 'cloudnative-pg.libsonnet') +
-(import 'atlasgo.libsonnet') +
+(import 'atlas.libsonnet') +
 (import 'strimzi.libsonnet') +
 (import 'meilisearch.libsonnet') +
 (import 'dragonfly.libsonnet') +

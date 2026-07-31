@@ -6,32 +6,32 @@ metadata:
     app.tanka.grafana.com: openkruise
   name: kruise-certs-role
 rules:
-- apiGroups:
-  - admissionregistration.k8s.io
-  resourceNames:
-  - kruise-mutating-webhook-configuration
-  resources:
-  - mutatingwebhookconfigurations
-  verbs:
-  - patch
-  - update
-- apiGroups:
-  - admissionregistration.k8s.io
-  resourceNames:
-  - kruise-validating-webhook-configuration
-  resources:
-  - validatingwebhookconfigurations
-  verbs:
-  - patch
-  - update
-- apiGroups:
-  - apiextensions.k8s.io
-  resourceNames:
-  - statefulsets.apps.kruise.io
-  - sidecarsets.apps.kruise.io
-  - daemonsets.apps.kruise.io
-  resources:
-  - customresourcedefinitions
-  verbs:
-  - update
-  - watch
+  - apiGroups:
+      - admissionregistration.k8s.io
+    resourceNames:
+      - kruise-mutating-webhook-configuration
+    resources:
+      - mutatingwebhookconfigurations
+    verbs:
+      - patch
+      - update
+  - apiGroups:
+      - admissionregistration.k8s.io
+    resourceNames:
+      - kruise-validating-webhook-configuration
+    resources:
+      - validatingwebhookconfigurations
+    verbs:
+      - patch
+      - update
+  - apiGroups:
+      - apiextensions.k8s.io
+    resourceNames:
+      - statefulsets.apps.kruise.io
+      - sidecarsets.apps.kruise.io
+      - daemonsets.apps.kruise.io
+    resources:
+      - customresourcedefinitions
+    verbs:
+      - update
+      - watch

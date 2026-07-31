@@ -13,10 +13,10 @@ metadata:
   namespace: default
 spec:
   ports:
-  - appProtocol: tcp
-    name: nats
-    port: 4222
-    targetPort: nats
+    - appProtocol: tcp
+      name: nats
+      port: 4222
+      targetPort: nats
   selector:
     app.kubernetes.io/component: nats
     app.kubernetes.io/instance: openobserve

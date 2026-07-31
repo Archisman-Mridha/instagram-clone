@@ -15,6 +15,6 @@ roleRef:
   kind: ClusterRole
   name: ebs-csi-node-role
 subjects:
-- kind: ServiceAccount
-  name: ebs-csi-node-sa
-  namespace: aws
+  - kind: ServiceAccount
+    name: ebs-csi-node-sa
+    namespace: aws

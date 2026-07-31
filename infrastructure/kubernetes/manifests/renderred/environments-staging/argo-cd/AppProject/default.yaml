@@ -7,12 +7,12 @@ metadata:
   namespace: argo-cd
 spec:
   clusterResourceWhitelist:
-  - group: '*'
-    kind: '*'
+    - group: "*"
+      kind: "*"
   destinations:
-  - namespace: '*'
-    server: '*'
+    - namespace: "*"
+      server: "*"
   orphanedResources:
     warn: true
   sourceRepos:
-  - https://github.com/archisman-mridha/openmedia
+    - https://github.com/archisman-mridha/openmedia

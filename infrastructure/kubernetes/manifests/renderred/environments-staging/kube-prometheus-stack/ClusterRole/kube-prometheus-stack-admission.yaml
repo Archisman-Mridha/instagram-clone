@@ -18,12 +18,12 @@ metadata:
     release: kube-prometheus-stack
   name: kube-prometheus-stack-admission
 rules:
-- apiGroups:
-  - admissionregistration.k8s.io
-  resources:
-  - validatingwebhookconfigurations
-  - mutatingwebhookconfigurations
-  verbs:
-  - get
-  - update
-  - patch
+  - apiGroups:
+      - admissionregistration.k8s.io
+    resources:
+      - validatingwebhookconfigurations
+      - mutatingwebhookconfigurations
+    verbs:
+      - get
+      - update
+      - patch

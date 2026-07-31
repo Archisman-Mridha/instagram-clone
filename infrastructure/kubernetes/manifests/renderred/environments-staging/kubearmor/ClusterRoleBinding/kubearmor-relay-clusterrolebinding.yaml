@@ -10,6 +10,6 @@ roleRef:
   kind: ClusterRole
   name: kubearmor-relay-clusterrole
 subjects:
-- kind: ServiceAccount
-  name: kubearmor-relay
-  namespace: kubearmor
+  - kind: ServiceAccount
+    name: kubearmor-relay
+    namespace: kubearmor

@@ -35,22 +35,22 @@ spec:
       name: kube-prometheus-stack-admission-patch
     spec:
       containers:
-      - args:
-        - patch
-        - --webhook-name=kube-prometheus-stack-admission
-        - --namespace=kube-prometheus-stack
-        - --secret-name=kube-prometheus-stack-admission
-        - --patch-failure-policy=
-        image: ghcr.io/jkroepke/kube-webhook-certgen:1.8.3
-        imagePullPolicy: IfNotPresent
-        name: patch
-        resources: {}
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-            - ALL
-          readOnlyRootFilesystem: true
+        - args:
+            - patch
+            - --webhook-name=kube-prometheus-stack-admission
+            - --namespace=kube-prometheus-stack
+            - --secret-name=kube-prometheus-stack-admission
+            - --patch-failure-policy=
+          image: ghcr.io/jkroepke/kube-webhook-certgen:1.8.3
+          imagePullPolicy: IfNotPresent
+          name: patch
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
       restartPolicy: OnFailure
       securityContext:
         runAsGroup: 2000

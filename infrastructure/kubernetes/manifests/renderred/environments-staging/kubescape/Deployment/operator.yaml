@@ -53,83 +53,83 @@ spec:
       affinity: null
       automountServiceAccountToken: true
       containers:
-      - env:
-        - name: NODE_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: spec.nodeName
-        - name: HELM_RELEASE
-          value: kubescape-operator-1.40.2
-        - name: GOMEMLIMIT
-          valueFrom:
-            resourceFieldRef:
-              divisor: "1"
-              resource: limits.memory
-        - name: KS_LOGGER_LEVEL
-          value: info
-        - name: KS_LOGGER_NAME
-          value: zap
-        image: quay.io/kubescape/operator:v0.2.142
-        imagePullPolicy: IfNotPresent
-        livenessProbe:
-          httpGet:
-            path: /v1/liveness
-            port: readiness-port
-          initialDelaySeconds: 3
-          periodSeconds: 3
-        name: operator
-        ports:
-        - containerPort: 4002
-          name: trigger-port
-          protocol: TCP
-        - containerPort: 8000
-          name: readiness-port
-          protocol: TCP
-        - containerPort: 8443
-          name: admission-port
-          protocol: TCP
-        readinessProbe:
-          httpGet:
-            path: /v1/readiness
-            port: readiness-port
-          initialDelaySeconds: 10
-          periodSeconds: 5
-        resources:
-          limits:
-            cpu: 300m
-            memory: 300Mi
-          requests:
-            cpu: 50m
-            memory: 100Mi
-        securityContext:
-          allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
-          runAsNonRoot: true
-        volumeMounts:
-        - mountPath: /etc/credentials
-          name: cloud-secret
-          readOnly: true
-        - mountPath: /tmp
-          name: tmp-dir
-        - mountPath: /etc/config/clusterData.json
-          name: ks-cloud-config
-          readOnly: true
-          subPath: clusterData.json
-        - mountPath: /etc/config/capabilities.json
-          name: ks-capabilities
-          readOnly: true
-          subPath: capabilities.json
-        - mountPath: /etc/config/matchingRules.json
-          name: cs-matching-rules
-          readOnly: true
-          subPath: matchingRules.json
-        - mountPath: /etc/config/config.json
-          name: config
-          readOnly: true
-          subPath: config.json
-        - mountPath: /etc/certs
-          name: tls-certs
-          readOnly: true
+        - env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: HELM_RELEASE
+              value: kubescape-operator-1.40.2
+            - name: GOMEMLIMIT
+              valueFrom:
+                resourceFieldRef:
+                  divisor: "1"
+                  resource: limits.memory
+            - name: KS_LOGGER_LEVEL
+              value: info
+            - name: KS_LOGGER_NAME
+              value: zap
+          image: quay.io/kubescape/operator:v0.2.142
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /v1/liveness
+              port: readiness-port
+            initialDelaySeconds: 3
+            periodSeconds: 3
+          name: operator
+          ports:
+            - containerPort: 4002
+              name: trigger-port
+              protocol: TCP
+            - containerPort: 8000
+              name: readiness-port
+              protocol: TCP
+            - containerPort: 8443
+              name: admission-port
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /v1/readiness
+              port: readiness-port
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          resources:
+            limits:
+              cpu: 300m
+              memory: 300Mi
+            requests:
+              cpu: 50m
+              memory: 100Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+          volumeMounts:
+            - mountPath: /etc/credentials
+              name: cloud-secret
+              readOnly: true
+            - mountPath: /tmp
+              name: tmp-dir
+            - mountPath: /etc/config/clusterData.json
+              name: ks-cloud-config
+              readOnly: true
+              subPath: clusterData.json
+            - mountPath: /etc/config/capabilities.json
+              name: ks-capabilities
+              readOnly: true
+              subPath: capabilities.json
+            - mountPath: /etc/config/matchingRules.json
+              name: cs-matching-rules
+              readOnly: true
+              subPath: matchingRules.json
+            - mountPath: /etc/config/config.json
+              name: config
+              readOnly: true
+              subPath: config.json
+            - mountPath: /etc/certs
+              name: tls-certs
+              readOnly: true
       nodeSelector:
         kubernetes.io/os: linux
       securityContext:
@@ -140,35 +140,35 @@ spec:
       serviceAccountName: operator
       tolerations: null
       volumes:
-      - name: cloud-secret
-        secret:
-          secretName: cloud-secret
-      - name: tls-certs
-        secret:
-          secretName: kubescape-admission-webhook-tls
-      - emptyDir: {}
-        name: tmp-dir
-      - configMap:
-          items:
-          - key: clusterData
-            path: clusterData.json
+        - name: cloud-secret
+          secret:
+            secretName: cloud-secret
+        - name: tls-certs
+          secret:
+            secretName: kubescape-admission-webhook-tls
+        - emptyDir: {}
+          name: tmp-dir
+        - configMap:
+            items:
+              - key: clusterData
+                path: clusterData.json
+            name: ks-cloud-config
           name: ks-cloud-config
-        name: ks-cloud-config
-      - configMap:
-          items:
-          - key: capabilities
-            path: capabilities.json
+        - configMap:
+            items:
+              - key: capabilities
+                path: capabilities.json
+            name: ks-capabilities
           name: ks-capabilities
-        name: ks-capabilities
-      - configMap:
-          items:
-          - key: config.json
-            path: config.json
-          name: operator
-        name: config
-      - configMap:
-          items:
-          - key: matchingRules.json
-            path: matchingRules.json
+        - configMap:
+            items:
+              - key: config.json
+                path: config.json
+            name: operator
+          name: config
+        - configMap:
+            items:
+              - key: matchingRules.json
+                path: matchingRules.json
+            name: cs-matching-rules
           name: cs-matching-rules
-        name: cs-matching-rules

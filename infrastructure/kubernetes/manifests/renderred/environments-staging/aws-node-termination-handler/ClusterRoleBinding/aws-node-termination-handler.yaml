@@ -15,6 +15,6 @@ roleRef:
   kind: ClusterRole
   name: aws-node-termination-handler
 subjects:
-- kind: ServiceAccount
-  name: aws-node-termination-handler
-  namespace: aws
+  - kind: ServiceAccount
+    name: aws-node-termination-handler
+    namespace: aws

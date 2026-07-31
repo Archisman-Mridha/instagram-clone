@@ -13,6 +13,6 @@ roleRef:
   kind: ClusterRole
   name: node-problem-detector
 subjects:
-- kind: ServiceAccount
-  name: node-problem-detector
-  namespace: node-problem-detector
+  - kind: ServiceAccount
+    name: node-problem-detector
+    namespace: node-problem-detector

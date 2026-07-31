@@ -14,18 +14,18 @@ metadata:
   namespace: openobserve
 spec:
   ports:
-  - name: http
-    port: 5080
-    protocol: TCP
-    targetPort: http
-  - name: grpc
-    port: 5081
-    protocol: TCP
-    targetPort: grpc
-  - name: reportserver
-    port: 5082
-    protocol: TCP
-    targetPort: reportserver
+    - name: http
+      port: 5080
+      protocol: TCP
+      targetPort: http
+    - name: grpc
+      port: 5081
+      protocol: TCP
+      targetPort: grpc
+    - name: reportserver
+      port: 5082
+      protocol: TCP
+      targetPort: reportserver
   selector:
     app.kubernetes.io/instance: openobserve
     app.kubernetes.io/name: openobserve

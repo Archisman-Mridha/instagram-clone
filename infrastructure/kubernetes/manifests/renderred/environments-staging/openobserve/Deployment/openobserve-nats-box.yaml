@@ -29,33 +29,33 @@ spec:
         helm.sh/chart: nats-1.3.13
     spec:
       containers:
-      - args:
-        - sh
-        - -ec
-        - trap true INT TERM; sleep infinity & wait
-        command:
-        - sh
-        - -ec
-        - |
-          work_dir="$(pwd)"
-          mkdir -p "$XDG_CONFIG_HOME/nats"
-          cd "$XDG_CONFIG_HOME/nats"
-          if ! [ -s context ]; then
-            ln -s /etc/nats-contexts context
-          fi
-          if ! [ -f context.txt ]; then
-            echo -n "default" > context.txt
-          fi
-          cd "$work_dir"
-          exec /entrypoint.sh "$@"
-        - --
-        image: natsio/nats-box:0.18.0-nonroot
-        name: nats-box
-        volumeMounts:
-        - mountPath: /etc/nats-contexts
-          name: contexts
+        - args:
+            - sh
+            - -ec
+            - trap true INT TERM; sleep infinity & wait
+          command:
+            - sh
+            - -ec
+            - |
+              work_dir="$(pwd)"
+              mkdir -p "$XDG_CONFIG_HOME/nats"
+              cd "$XDG_CONFIG_HOME/nats"
+              if ! [ -s context ]; then
+                ln -s /etc/nats-contexts context
+              fi
+              if ! [ -f context.txt ]; then
+                echo -n "default" > context.txt
+              fi
+              cd "$work_dir"
+              exec /entrypoint.sh "$@"
+            - --
+          image: natsio/nats-box:0.18.0-nonroot
+          name: nats-box
+          volumeMounts:
+            - mountPath: /etc/nats-contexts
+              name: contexts
       enableServiceLinks: false
       volumes:
-      - name: contexts
-        secret:
-          secretName: openobserve-nats-box-contexts
+        - name: contexts
+          secret:
+            secretName: openobserve-nats-box-contexts

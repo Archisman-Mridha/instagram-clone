@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: manager
+    app.kubernetes.io/created-by: atlas-operator
+    app.kubernetes.io/instance: atlas
+    app.kubernetes.io/managed-by: Helmraiser
+    app.kubernetes.io/name: atlas-operator
+    app.kubernetes.io/part-of: atlas-operator
+    app.kubernetes.io/version: 0.7.37
+    app.tanka.grafana.com: atlas
+    control-plane: controller-manager
+    helm.sh/chart: atlas-operator-0.7.37
+  name: atlas-atlas-operator
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: atlas
+      app.kubernetes.io/name: atlas-operator
+      control-plane: controller-manager
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: atlas
+        app.kubernetes.io/name: atlas-operator
+        control-plane: controller-manager
+    spec:
+      containers:
+        - env:
+            - name: PREWARM_DEVDB
+              value: "true"
+            - name: ALLOW_CUSTOM_CONFIG
+              value: "false"
+          image: arigaio/atlas-operator:0.7.37
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8081
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          name: manager
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8081
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsUser: 65532
+      securityContext:
+        fsGroup: 65532
+      serviceAccountName: atlas-atlas-operator
+      terminationGracePeriodSeconds: 10

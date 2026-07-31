@@ -20,6 +20,6 @@ roleRef:
   kind: Role
   name: operator
 subjects:
-- kind: ServiceAccount
-  name: operator
-  namespace: kubescape
+  - kind: ServiceAccount
+    name: operator
+    namespace: kubescape

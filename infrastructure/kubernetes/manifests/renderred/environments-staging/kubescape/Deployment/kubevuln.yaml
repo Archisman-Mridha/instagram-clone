@@ -47,64 +47,64 @@ spec:
       affinity: null
       automountServiceAccountToken: true
       containers:
-      - args:
-        - -alsologtostderr
-        - -v=4
-        - 2>&1
-        env:
-        - name: GOMEMLIMIT
-          value: 4000MiB
-        - name: KS_LOGGER_LEVEL
-          value: info
-        - name: KS_LOGGER_NAME
-          value: zap
-        - name: PRINT_POST_JSON
-          value: ""
-        - name: CA_MAX_VULN_SCAN_ROUTINES
-          value: "1"
-        image: quay.io/kubescape/kubevuln:v0.3.142
-        imagePullPolicy: IfNotPresent
-        livenessProbe:
-          httpGet:
-            path: /v1/liveness
-            port: 8080
-          initialDelaySeconds: 3
-          periodSeconds: 3
-        name: kubevuln
-        ports:
-        - containerPort: 8080
-          protocol: TCP
-        readinessProbe:
-          httpGet:
-            path: /v1/readiness
-            port: 8080
-        resources:
-          limits:
-            cpu: 1500m
-            ephemeral-storage: 10Gi
-            memory: 5000Mi
-          requests:
-            cpu: 300m
-            ephemeral-storage: 5Gi
-            memory: 1000Mi
-        securityContext:
-          allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
-          runAsNonRoot: true
-        volumeMounts:
-        - mountPath: /etc/credentials
-          name: cloud-secret
-          readOnly: true
-        - mountPath: /tmp
-          name: tmp-dir
-        - mountPath: /home/nonroot/anchore-resources/db
-          name: grype-db-cache
-        - mountPath: /etc/config/clusterData.json
-          name: ks-cloud-config
-          readOnly: true
-          subPath: clusterData.json
-        - mountPath: /home/nonroot/.cache/grype
-          name: grype-db
+        - args:
+            - -alsologtostderr
+            - -v=4
+            - 2>&1
+          env:
+            - name: GOMEMLIMIT
+              value: 4000MiB
+            - name: KS_LOGGER_LEVEL
+              value: info
+            - name: KS_LOGGER_NAME
+              value: zap
+            - name: PRINT_POST_JSON
+              value: ""
+            - name: CA_MAX_VULN_SCAN_ROUTINES
+              value: "1"
+          image: quay.io/kubescape/kubevuln:v0.3.142
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /v1/liveness
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 3
+          name: kubevuln
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /v1/readiness
+              port: 8080
+          resources:
+            limits:
+              cpu: 1500m
+              ephemeral-storage: 10Gi
+              memory: 5000Mi
+            requests:
+              cpu: 300m
+              ephemeral-storage: 5Gi
+              memory: 1000Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+          volumeMounts:
+            - mountPath: /etc/credentials
+              name: cloud-secret
+              readOnly: true
+            - mountPath: /tmp
+              name: tmp-dir
+            - mountPath: /home/nonroot/anchore-resources/db
+              name: grype-db-cache
+            - mountPath: /etc/config/clusterData.json
+              name: ks-cloud-config
+              readOnly: true
+              subPath: clusterData.json
+            - mountPath: /home/nonroot/.cache/grype
+              name: grype-db
       nodeSelector:
         kubernetes.io/os: linux
       securityContext:
@@ -115,18 +115,18 @@ spec:
       serviceAccountName: kubevuln
       tolerations: null
       volumes:
-      - name: cloud-secret
-        secret:
-          secretName: cloud-secret
-      - emptyDir: {}
-        name: tmp-dir
-      - emptyDir: {}
-        name: grype-db-cache
-      - configMap:
-          items:
-          - key: clusterData
-            path: clusterData.json
+        - name: cloud-secret
+          secret:
+            secretName: cloud-secret
+        - emptyDir: {}
+          name: tmp-dir
+        - emptyDir: {}
+          name: grype-db-cache
+        - configMap:
+            items:
+              - key: clusterData
+                path: clusterData.json
+            name: ks-cloud-config
           name: ks-cloud-config
-        name: ks-cloud-config
-      - emptyDir: {}
-        name: grype-db
+        - emptyDir: {}
+          name: grype-db

@@ -32,131 +32,131 @@ spec:
     spec:
       automountServiceAccountToken: true
       containers:
-      - args: null
-        env:
-        - name: LOG_LEVEL
-          value: info
-        - name: CUSTOM_COST_ENABLED
-          value: "false"
-        - name: INSTALL_NAMESPACE
-          value: opencost
-        - name: PROMETHEUS_QUERY_RESOLUTION_SECONDS
-          value: "300"
-        - name: API_PORT
-          value: "9003"
-        - name: PROMETHEUS_SERVER_ENDPOINT
-          value: http://kube-prometheus-stack-prometheus.kube-prometheus-stack.svc.cluster.local:80
-        - name: INSECURE_SKIP_VERIFY
-          value: "false"
-        - name: CLUSTER_ID
-          value: default-cluster
-        - name: PV_MOUNT_PATH
-          value: /mnt/export
-        - name: RESOLUTION_1D_RETENTION
-          value: "15"
-        - name: RESOLUTION_1H_RETENTION
-          value: "49"
-        - name: CLOUD_COST_ENABLED
-          value: "false"
-        - name: CLOUD_COST_MONTH_TO_DATE_INTERVAL
-          value: "6"
-        - name: CLOUD_COST_REFRESH_RATE_HOURS
-          value: "6"
-        - name: CLOUD_COST_QUERY_WINDOW_DAYS
-          value: "7"
-        - name: CLOUD_COST_RUN_WINDOW_DAYS
-          value: "3"
-        - name: EMIT_KSM_V1_METRICS
-          value: "false"
-        - name: EMIT_KSM_V1_METRICS_ONLY
-          value: "true"
-        - name: MCP_SERVER_ENABLED
-          value: "true"
-        - name: MCP_HTTP_PORT
-          value: "8081"
-        image: ghcr.io/opencost/opencost:1.120.3@sha256:9f282400e59a4fc886e5fa3bca3c777b9dcae866b781641ca1d1271525d15f72
-        imagePullPolicy: IfNotPresent
-        livenessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /healthz
-            port: 9003
-          initialDelaySeconds: 10
-          periodSeconds: 20
-        name: opencost
-        ports:
-        - containerPort: 9003
-          name: http
-        - containerPort: 8081
-          name: mcp-server
-        readinessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /healthz
-            port: 9003
-          initialDelaySeconds: 10
-          periodSeconds: 10
-        resources:
-          limits:
-            memory: 1Gi
-          requests:
-            cpu: 10m
-            memory: 55Mi
-        startupProbe:
-          failureThreshold: 30
-          httpGet:
-            path: /healthz
-            port: 9003
-          initialDelaySeconds: 10
-          periodSeconds: 5
-        volumeMounts:
-        - mountPath: /mnt/export
-          name: opencost-export
-          readOnly: false
-      - env:
-        - name: API_PORT
-          value: "9003"
-        - name: UI_PORT
-          value: "9090"
-        image: ghcr.io/opencost/opencost-ui:1.120.3@sha256:12b6e7a844c17f9a4019cdd55e5bfe6c720c1a0961d8a9be2333a97c69bffcc9
-        imagePullPolicy: IfNotPresent
-        livenessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /healthz
-            port: 9090
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        name: opencost-ui
-        ports:
-        - containerPort: 9090
-          name: http-ui
-        readinessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /healthz
-            port: 9090
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        resources:
-          limits:
-            memory: 1Gi
-          requests:
-            cpu: 10m
-            memory: 55Mi
-        volumeMounts:
-        - mountPath: /etc/nginx/conf.d/default.nginx.conf
-          name: opencost-ui-nginx-config-volume
-          subPath: default.nginx.conf
+        - args: null
+          env:
+            - name: LOG_LEVEL
+              value: info
+            - name: CUSTOM_COST_ENABLED
+              value: "false"
+            - name: INSTALL_NAMESPACE
+              value: opencost
+            - name: PROMETHEUS_QUERY_RESOLUTION_SECONDS
+              value: "300"
+            - name: API_PORT
+              value: "9003"
+            - name: PROMETHEUS_SERVER_ENDPOINT
+              value: http://kube-prometheus-stack-prometheus.kube-prometheus-stack.svc.cluster.local:80
+            - name: INSECURE_SKIP_VERIFY
+              value: "false"
+            - name: CLUSTER_ID
+              value: default-cluster
+            - name: PV_MOUNT_PATH
+              value: /mnt/export
+            - name: RESOLUTION_1D_RETENTION
+              value: "15"
+            - name: RESOLUTION_1H_RETENTION
+              value: "49"
+            - name: CLOUD_COST_ENABLED
+              value: "false"
+            - name: CLOUD_COST_MONTH_TO_DATE_INTERVAL
+              value: "6"
+            - name: CLOUD_COST_REFRESH_RATE_HOURS
+              value: "6"
+            - name: CLOUD_COST_QUERY_WINDOW_DAYS
+              value: "7"
+            - name: CLOUD_COST_RUN_WINDOW_DAYS
+              value: "3"
+            - name: EMIT_KSM_V1_METRICS
+              value: "false"
+            - name: EMIT_KSM_V1_METRICS_ONLY
+              value: "true"
+            - name: MCP_SERVER_ENABLED
+              value: "true"
+            - name: MCP_HTTP_PORT
+              value: "8081"
+          image: ghcr.io/opencost/opencost:1.120.3@sha256:9f282400e59a4fc886e5fa3bca3c777b9dcae866b781641ca1d1271525d15f72
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 9003
+            initialDelaySeconds: 10
+            periodSeconds: 20
+          name: opencost
+          ports:
+            - containerPort: 9003
+              name: http
+            - containerPort: 8081
+              name: mcp-server
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 9003
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            limits:
+              memory: 1Gi
+            requests:
+              cpu: 10m
+              memory: 55Mi
+          startupProbe:
+            failureThreshold: 30
+            httpGet:
+              path: /healthz
+              port: 9003
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          volumeMounts:
+            - mountPath: /mnt/export
+              name: opencost-export
+              readOnly: false
+        - env:
+            - name: API_PORT
+              value: "9003"
+            - name: UI_PORT
+              value: "9090"
+          image: ghcr.io/opencost/opencost-ui:1.120.3@sha256:12b6e7a844c17f9a4019cdd55e5bfe6c720c1a0961d8a9be2333a97c69bffcc9
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 9090
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          name: opencost-ui
+          ports:
+            - containerPort: 9090
+              name: http-ui
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 9090
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          resources:
+            limits:
+              memory: 1Gi
+            requests:
+              cpu: 10m
+              memory: 55Mi
+          volumeMounts:
+            - mountPath: /etc/nginx/conf.d/default.nginx.conf
+              name: opencost-ui-nginx-config-volume
+              subPath: default.nginx.conf
       initContainers: null
       serviceAccountName: opencost
       volumes:
-      - name: opencost-export
-        persistentVolumeClaim:
-          claimName: opencost-pvc
-      - configMap:
-          items:
-          - key: nginx.conf
-            path: default.nginx.conf
-          name: opencost-ui-nginx-config
-        name: opencost-ui-nginx-config-volume
+        - name: opencost-export
+          persistentVolumeClaim:
+            claimName: opencost-pvc
+        - configMap:
+            items:
+              - key: nginx.conf
+                path: default.nginx.conf
+            name: opencost-ui-nginx-config
+          name: opencost-ui-nginx-config-volume

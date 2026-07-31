@@ -18,40 +18,40 @@ metadata:
 spec:
   namespaceSelector:
     matchExpressions:
-    - key: kubernetes.io/metadata.name
-      operator: NotIn
-      values:
-      - kubescape
-      - kube-system
-      - kube-public
-      - kube-node-lease
-      - kubeconfig
-      - gmp-system
-      - gmp-public
+      - key: kubernetes.io/metadata.name
+        operator: NotIn
+        values:
+          - kubescape
+          - kube-system
+          - kube-public
+          - kube-node-lease
+          - kubeconfig
+          - gmp-system
+          - gmp-public
   rules:
-  - ruleName: Unexpected process launched
-  - ruleName: Files Access Anomalies in container
-  - ruleName: Syscalls Anomalies in container
-  - ruleName: Linux Capabilities Anomalies in container
-  - ruleName: DNS Anomalies in container
-  - ruleName: Unexpected service account token access
-  - ruleName: Workload uses Kubernetes API unexpectedly
-  - ruleName: Process executed from malicious source
-  - ruleName: Process tries to load a kernel module
-  - ruleName: Drifted process executed
-  - ruleName: Disallowed ssh connection
-  - ruleName: Fileless execution detected
-  - ruleName: Crypto miner launched
-  - ruleName: Process executed from mount
-  - ruleName: Crypto Mining Related Port Communication
-  - ruleName: Crypto Mining Domain Communication
-  - ruleName: Read Environment Variables from procfs
-  - ruleName: eBPF Program Load
-  - ruleName: Soft link created over sensitive file
-  - ruleName: Unexpected Sensitive File Access
-  - ruleName: Hard link created over sensitive file
-  - ruleName: Exec to pod
-  - ruleName: Port forward
-  - ruleName: Unexpected Egress Network Traffic
-  - ruleName: Malicious Ptrace Usage
-  - ruleName: Unexpected io_uring Operation Detected
+    - ruleName: Unexpected process launched
+    - ruleName: Files Access Anomalies in container
+    - ruleName: Syscalls Anomalies in container
+    - ruleName: Linux Capabilities Anomalies in container
+    - ruleName: DNS Anomalies in container
+    - ruleName: Unexpected service account token access
+    - ruleName: Workload uses Kubernetes API unexpectedly
+    - ruleName: Process executed from malicious source
+    - ruleName: Process tries to load a kernel module
+    - ruleName: Drifted process executed
+    - ruleName: Disallowed ssh connection
+    - ruleName: Fileless execution detected
+    - ruleName: Crypto miner launched
+    - ruleName: Process executed from mount
+    - ruleName: Crypto Mining Related Port Communication
+    - ruleName: Crypto Mining Domain Communication
+    - ruleName: Read Environment Variables from procfs
+    - ruleName: eBPF Program Load
+    - ruleName: Soft link created over sensitive file
+    - ruleName: Unexpected Sensitive File Access
+    - ruleName: Hard link created over sensitive file
+    - ruleName: Exec to pod
+    - ruleName: Port forward
+    - ruleName: Unexpected Egress Network Traffic
+    - ruleName: Malicious Ptrace Usage
+    - ruleName: Unexpected io_uring Operation Detected

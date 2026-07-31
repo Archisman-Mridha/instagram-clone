@@ -23,6 +23,6 @@ roleRef:
   kind: Role
   name: kube-prometheus-stack-admission
 subjects:
-- kind: ServiceAccount
-  name: kube-prometheus-stack-admission
-  namespace: kube-prometheus-stack
+  - kind: ServiceAccount
+    name: kube-prometheus-stack-admission
+    namespace: kube-prometheus-stack

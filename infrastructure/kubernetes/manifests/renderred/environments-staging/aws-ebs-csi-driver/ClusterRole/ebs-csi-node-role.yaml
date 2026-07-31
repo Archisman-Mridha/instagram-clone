@@ -11,31 +11,31 @@ metadata:
     helm.sh/chart: aws-ebs-csi-driver-2.60.1
   name: ebs-csi-node-role
 rules:
-- apiGroups:
-  - storage.k8s.io
-  resources:
-  - volumeattachments
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - nodes
-  verbs:
-  - get
-- apiGroups:
-  - ""
-  resources:
-  - nodes
-  verbs:
-  - patch
-  - list
-  - watch
-- apiGroups:
-  - storage.k8s.io
-  resources:
-  - csinodes
-  verbs:
-  - get
+  - apiGroups:
+      - storage.k8s.io
+    resources:
+      - volumeattachments
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+      - patch
+      - list
+      - watch
+  - apiGroups:
+      - storage.k8s.io
+    resources:
+      - csinodes
+    verbs:
+      - get

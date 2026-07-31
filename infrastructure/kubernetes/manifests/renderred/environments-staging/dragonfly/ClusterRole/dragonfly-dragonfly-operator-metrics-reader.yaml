@@ -13,7 +13,7 @@ metadata:
     helm.sh/chart: dragonfly-operator-v1.5.0
   name: dragonfly-dragonfly-operator-metrics-reader
 rules:
-- nonResourceURLs:
-  - /metrics
-  verbs:
-  - get
+  - nonResourceURLs:
+      - /metrics
+    verbs:
+      - get

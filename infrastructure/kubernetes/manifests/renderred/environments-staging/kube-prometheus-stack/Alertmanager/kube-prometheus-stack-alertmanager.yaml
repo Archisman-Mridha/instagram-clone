@@ -17,19 +17,19 @@ spec:
   affinity:
     podAntiAffinity:
       preferredDuringSchedulingIgnoredDuringExecution:
-      - podAffinityTerm:
-          labelSelector:
-            matchExpressions:
-            - key: app.kubernetes.io/name
-              operator: In
-              values:
-              - alertmanager
-            - key: alertmanager
-              operator: In
-              values:
-              - kube-prometheus-stack-alertmanager
-          topologyKey: kubernetes.io/hostname
-        weight: 100
+        - podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+                - key: app.kubernetes.io/name
+                  operator: In
+                  values:
+                    - alertmanager
+                - key: alertmanager
+                  operator: In
+                  values:
+                    - kube-prometheus-stack-alertmanager
+            topologyKey: kubernetes.io/hostname
+          weight: 100
   alertmanagerConfigNamespaceSelector: {}
   alertmanagerConfigSelector: {}
   automountServiceAccountToken: true

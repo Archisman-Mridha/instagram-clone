@@ -12,10 +12,11 @@ const REDIS_OPTIONS = Symbol("REDIS_OPTIONS")
 
 interface RedisModuleAsyncOptions extends Pick<ModuleMetadata, "imports"> {
 	inject?: FactoryProvider["inject"]
-	useFactory: (...args: any[]) => RedisClusterOptions | Promise<RedisClusterOptions>
+	useFactory: FactoryProvider<RedisClusterOptions>["useFactory"]
 }
 
 @Module({})
+// biome-ignore lint/complexity/noStaticOnlyClass: required by the NestJS dynamic module pattern.
 export class RedisModule {
 	static register(clusterOptions: RedisClusterOptions & { isGlobal?: boolean }): DynamicModule {
 		return {

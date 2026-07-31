@@ -19,10 +19,10 @@ metadata:
   name: kube-prometheus-stack-admission
   namespace: kube-prometheus-stack
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - secrets
-  verbs:
-  - get
-  - create
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - create

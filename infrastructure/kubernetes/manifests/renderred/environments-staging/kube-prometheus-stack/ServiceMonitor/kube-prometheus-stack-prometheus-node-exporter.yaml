@@ -17,8 +17,8 @@ spec:
   attachMetadata:
     node: false
   endpoints:
-  - port: http-metrics
-    scheme: http
+    - port: http-metrics
+      scheme: http
   jobLabel: jobLabel
   selector:
     matchLabels:

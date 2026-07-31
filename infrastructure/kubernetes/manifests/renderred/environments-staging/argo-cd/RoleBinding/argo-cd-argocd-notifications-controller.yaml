@@ -17,6 +17,6 @@ roleRef:
   kind: Role
   name: argo-cd-argocd-notifications-controller
 subjects:
-- kind: ServiceAccount
-  name: argocd-notifications-controller
-  namespace: argo-cd
+  - kind: ServiceAccount
+    name: argocd-notifications-controller
+    namespace: argo-cd

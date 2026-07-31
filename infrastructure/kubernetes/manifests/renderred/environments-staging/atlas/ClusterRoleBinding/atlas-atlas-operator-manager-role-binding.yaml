@@ -1,0 +1,22 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: atlas-operator
+    app.kubernetes.io/instance: atlas
+    app.kubernetes.io/managed-by: Helmraiser
+    app.kubernetes.io/name: atlas-operator
+    app.kubernetes.io/part-of: atlas-operator
+    app.kubernetes.io/version: 0.7.37
+    app.tanka.grafana.com: atlas
+    helm.sh/chart: atlas-operator-0.7.37
+  name: atlas-atlas-operator-manager-role-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: atlas-atlas-operator-manager-role
+subjects:
+  - kind: ServiceAccount
+    name: atlas-atlas-operator
+    namespace: atlas

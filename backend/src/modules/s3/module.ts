@@ -12,10 +12,11 @@ const S3_OPTIONS = Symbol("S3_OPTIONS")
 
 interface S3ModuleAsyncOptions extends Pick<ModuleMetadata, "imports"> {
 	inject?: FactoryProvider["inject"]
-	useFactory: (...args: any[]) => S3ClientConfig | Promise<S3ClientConfig>
+	useFactory: FactoryProvider<S3ClientConfig>["useFactory"]
 }
 
 @Module({})
+// biome-ignore lint/complexity/noStaticOnlyClass: required by the NestJS dynamic module pattern.
 export class S3Module {
 	static register({ ...config }: S3ClientConfig): DynamicModule {
 		return {

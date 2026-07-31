@@ -13,21 +13,21 @@ spec:
   attachMetadata:
     node: false
   endpoints:
-  - interval: 60s
-    path: /metrics
-    port: exporter
-    relabelings:
-    - action: replace
-      sourceLabels:
-      - __meta_kubernetes_pod_node_name
-      targetLabel: node
-    - action: replace
-      sourceLabels:
-      - __meta_kubernetes_pod_host_ip
-      targetLabel: host_ip
+    - interval: 60s
+      path: /metrics
+      port: exporter
+      relabelings:
+        - action: replace
+          sourceLabels:
+            - __meta_kubernetes_pod_node_name
+          targetLabel: node
+        - action: replace
+          sourceLabels:
+            - __meta_kubernetes_pod_host_ip
+          targetLabel: host_ip
   namespaceSelector:
     matchNames:
-    - node-problem-detector
+      - node-problem-detector
   selector:
     matchLabels:
       app: node-problem-detector

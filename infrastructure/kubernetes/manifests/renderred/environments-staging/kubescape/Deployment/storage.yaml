@@ -43,53 +43,53 @@ spec:
     spec:
       affinity: null
       containers:
-      - env:
-        - name: GOMEMLIMIT
-          valueFrom:
-            resourceFieldRef:
-              divisor: "1"
-              resource: limits.memory
-        - name: KS_LOGGER_LEVEL
-          value: info
-        - name: KS_LOGGER_NAME
-          value: zap
-        image: quay.io/kubescape/storage:v0.0.274
-        imagePullPolicy: IfNotPresent
-        livenessProbe:
-          httpGet:
-            path: /livez
-            port: 8443
-            scheme: HTTPS
-        name: apiserver
-        readinessProbe:
-          httpGet:
-            path: /readyz
-            port: 8443
-            scheme: HTTPS
-        resources:
-          limits:
-            cpu: 1500m
-            memory: 1500Mi
-          requests:
-            cpu: 100m
-            memory: 400Mi
-        securityContext:
-          allowPrivilegeEscalation: false
-          runAsNonRoot: true
-        volumeMounts:
-        - mountPath: /data
-          name: data
-        - mountPath: /etc/config/clusterData.json
-          name: ks-cloud-config
-          readOnly: true
-          subPath: clusterData.json
-        - mountPath: /etc/config/config.json
-          name: config
-          readOnly: true
-          subPath: config.json
-        - mountPath: /etc/storage-ca-certificates
-          name: ca-certificates
-          readOnly: true
+        - env:
+            - name: GOMEMLIMIT
+              valueFrom:
+                resourceFieldRef:
+                  divisor: "1"
+                  resource: limits.memory
+            - name: KS_LOGGER_LEVEL
+              value: info
+            - name: KS_LOGGER_NAME
+              value: zap
+          image: quay.io/kubescape/storage:v0.0.274
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /livez
+              port: 8443
+              scheme: HTTPS
+          name: apiserver
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8443
+              scheme: HTTPS
+          resources:
+            limits:
+              cpu: 1500m
+              memory: 1500Mi
+            requests:
+              cpu: 100m
+              memory: 400Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+          volumeMounts:
+            - mountPath: /data
+              name: data
+            - mountPath: /etc/config/clusterData.json
+              name: ks-cloud-config
+              readOnly: true
+              subPath: clusterData.json
+            - mountPath: /etc/config/config.json
+              name: config
+              readOnly: true
+              subPath: config.json
+            - mountPath: /etc/storage-ca-certificates
+              name: ca-certificates
+              readOnly: true
       nodeSelector:
         kubernetes.io/os: linux
       securityContext:
@@ -100,21 +100,21 @@ spec:
       serviceAccountName: storage
       tolerations: null
       volumes:
-      - name: data
-        persistentVolumeClaim:
-          claimName: kubescape-storage
-      - configMap:
-          items:
-          - key: clusterData
-            path: clusterData.json
+        - name: data
+          persistentVolumeClaim:
+            claimName: kubescape-storage
+        - configMap:
+            items:
+              - key: clusterData
+                path: clusterData.json
+            name: ks-cloud-config
           name: ks-cloud-config
-        name: ks-cloud-config
-      - configMap:
-          items:
-          - key: config.json
-            path: config.json
-          name: storage
-        name: config
-      - name: ca-certificates
-        secret:
-          secretName: storage-tls
+        - configMap:
+            items:
+              - key: config.json
+                path: config.json
+            name: storage
+          name: config
+        - name: ca-certificates
+          secret:
+            secretName: storage-tls

@@ -12,9 +12,9 @@ metadata:
   namespace: aws
 spec:
   ports:
-  - name: metrics
-    port: 3304
-    targetPort: 3304
+    - name: metrics
+      port: 3304
+      targetPort: 3304
   selector:
     app: ebs-csi-controller
   type: ClusterIP

@@ -15,14 +15,14 @@ metadata:
   namespace: kube-prometheus-stack
 spec:
   endpoints:
-  - enableHttp2: true
-    path: /metrics
-    port: http-web
-  - path: /metrics
-    port: reloader-web
+    - enableHttp2: true
+      path: /metrics
+      port: http-web
+    - path: /metrics
+      port: reloader-web
   namespaceSelector:
     matchNames:
-    - kube-prometheus-stack
+      - kube-prometheus-stack
   selector:
     matchLabels:
       app: kube-prometheus-stack-alertmanager
