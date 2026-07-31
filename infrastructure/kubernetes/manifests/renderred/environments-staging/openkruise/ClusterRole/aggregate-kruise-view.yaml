@@ -7,43 +7,43 @@ metadata:
     rbac.authorization.k8s.io/aggregate-to-view: "true"
   name: aggregate-kruise-view
 rules:
-- apiGroups:
-  - apps.kruise.io
-  resources:
-  - advancedcronjobs
-  - advancedcronjobs/status
-  - broadcastjobs
-  - broadcastjobs/status
-  - clonesets
-  - clonesets/scale
-  - clonesets/status
-  - containerrecreaterequests
-  - containerrecreaterequests/status
-  - daemonsets
-  - daemonsets/status
-  - imagelistpulljobs
-  - imagelistpulljobs/status
-  - imagepulljobs
-  - imagepulljobs/status
-  - nodeimages
-  - nodeimages/status
-  - nodepodprobes
-  - nodepodprobes/status
-  - persistentpodstates
-  - persistentpodstates/status
-  - podprobemarkers
-  - podprobemarkers/status
-  - sidecarsets
-  - sidecarsets/status
-  - statefulsets
-  - statefulsets/scale
-  - statefulsets/status
-  - uniteddeployments
-  - uniteddeployments/scale
-  - uniteddeployments/status
-  - workloadspreads
-  - workloadspreads/status
-  verbs:
-  - get
-  - list
-  - watch
+  - apiGroups:
+      - apps.kruise.io
+    resources:
+      - advancedcronjobs
+      - advancedcronjobs/status
+      - broadcastjobs
+      - broadcastjobs/status
+      - clonesets
+      - clonesets/scale
+      - clonesets/status
+      - containerrecreaterequests
+      - containerrecreaterequests/status
+      - daemonsets
+      - daemonsets/status
+      - imagelistpulljobs
+      - imagelistpulljobs/status
+      - imagepulljobs
+      - imagepulljobs/status
+      - nodeimages
+      - nodeimages/status
+      - nodepodprobes
+      - nodepodprobes/status
+      - persistentpodstates
+      - persistentpodstates/status
+      - podprobemarkers
+      - podprobemarkers/status
+      - sidecarsets
+      - sidecarsets/status
+      - statefulsets
+      - statefulsets/scale
+      - statefulsets/status
+      - uniteddeployments
+      - uniteddeployments/scale
+      - uniteddeployments/status
+      - workloadspreads
+      - workloadspreads/status
+    verbs:
+      - get
+      - list
+      - watch

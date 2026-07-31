@@ -15,8 +15,8 @@ metadata:
   namespace: kube-prometheus-stack
 spec:
   endpoints:
-  - honorLabels: true
-    port: http
+    - honorLabels: true
+      port: http
   jobLabel: app.kubernetes.io/name
   selector:
     matchLabels:

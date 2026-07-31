@@ -17,24 +17,24 @@ spec:
   affinity:
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
-      - labelSelector:
-          matchExpressions:
-          - key: app.kubernetes.io/name
-            operator: In
-            values:
-            - prometheus
-          - key: app.kubernetes.io/instance
-            operator: In
-            values:
-            - kube-prometheus-stack-prometheus
-        topologyKey: kubernetes.io/hostname
+        - labelSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                  - prometheus
+              - key: app.kubernetes.io/instance
+                operator: In
+                values:
+                  - kube-prometheus-stack-prometheus
+          topologyKey: kubernetes.io/hostname
   alerting:
     alertmanagers:
-    - apiVersion: v2
-      name: kube-prometheus-stack-alertmanager
-      namespace: kube-prometheus-stack
-      pathPrefix: /
-      port: http-web
+      - apiVersion: v2
+        name: kube-prometheus-stack-alertmanager
+        namespace: kube-prometheus-stack
+        pathPrefix: /
+        port: http-web
   automountServiceAccountToken: true
   enableAdminAPI: false
   enableOTLPReceiver: false

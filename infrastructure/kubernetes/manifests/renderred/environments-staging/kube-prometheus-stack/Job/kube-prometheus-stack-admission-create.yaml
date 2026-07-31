@@ -35,21 +35,21 @@ spec:
       name: kube-prometheus-stack-admission-create
     spec:
       containers:
-      - args:
-        - create
-        - --host=kube-prometheus-stack-operator,kube-prometheus-stack-operator.kube-prometheus-stack.svc
-        - --namespace=kube-prometheus-stack
-        - --secret-name=kube-prometheus-stack-admission
-        image: ghcr.io/jkroepke/kube-webhook-certgen:1.8.3
-        imagePullPolicy: IfNotPresent
-        name: create
-        resources: {}
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-            - ALL
-          readOnlyRootFilesystem: true
+        - args:
+            - create
+            - --host=kube-prometheus-stack-operator,kube-prometheus-stack-operator.kube-prometheus-stack.svc
+            - --namespace=kube-prometheus-stack
+            - --secret-name=kube-prometheus-stack-admission
+          image: ghcr.io/jkroepke/kube-webhook-certgen:1.8.3
+          imagePullPolicy: IfNotPresent
+          name: create
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
       restartPolicy: OnFailure
       securityContext:
         runAsGroup: 2000

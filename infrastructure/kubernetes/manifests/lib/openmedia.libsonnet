@@ -23,6 +23,52 @@ local postgresqlCluster = CloudNativePG.newCluster(app, app) + {
   },
 };
 
+local databaseSchema = {
+  apiVersion: 'db.atlasgo.io/v1alpha1',
+  kind: 'AtlasSchema',
+  metadata: {
+    name: app,
+    namespace: app,
+  },
+  spec: {
+    // CloudNativePG generates this Secret for the application user declared in the cluster's
+    // bootstrap.initdb block. Its 'uri' key holds the complete PostgreSQL connection string.
+    urlFrom: {
+      secretKeyRef: {
+        key: 'uri',
+        name: app + '-app',
+      },
+    },
+
+    schema: {
+      sql: importstr '../../../../backend/schema.sql',
+    },
+
+    // By default, each migration is carried out as a transaction. This disables us from concurrent
+    // creation / deletion of indices. So, we instruct Atlas to carry out the migration without
+    // a transaction.
+    txMode: 'none',
+
+    policy: {
+      // The Atlasgo operator should error out, if it detects a destructive change such as dropping
+      // a column or table.
+      // Destructive changes will be taken care of manually.
+      lint: {
+        destructive: {
+          'error': true,
+        },
+      },
+
+      diff: {
+        concurrent_index: {
+          create: true,
+          drop: true,
+        },
+      },
+    },
+  },
+};
+
 local kafkaCluster =
   local controllerVolumeSize = '1Gi',
         brokerVolumeSize = '5Gi';
@@ -63,7 +109,10 @@ local dragonflyCluster = Dragonfly.newCluster(app, app);
 
 {
   openmedia: Utils.withAppLabel(app, {
-    postgresqlCluster: postgresqlCluster,
+    database: {
+      postgresqlCluster: postgresqlCluster,
+      schema: databaseSchema,
+    },
 
     kafkaCluster: kafkaCluster,
 

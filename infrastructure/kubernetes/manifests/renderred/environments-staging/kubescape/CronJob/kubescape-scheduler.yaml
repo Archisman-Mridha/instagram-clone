@@ -41,33 +41,33 @@ spec:
           affinity: null
           automountServiceAccountToken: false
           containers:
-          - args:
-            - -method=post
-            - -scheme=http
-            - -host=operator:4002
-            - -path=v1/triggerAction
-            - -headers=Content-Type:application/json
-            - -path-body=/home/ks/request-body.json
-            image: quay.io/kubescape/http-request:v0.2.19
-            imagePullPolicy: IfNotPresent
-            name: kubescape-scheduler
-            resources:
-              limits:
-                cpu: 10m
-                memory: 20Mi
-              requests:
-                cpu: 1m
-                memory: 10Mi
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              runAsNonRoot: true
-              runAsUser: 100
-            volumeMounts:
-            - mountPath: /home/ks/request-body.json
+            - args:
+                - -method=post
+                - -scheme=http
+                - -host=operator:4002
+                - -path=v1/triggerAction
+                - -headers=Content-Type:application/json
+                - -path-body=/home/ks/request-body.json
+              image: quay.io/kubescape/http-request:v0.2.19
+              imagePullPolicy: IfNotPresent
               name: kubescape-scheduler
-              readOnly: true
-              subPath: request-body.json
+              resources:
+                limits:
+                  cpu: 10m
+                  memory: 20Mi
+                requests:
+                  cpu: 1m
+                  memory: 10Mi
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                runAsNonRoot: true
+                runAsUser: 100
+              volumeMounts:
+                - mountPath: /home/ks/request-body.json
+                  name: kubescape-scheduler
+                  readOnly: true
+                  subPath: request-body.json
           nodeSelector:
             kubernetes.io/os: linux
           restartPolicy: Never
@@ -77,8 +77,8 @@ spec:
           serviceAccountName: kubescape
           tolerations: null
           volumes:
-          - configMap:
+            - configMap:
+                name: kubescape-scheduler
               name: kubescape-scheduler
-            name: kubescape-scheduler
   schedule: 27 15 * * *
   successfulJobsHistoryLimit: 3

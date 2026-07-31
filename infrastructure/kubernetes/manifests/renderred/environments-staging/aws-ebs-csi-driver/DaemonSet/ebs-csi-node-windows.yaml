@@ -33,162 +33,162 @@ spec:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
-            - matchExpressions:
-              - key: eks.amazonaws.com/compute-type
-                operator: NotIn
-                values:
-                - fargate
-                - auto
-                - hybrid
+              - matchExpressions:
+                  - key: eks.amazonaws.com/compute-type
+                    operator: NotIn
+                    values:
+                      - fargate
+                      - auto
+                      - hybrid
       containers:
-      - args:
-        - node
-        - --endpoint=$(CSI_ENDPOINT)
-        - --logging-format=text
-        - --v=2
-        env:
-        - name: CSI_ENDPOINT
-          value: unix:/csi/csi.sock
-        - name: CSI_NODE_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: spec.nodeName
-        image: public.ecr.aws/ebs-csi-driver/aws-ebs-csi-driver:v1.60.1
-        imagePullPolicy: IfNotPresent
-        lifecycle:
-          preStop:
-            exec:
-              command:
-              - /bin/aws-ebs-csi-driver
-              - pre-stop-hook
-        livenessProbe:
-          failureThreshold: 5
-          httpGet:
-            path: /healthz
-            port: healthz
-          initialDelaySeconds: 10
-          periodSeconds: 10
-          timeoutSeconds: 3
-        name: ebs-plugin
-        ports:
-        - containerPort: 9808
-          name: healthz
-          protocol: TCP
-        readinessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /healthz
-            port: healthz
-          periodSeconds: 5
-          timeoutSeconds: 3
-        resources:
-          limits:
-            memory: 256Mi
-          requests:
-            cpu: 10m
-            memory: 40Mi
-        securityContext:
-          windowsOptions:
-            runAsUserName: ContainerAdministrator
-        terminationMessagePolicy: FallbackToLogsOnError
-        volumeMounts:
-        - mountPath: C:\var\lib\kubelet
-          mountPropagation: None
-          name: kubelet-dir
-        - mountPath: C:\csi
-          name: plugin-dir
-        - mountPath: \\.\pipe\csi-proxy-disk-v1
-          name: csi-proxy-disk-pipe
-        - mountPath: \\.\pipe\csi-proxy-volume-v1
-          name: csi-proxy-volume-pipe
-        - mountPath: \\.\pipe\csi-proxy-filesystem-v1
-          name: csi-proxy-filesystem-pipe
-      - args:
-        - --csi-address=$(ADDRESS)
-        - --kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)
-        - --http-endpoint=0.0.0.0:9809
-        - --v=2
-        env:
-        - name: ADDRESS
-          value: unix:/csi/csi.sock
-        - name: DRIVER_REG_SOCK_PATH
-          value: C:\var\lib\kubelet\plugins\ebs.csi.aws.com\csi.sock
-        image: public.ecr.aws/csi-components/csi-node-driver-registrar:v2.16.0-eksbuild.6
-        imagePullPolicy: IfNotPresent
-        livenessProbe:
-          httpGet:
-            path: /healthz
-            port: healthz-ndr
-          initialDelaySeconds: 30
-          periodSeconds: 90
-          timeoutSeconds: 15
-        name: node-driver-registrar
-        ports:
-        - containerPort: 9809
-          name: healthz-ndr
-        resources:
-          limits:
-            memory: 150Mi
-          requests:
-            cpu: 10m
-            memory: 150Mi
-        terminationMessagePolicy: FallbackToLogsOnError
-        volumeMounts:
-        - mountPath: C:\csi
-          name: plugin-dir
-        - mountPath: C:\registration
-          name: registration-dir
-        - mountPath: C:\var\lib\kubelet\plugins\ebs.csi.aws.com
-          name: probe-dir
-      - args:
-        - --csi-address=unix:/csi/csi.sock
-        image: public.ecr.aws/csi-components/livenessprobe:v2.18.0-eksbuild.6
-        imagePullPolicy: IfNotPresent
-        name: liveness-probe
-        resources:
-          limits:
-            memory: 150Mi
-          requests:
-            cpu: 10m
-            memory: 150Mi
-        terminationMessagePolicy: FallbackToLogsOnError
-        volumeMounts:
-        - mountPath: C:\csi
-          name: plugin-dir
+        - args:
+            - node
+            - --endpoint=$(CSI_ENDPOINT)
+            - --logging-format=text
+            - --v=2
+          env:
+            - name: CSI_ENDPOINT
+              value: unix:/csi/csi.sock
+            - name: CSI_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          image: public.ecr.aws/ebs-csi-driver/aws-ebs-csi-driver:v1.60.1
+          imagePullPolicy: IfNotPresent
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /bin/aws-ebs-csi-driver
+                  - pre-stop-hook
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /healthz
+              port: healthz
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 3
+          name: ebs-plugin
+          ports:
+            - containerPort: 9808
+              name: healthz
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: healthz
+            periodSeconds: 5
+            timeoutSeconds: 3
+          resources:
+            limits:
+              memory: 256Mi
+            requests:
+              cpu: 10m
+              memory: 40Mi
+          securityContext:
+            windowsOptions:
+              runAsUserName: ContainerAdministrator
+          terminationMessagePolicy: FallbackToLogsOnError
+          volumeMounts:
+            - mountPath: C:\var\lib\kubelet
+              mountPropagation: None
+              name: kubelet-dir
+            - mountPath: C:\csi
+              name: plugin-dir
+            - mountPath: \\.\pipe\csi-proxy-disk-v1
+              name: csi-proxy-disk-pipe
+            - mountPath: \\.\pipe\csi-proxy-volume-v1
+              name: csi-proxy-volume-pipe
+            - mountPath: \\.\pipe\csi-proxy-filesystem-v1
+              name: csi-proxy-filesystem-pipe
+        - args:
+            - --csi-address=$(ADDRESS)
+            - --kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)
+            - --http-endpoint=0.0.0.0:9809
+            - --v=2
+          env:
+            - name: ADDRESS
+              value: unix:/csi/csi.sock
+            - name: DRIVER_REG_SOCK_PATH
+              value: C:\var\lib\kubelet\plugins\ebs.csi.aws.com\csi.sock
+          image: public.ecr.aws/csi-components/csi-node-driver-registrar:v2.16.0-eksbuild.6
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: healthz-ndr
+            initialDelaySeconds: 30
+            periodSeconds: 90
+            timeoutSeconds: 15
+          name: node-driver-registrar
+          ports:
+            - containerPort: 9809
+              name: healthz-ndr
+          resources:
+            limits:
+              memory: 150Mi
+            requests:
+              cpu: 10m
+              memory: 150Mi
+          terminationMessagePolicy: FallbackToLogsOnError
+          volumeMounts:
+            - mountPath: C:\csi
+              name: plugin-dir
+            - mountPath: C:\registration
+              name: registration-dir
+            - mountPath: C:\var\lib\kubelet\plugins\ebs.csi.aws.com
+              name: probe-dir
+        - args:
+            - --csi-address=unix:/csi/csi.sock
+          image: public.ecr.aws/csi-components/livenessprobe:v2.18.0-eksbuild.6
+          imagePullPolicy: IfNotPresent
+          name: liveness-probe
+          resources:
+            limits:
+              memory: 150Mi
+            requests:
+              cpu: 10m
+              memory: 150Mi
+          terminationMessagePolicy: FallbackToLogsOnError
+          volumeMounts:
+            - mountPath: C:\csi
+              name: plugin-dir
       nodeSelector:
         kubernetes.io/os: windows
       priorityClassName: system-node-critical
       serviceAccountName: ebs-csi-node-sa
       terminationGracePeriodSeconds: 30
       tolerations:
-      - operator: Exists
+        - operator: Exists
       volumes:
-      - hostPath:
-          path: C:\var\lib\kubelet
-          type: Directory
-        name: kubelet-dir
-      - hostPath:
-          path: C:\var\lib\kubelet\plugins\ebs.csi.aws.com
-          type: DirectoryOrCreate
-        name: plugin-dir
-      - hostPath:
-          path: C:\var\lib\kubelet\plugins_registry
-          type: Directory
-        name: registration-dir
-      - hostPath:
-          path: \\.\pipe\csi-proxy-disk-v1
-          type: ""
-        name: csi-proxy-disk-pipe
-      - hostPath:
-          path: \\.\pipe\csi-proxy-volume-v1
-          type: ""
-        name: csi-proxy-volume-pipe
-      - hostPath:
-          path: \\.\pipe\csi-proxy-filesystem-v1
-          type: ""
-        name: csi-proxy-filesystem-pipe
-      - emptyDir: {}
-        name: probe-dir
+        - hostPath:
+            path: C:\var\lib\kubelet
+            type: Directory
+          name: kubelet-dir
+        - hostPath:
+            path: C:\var\lib\kubelet\plugins\ebs.csi.aws.com
+            type: DirectoryOrCreate
+          name: plugin-dir
+        - hostPath:
+            path: C:\var\lib\kubelet\plugins_registry
+            type: Directory
+          name: registration-dir
+        - hostPath:
+            path: \\.\pipe\csi-proxy-disk-v1
+            type: ""
+          name: csi-proxy-disk-pipe
+        - hostPath:
+            path: \\.\pipe\csi-proxy-volume-v1
+            type: ""
+          name: csi-proxy-volume-pipe
+        - hostPath:
+            path: \\.\pipe\csi-proxy-filesystem-v1
+            type: ""
+          name: csi-proxy-filesystem-pipe
+        - emptyDir: {}
+          name: probe-dir
   updateStrategy:
     rollingUpdate:
       maxUnavailable: 10%

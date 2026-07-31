@@ -14,9 +14,9 @@ metadata:
   namespace: argo-cd
 spec:
   ports:
-  - name: http-webhook
-    port: 7000
-    targetPort: webhook
+    - name: http-webhook
+      port: 7000
+      targetPort: webhook
   selector:
     app.kubernetes.io/instance: argo-cd
     app.kubernetes.io/name: argocd-applicationset-controller

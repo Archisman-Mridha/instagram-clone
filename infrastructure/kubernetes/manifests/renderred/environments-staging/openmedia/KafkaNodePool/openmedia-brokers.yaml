@@ -9,11 +9,11 @@ metadata:
 spec:
   replicas: 3
   roles:
-  - broker
+    - broker
   storage:
     type: jbod
     volumes:
-    - id: 0
-      kraftMetadata: shared
-      size: 5Gi
-      type: persistent-claim
+      - id: 0
+        kraftMetadata: shared
+        size: 5Gi
+        type: persistent-claim

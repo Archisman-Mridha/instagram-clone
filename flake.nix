@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:cachix/devenv-nixpkgs/rolling";
+    nixpkgs-25_11.url = "github:NixOS/nixpkgs/nixos-25.11";
     systems.url = "github:nix-systems/default";
     devenv = {
       url = "github:cachix/devenv";
@@ -19,6 +20,7 @@
     {
       self,
       nixpkgs,
+      nixpkgs-25_11,
       systems,
       devenv,
       ...
@@ -55,6 +57,12 @@
                   terragrunt
                   tflint
 
+                  # Tanka only supports Helm v3. It feeds every repository from chartfile.yaml
+                  # (including the oci:// ones) into 'helm repo update', which Helm v4 rejects,
+                  # making 'tk tool charts vendor' fail.
+                  # This issue is being tracked upstream in grafana/tanka#1749.
+                  # nixos-25.11 is the most recent nixpkgs branch still shipping Helm v3.
+                  (import inputs.nixpkgs-25_11 { inherit system; }).kubernetes-helm
                   k3d
                   kops
                   tanka
@@ -63,6 +71,7 @@
                   kubeseal
                   karmor
 
+                  sqlfluff
                   hadolint
                   yamlfmt
                   statix

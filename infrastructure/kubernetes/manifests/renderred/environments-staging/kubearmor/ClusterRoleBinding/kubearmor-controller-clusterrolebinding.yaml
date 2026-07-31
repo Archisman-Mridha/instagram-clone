@@ -10,6 +10,6 @@ roleRef:
   kind: ClusterRole
   name: kubearmor-controller-clusterrole
 subjects:
-- kind: ServiceAccount
-  name: kubearmor-controller
-  namespace: kubearmor
+  - kind: ServiceAccount
+    name: kubearmor-controller
+    namespace: kubearmor

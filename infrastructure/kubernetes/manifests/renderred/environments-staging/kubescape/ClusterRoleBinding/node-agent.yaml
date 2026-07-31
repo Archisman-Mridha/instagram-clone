@@ -19,6 +19,6 @@ roleRef:
   kind: ClusterRole
   name: node-agent
 subjects:
-- kind: ServiceAccount
-  name: node-agent
-  namespace: kubescape
+  - kind: ServiceAccount
+    name: node-agent
+    namespace: kubescape

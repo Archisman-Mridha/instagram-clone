@@ -17,6 +17,6 @@ roleRef:
   kind: ClusterRole
   name: kube-prometheus-stack-kube-state-metrics
 subjects:
-- kind: ServiceAccount
-  name: kube-prometheus-stack-kube-state-metrics
-  namespace: kube-prometheus-stack
+  - kind: ServiceAccount
+    name: kube-prometheus-stack-kube-state-metrics
+    namespace: kube-prometheus-stack

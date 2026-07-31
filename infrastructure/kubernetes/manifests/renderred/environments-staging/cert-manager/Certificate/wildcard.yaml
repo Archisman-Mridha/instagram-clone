@@ -12,8 +12,8 @@ metadata:
   namespace: gateway-api
 spec:
   dnsNames:
-  - staging.openmedia.projectsofarchi.xyz
-  - '*.staging.openmedia.projectsofarchi.xyz'
+    - staging.openmedia.projectsofarchi.xyz
+    - "*.staging.openmedia.projectsofarchi.xyz"
   issuerRef:
     kind: ClusterIssuer
     name: letsencrypt

@@ -33,92 +33,92 @@ spec:
         helm.sh/chart: nats-1.3.13
     spec:
       containers:
-      - args:
-        - --config
-        - /etc/nats-config/nats.conf
-        env:
-        - name: POD_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.name
-        - name: SERVER_NAME
-          value: $(POD_NAME)
-        image: nats:2.11.8-alpine
-        lifecycle:
-          preStop:
-            exec:
-              command:
-              - nats-server
-              - -sl=ldm=/var/run/nats/nats.pid
-        livenessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /healthz?js-enabled-only=true
-            port: monitor
-          initialDelaySeconds: 10
-          periodSeconds: 30
-          successThreshold: 1
-          timeoutSeconds: 5
-        name: nats
-        ports:
-        - containerPort: 4222
+        - args:
+            - --config
+            - /etc/nats-config/nats.conf
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: SERVER_NAME
+              value: $(POD_NAME)
+          image: nats:2.11.8-alpine
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - nats-server
+                  - -sl=ldm=/var/run/nats/nats.pid
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz?js-enabled-only=true
+              port: monitor
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 5
           name: nats
-        - containerPort: 6222
-          name: cluster
-        - containerPort: 8222
-          name: monitor
-        readinessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /healthz?js-server-only=true
-            port: monitor
-          initialDelaySeconds: 10
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 5
-        startupProbe:
-          failureThreshold: 90
-          httpGet:
-            path: /healthz
-            port: monitor
-          initialDelaySeconds: 10
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 5
-        volumeMounts:
-        - mountPath: /etc/nats-config
-          name: config
-        - mountPath: /var/run/nats
-          name: pid
-        - mountPath: /data
-          name: openobserve-nats-js
-      - args:
-        - -pid
-        - /var/run/nats/nats.pid
-        - -config
-        - /etc/nats-config/nats.conf
-        image: natsio/nats-server-config-reloader:0.19.1
-        name: reloader
-        volumeMounts:
-        - mountPath: /var/run/nats
-          name: pid
-        - mountPath: /etc/nats-config
-          name: config
+          ports:
+            - containerPort: 4222
+              name: nats
+            - containerPort: 6222
+              name: cluster
+            - containerPort: 8222
+              name: monitor
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz?js-server-only=true
+              port: monitor
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          startupProbe:
+            failureThreshold: 90
+            httpGet:
+              path: /healthz
+              port: monitor
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          volumeMounts:
+            - mountPath: /etc/nats-config
+              name: config
+            - mountPath: /var/run/nats
+              name: pid
+            - mountPath: /data
+              name: openobserve-nats-js
+        - args:
+            - -pid
+            - /var/run/nats/nats.pid
+            - -config
+            - /etc/nats-config/nats.conf
+          image: natsio/nats-server-config-reloader:0.19.1
+          name: reloader
+          volumeMounts:
+            - mountPath: /var/run/nats
+              name: pid
+            - mountPath: /etc/nats-config
+              name: config
       enableServiceLinks: false
       shareProcessNamespace: true
       terminationGracePeriodSeconds: 60
       volumes:
-      - configMap:
-          name: openobserve-nats-config
-        name: config
-      - emptyDir: {}
-        name: pid
+        - configMap:
+            name: openobserve-nats-config
+          name: config
+        - emptyDir: {}
+          name: pid
   volumeClaimTemplates:
-  - metadata:
-      name: openobserve-nats-js
-    spec:
-      accessModes:
-      - ReadWriteOnce
-      resources:
-        requests:
-          storage: 20Gi
+    - metadata:
+        name: openobserve-nats-js
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20Gi

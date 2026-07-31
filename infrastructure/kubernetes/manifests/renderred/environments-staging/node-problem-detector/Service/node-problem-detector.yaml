@@ -18,9 +18,9 @@ metadata:
 spec:
   clusterIP: None
   ports:
-  - name: exporter
-    port: 20257
-    protocol: TCP
+    - name: exporter
+      port: 20257
+      protocol: TCP
   selector:
     app: node-problem-detector
   type: ClusterIP

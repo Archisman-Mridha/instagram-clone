@@ -15,47 +15,47 @@ metadata:
     release: kube-prometheus-stack
   name: kube-prometheus-stack-admission
 webhooks:
-- admissionReviewVersions:
-  - v1
-  - v1beta1
-  clientConfig:
-    service:
-      name: kube-prometheus-stack-operator
-      namespace: kube-prometheus-stack
-      path: /admission-prometheusrules/validate
-  failurePolicy: Ignore
-  name: prometheusrulevalidate.monitoring.coreos.com
-  rules:
-  - apiGroups:
-    - monitoring.coreos.com
-    apiVersions:
-    - '*'
-    operations:
-    - CREATE
-    - UPDATE
-    resources:
-    - prometheusrules
-  sideEffects: None
-  timeoutSeconds: 10
-- admissionReviewVersions:
-  - v1
-  - v1beta1
-  clientConfig:
-    service:
-      name: kube-prometheus-stack-operator
-      namespace: kube-prometheus-stack
-      path: /admission-alertmanagerconfigs/validate
-  failurePolicy: Ignore
-  name: alertmanagerconfigsvalidate.monitoring.coreos.com
-  rules:
-  - apiGroups:
-    - monitoring.coreos.com
-    apiVersions:
-    - v1alpha1
-    operations:
-    - CREATE
-    - UPDATE
-    resources:
-    - alertmanagerconfigs
-  sideEffects: None
-  timeoutSeconds: 10
+  - admissionReviewVersions:
+      - v1
+      - v1beta1
+    clientConfig:
+      service:
+        name: kube-prometheus-stack-operator
+        namespace: kube-prometheus-stack
+        path: /admission-prometheusrules/validate
+    failurePolicy: Ignore
+    name: prometheusrulevalidate.monitoring.coreos.com
+    rules:
+      - apiGroups:
+          - monitoring.coreos.com
+        apiVersions:
+          - "*"
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - prometheusrules
+    sideEffects: None
+    timeoutSeconds: 10
+  - admissionReviewVersions:
+      - v1
+      - v1beta1
+    clientConfig:
+      service:
+        name: kube-prometheus-stack-operator
+        namespace: kube-prometheus-stack
+        path: /admission-alertmanagerconfigs/validate
+    failurePolicy: Ignore
+    name: alertmanagerconfigsvalidate.monitoring.coreos.com
+    rules:
+      - apiGroups:
+          - monitoring.coreos.com
+        apiVersions:
+          - v1alpha1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - alertmanagerconfigs
+    sideEffects: None
+    timeoutSeconds: 10

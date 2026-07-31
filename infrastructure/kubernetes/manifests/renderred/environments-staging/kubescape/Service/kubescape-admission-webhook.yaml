@@ -17,8 +17,8 @@ metadata:
   namespace: kubescape
 spec:
   ports:
-  - port: 443
-    targetPort: 8443
+    - port: 443
+      targetPort: 8443
   selector:
     app.kubernetes.io/component: operator
     app.kubernetes.io/instance: kubescape

@@ -25,7 +25,7 @@ repositories:
   - name: dragonfly-operator
     url: oci://ghcr.io/dragonflydb/dragonfly-operator/helm
   - name: bitnami-labs
-    url: https://bitnami-labs.github.io/sealed-secrets/
+    url: https://bitnami.github.io/sealed-secrets
   - name: argo
     url: https://argoproj.github.io/argo-helm
   - name: deliveryhero
@@ -40,6 +40,8 @@ repositories:
     url: https://charts.openobserve.ai
   - name: openkruise
     url: https://openkruise.github.io/charts/
+  - name: atlas-operator
+    url: oci://ghcr.io/ariga/charts
 requires:
   - chart: cilium/cilium
     version: 1.19.4
@@ -79,4 +81,6 @@ requires:
     version: 0.80.3
   - chart: openkruise/kruise
     version: 1.9.0-alpha3
+  - chart: atlas-operator/atlas-operator
+    version: 0.7.37
 version: 1

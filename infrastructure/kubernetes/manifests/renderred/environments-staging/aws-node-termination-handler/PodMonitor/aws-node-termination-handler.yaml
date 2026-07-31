@@ -15,11 +15,11 @@ spec:
   jobLabel: app.kubernetes.io/name
   namespaceSelector:
     matchNames:
-    - aws
+      - aws
   podMetricsEndpoints:
-  - interval: 30s
-    path: /metrics
-    port: http-metrics
+    - interval: 30s
+      path: /metrics
+      port: http-metrics
   sampleLimit: 5000
   selector:
     matchLabels:

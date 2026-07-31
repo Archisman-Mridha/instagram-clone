@@ -16,10 +16,10 @@ metadata:
   namespace: dragonfly
 spec:
   containers:
-  - args:
-    - dragonfly-dragonfly-operator:8443
-    command:
-    - wget
-    image: busybox
-    name: wget
+    - args:
+        - dragonfly-dragonfly-operator:8443
+      command:
+        - wget
+      image: busybox
+      name: wget
   restartPolicy: Never

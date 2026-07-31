@@ -17,9 +17,9 @@ spec:
   privateKeySecretRef:
     name: letsencrypt
   solvers:
-  - dns01:
-      cloudflare:
-        apiKeySecretRef:
-          name: cloudflare-credentials
-          namespace: cert-manager
-        email: archismanmridha12345@gmail.com
+    - dns01:
+        cloudflare:
+          apiKeySecretRef:
+            name: cloudflare-credentials
+            namespace: cert-manager
+          email: archismanmridha12345@gmail.com

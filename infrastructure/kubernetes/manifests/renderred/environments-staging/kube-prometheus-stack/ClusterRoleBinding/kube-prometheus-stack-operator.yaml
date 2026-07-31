@@ -19,6 +19,6 @@ roleRef:
   kind: ClusterRole
   name: kube-prometheus-stack-operator
 subjects:
-- kind: ServiceAccount
-  name: kube-prometheus-stack-operator
-  namespace: kube-prometheus-stack
+  - kind: ServiceAccount
+    name: kube-prometheus-stack-operator
+    namespace: kube-prometheus-stack

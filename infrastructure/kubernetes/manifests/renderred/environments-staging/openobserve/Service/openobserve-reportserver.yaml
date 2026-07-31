@@ -12,10 +12,10 @@ metadata:
   namespace: openobserve
 spec:
   ports:
-  - name: http
-    port: 5080
-    protocol: TCP
-    targetPort: http
+    - name: http
+      port: 5080
+      protocol: TCP
+      targetPort: http
   selector:
     app.kubernetes.io/instance: openobserve
     app.kubernetes.io/name: openobserve

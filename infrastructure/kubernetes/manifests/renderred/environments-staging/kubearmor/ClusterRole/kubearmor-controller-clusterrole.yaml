@@ -6,59 +6,59 @@ metadata:
     app.tanka.grafana.com: kubearmor
   name: kubearmor-controller-clusterrole
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - pods
-  verbs:
-  - create
-  - delete
-  - get
-  - patch
-  - list
-  - watch
-  - update
-- apiGroups:
-  - ""
-  resources:
-  - nodes
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - apps
-  resources:
-  - deployments
-  - statefulsets
-  - daemonsets
-  - replicasets
-  verbs:
-  - get
-  - update
-- apiGroups:
-  - security.kubearmor.com
-  resources:
-  - kubearmorpolicies
-  - kubearmorclusterpolicies
-  - kubearmorhostpolicies
-  - kubearmornetworkpolicies
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - security.kubearmor.com
-  resources:
-  - kubearmorpolicies/status
-  - kubearmorclusterpolicies/status
-  - kubearmorhostpolicies/status
-  - kubearmornetworkpolicies/status
-  verbs:
-  - get
-  - patch
-  - update
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - create
+      - delete
+      - get
+      - patch
+      - list
+      - watch
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+      - statefulsets
+      - daemonsets
+      - replicasets
+    verbs:
+      - get
+      - update
+  - apiGroups:
+      - security.kubearmor.com
+    resources:
+      - kubearmorpolicies
+      - kubearmorclusterpolicies
+      - kubearmorhostpolicies
+      - kubearmornetworkpolicies
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - security.kubearmor.com
+    resources:
+      - kubearmorpolicies/status
+      - kubearmorclusterpolicies/status
+      - kubearmorhostpolicies/status
+      - kubearmornetworkpolicies/status
+    verbs:
+      - get
+      - patch
+      - update

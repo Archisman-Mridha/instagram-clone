@@ -17,6 +17,6 @@ roleRef:
   kind: Role
   name: argo-cd-argocd-applicationset-controller
 subjects:
-- kind: ServiceAccount
-  name: argocd-applicationset-controller
-  namespace: argo-cd
+  - kind: ServiceAccount
+    name: argocd-applicationset-controller
+    namespace: argo-cd

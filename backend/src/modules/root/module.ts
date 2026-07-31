@@ -106,18 +106,10 @@ import { PingModule } from "../ping/module"
 		TypeOrmModule.forRootAsync({
 			inject: [ConfigService],
 			useFactory: (configService: ConfigService<z.infer<typeof ConfigSchema>>) => ({
-				type: "cockroachdb",
-				url: configService.getOrThrow("COCKROACHDB_URL"),
+				type: "postgres",
+				url: configService.getOrThrow("POSTGRES_URL"),
 
-				autoLoadEntities: true,
-
-				migrations: ["generated/migrations/**"],
-				migrationsRun: true,
-
-				// Indicates if database schema should be auto created on every application launch.
-				// NOTE : Be careful with this option and don't use this in production - otherwise you can
-				//        loose production data.
-				synchronize: isDevelopmentEnvironment
+				autoLoadEntities: true
 
 				// logging: isDevelopmentEnvironment
 			})

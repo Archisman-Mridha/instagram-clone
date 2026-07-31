@@ -9,12 +9,12 @@ metadata:
   namespace: aws
 spec:
   endpoints:
-  - interval: 15s
-    path: /metrics
-    targetPort: 3302
+    - interval: 15s
+      path: /metrics
+      targetPort: 3302
   namespaceSelector:
     matchNames:
-    - aws
+      - aws
   selector:
     matchLabels:
       app: ebs-csi-controller-provisioner

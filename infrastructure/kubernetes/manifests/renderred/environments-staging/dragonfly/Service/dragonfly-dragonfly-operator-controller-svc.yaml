@@ -15,14 +15,14 @@ metadata:
   namespace: dragonfly
 spec:
   ports:
-  - name: https
-    port: 8443
-    protocol: TCP
-    targetPort: https
-  - name: metrics
-    port: 8080
-    protocol: TCP
-    targetPort: metrics
+    - name: https
+      port: 8443
+      protocol: TCP
+      targetPort: https
+    - name: metrics
+      port: 8080
+      protocol: TCP
+      targetPort: metrics
   selector:
     app.kubernetes.io/instance: dragonfly
     app.kubernetes.io/name: dragonfly-operator

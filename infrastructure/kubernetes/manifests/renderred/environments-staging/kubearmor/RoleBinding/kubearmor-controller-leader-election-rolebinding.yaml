@@ -11,6 +11,6 @@ roleRef:
   kind: Role
   name: kubearmor-controller-leader-election-role
 subjects:
-- kind: ServiceAccount
-  name: kubearmor-controller
-  namespace: kubearmor
+  - kind: ServiceAccount
+    name: kubearmor-controller
+    namespace: kubearmor

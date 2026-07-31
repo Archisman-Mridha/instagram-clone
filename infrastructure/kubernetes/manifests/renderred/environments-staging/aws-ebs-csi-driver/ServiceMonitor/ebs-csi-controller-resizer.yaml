@@ -9,12 +9,12 @@ metadata:
   namespace: aws
 spec:
   endpoints:
-  - interval: 15s
-    path: /metrics
-    targetPort: 3304
+    - interval: 15s
+      path: /metrics
+      targetPort: 3304
   namespaceSelector:
     matchNames:
-    - aws
+      - aws
   selector:
     matchLabels:
       app: ebs-csi-controller-resizer

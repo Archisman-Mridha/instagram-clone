@@ -16,13 +16,13 @@ metadata:
   namespace: kube-prometheus-stack
 spec:
   ports:
-  - name: http-web
-    port: 9090
-    targetPort: 9090
-  - appProtocol: http
-    name: reloader-web
-    port: 8080
-    targetPort: reloader-web
+    - name: http-web
+      port: 9090
+      targetPort: 9090
+    - appProtocol: http
+      name: reloader-web
+      port: 8080
+      targetPort: reloader-web
   publishNotReadyAddresses: false
   selector:
     app.kubernetes.io/name: prometheus

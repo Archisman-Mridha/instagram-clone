@@ -17,6 +17,6 @@ roleRef:
   kind: Role
   name: argo-cd-argocd-repo-server
 subjects:
-- kind: ServiceAccount
-  name: argo-cd-argocd-repo-server
-  namespace: argo-cd
+  - kind: ServiceAccount
+    name: argo-cd-argocd-repo-server
+    namespace: argo-cd

@@ -1,4 +1,10 @@
-declare const module: any
+// Injected by RsPack, and only present in development builds.
+declare const module: {
+	hot?: {
+		accept(): void
+		dispose(callback: () => void): void
+	}
+}
 
 import compression from "@fastify/compress"
 import cookie from "@fastify/cookie"

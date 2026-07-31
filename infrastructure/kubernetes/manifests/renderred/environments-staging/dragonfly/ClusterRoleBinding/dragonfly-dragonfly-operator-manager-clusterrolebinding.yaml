@@ -17,6 +17,6 @@ roleRef:
   kind: ClusterRole
   name: dragonfly-dragonfly-operator-manager-role
 subjects:
-- kind: ServiceAccount
-  name: dragonfly-operator-controller-manager
-  namespace: dragonfly
+  - kind: ServiceAccount
+    name: dragonfly-operator-controller-manager
+    namespace: dragonfly

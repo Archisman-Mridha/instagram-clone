@@ -17,49 +17,49 @@ spec:
         app: openfga
     spec:
       containers:
-      - command:
-        - /openfga
-        - run
-        env:
-        - name: OPENFGA_DATASTORE_ENGINE
-          value: postgres
-        - name: OPENFGA_LOG_FORMAT
-          value: json
-        envFrom:
-        - secretRef:
-            name: openobserve-auth-credentials
-        image: openfga/openfga:latest
-        imagePullPolicy: IfNotPresent
-        name: openfga
-        ports:
-        - containerPort: 8080
-          name: http
-        - containerPort: 8081
-          name: grpc
-        resources:
-          limits:
-            cpu: 200m
-            memory: 200Mi
-          requests:
-            cpu: 100m
-            memory: 128Mi
+        - command:
+            - /openfga
+            - run
+          env:
+            - name: OPENFGA_DATASTORE_ENGINE
+              value: postgres
+            - name: OPENFGA_LOG_FORMAT
+              value: json
+          envFrom:
+            - secretRef:
+                name: openobserve-auth-credentials
+          image: openfga/openfga:latest
+          imagePullPolicy: IfNotPresent
+          name: openfga
+          ports:
+            - containerPort: 8080
+              name: http
+            - containerPort: 8081
+              name: grpc
+          resources:
+            limits:
+              cpu: 200m
+              memory: 200Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
       initContainers:
-      - command:
-        - /openfga
-        - migrate
-        env:
-        - name: OPENFGA_DATASTORE_ENGINE
-          value: postgres
-        envFrom:
-        - secretRef:
-            name: openobserve-auth-credentials
-        image: openfga/openfga:latest
-        imagePullPolicy: IfNotPresent
-        name: openfga-migrate
-        resources:
-          limits:
-            cpu: 200m
-            memory: 200Mi
-          requests:
-            cpu: 100m
-            memory: 128Mi
+        - command:
+            - /openfga
+            - migrate
+          env:
+            - name: OPENFGA_DATASTORE_ENGINE
+              value: postgres
+          envFrom:
+            - secretRef:
+                name: openobserve-auth-credentials
+          image: openfga/openfga:latest
+          imagePullPolicy: IfNotPresent
+          name: openfga-migrate
+          resources:
+            limits:
+              cpu: 200m
+              memory: 200Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi

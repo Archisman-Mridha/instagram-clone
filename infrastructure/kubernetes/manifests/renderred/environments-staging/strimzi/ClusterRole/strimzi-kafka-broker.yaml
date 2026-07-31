@@ -11,9 +11,9 @@ metadata:
     release: strimzi
   name: strimzi-kafka-broker
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - nodes
-  verbs:
-  - get
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+      - get

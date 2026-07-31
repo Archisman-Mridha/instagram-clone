@@ -11,6 +11,6 @@ roleRef:
   kind: ClusterRole
   name: hubble-ui
 subjects:
-- kind: ServiceAccount
-  name: hubble-ui
-  namespace: cilium
+  - kind: ServiceAccount
+    name: hubble-ui
+    namespace: cilium

@@ -11,9 +11,9 @@ metadata:
   namespace: cilium
 spec:
   ports:
-  - port: 80
-    protocol: TCP
-    targetPort: grpc
+    - port: 80
+      protocol: TCP
+      targetPort: grpc
   selector:
     k8s-app: hubble-relay
   type: ClusterIP

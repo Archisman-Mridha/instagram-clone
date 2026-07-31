@@ -11,9 +11,9 @@ metadata:
   namespace: cilium
 spec:
   ports:
-  - name: http
-    port: 80
-    targetPort: 8081
+    - name: http
+      port: 80
+      targetPort: 8081
   selector:
     k8s-app: hubble-ui
   type: ClusterIP

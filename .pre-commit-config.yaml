@@ -1,4 +1,14 @@
 repos:
+  - repo: https://github.com/sqlfluff/sqlfluff
+    rev: 4.2.2
+    hooks:
+      - id: sqlfluff-lint
+        name: Lint SQL files.
+        language: system
+      - id: sqlfluff-fix
+        name: Fix SQL lint errors.
+        language: system
+
   - repo: https://github.com/biomejs/pre-commit
     rev: v2.4.16
     hooks:

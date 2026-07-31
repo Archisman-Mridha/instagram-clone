@@ -13,14 +13,14 @@ metadata:
   namespace: kube-prometheus-stack
 spec:
   endpoints:
-  - honorLabels: true
-    path: /metrics
-    port: http-web
-    scheme: http
+    - honorLabels: true
+      path: /metrics
+      port: http-web
+      scheme: http
   jobLabel: kube-prometheus-stack
   namespaceSelector:
     matchNames:
-    - kube-prometheus-stack
+      - kube-prometheus-stack
   selector:
     matchLabels:
       app.kubernetes.io/instance: kube-prometheus-stack

@@ -13,15 +13,15 @@ metadata:
   namespace: opencost
 spec:
   ports:
-  - name: http
-    port: 9003
-    targetPort: 9003
-  - name: mcp-server
-    port: 8081
-    targetPort: 8081
-  - name: http-ui
-    port: 9090
-    targetPort: 9090
+    - name: http
+      port: 9003
+      targetPort: 9003
+    - name: mcp-server
+      port: 8081
+      targetPort: 8081
+    - name: http-ui
+      port: 9090
+      targetPort: 9090
   selector:
     app.kubernetes.io/instance: opencost
     app.kubernetes.io/name: opencost

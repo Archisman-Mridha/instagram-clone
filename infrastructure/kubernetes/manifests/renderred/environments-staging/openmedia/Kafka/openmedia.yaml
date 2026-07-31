@@ -15,9 +15,9 @@ spec:
       default.replication.factor: 3
       min.insync.replicas: 2
     listeners:
-    - name: plain
-      port: 9092
-      tls: false
-      type: internal
+      - name: plain
+        port: 9092
+        tls: false
+        type: internal
     metadataVersion: 4.2-IV1
     version: 4.2.0

@@ -17,117 +17,117 @@ spec:
         kubearmor-app: kubearmor
     spec:
       containers:
-      - args:
-        - -gRPC=32767
-        - -procfsMount=/host/procfs
-        - -tlsEnabled=false
-        env:
-        - name: KUBEARMOR_NODENAME
-          valueFrom:
-            fieldRef:
-              fieldPath: spec.nodeName
-        - name: KUBEARMOR_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        image: docker.io/kubearmor/kubearmor:stable
-        imagePullPolicy: Always
-        livenessProbe:
-          exec:
-            command:
-            - /bin/bash
-            - -c
-            - pgrep -f kubearmor >/dev/null
-          failureThreshold: 5
-          initialDelaySeconds: 60
-          periodSeconds: 20
-          successThreshold: 1
-          timeoutSeconds: 5
-        name: kubearmor
-        ports:
-        - containerPort: 32767
-        resources:
-          requests:
-            cpu: 10m
-            memory: 64Mi
-        securityContext:
-          capabilities:
-            add:
-            - SETUID
-            - SETGID
-            - SETPCAP
-            - SYS_ADMIN
-            - SYS_PTRACE
-            - MAC_ADMIN
-            - NET_ADMIN
-            - SYS_RESOURCE
-            - IPC_LOCK
-            - CAP_DAC_OVERRIDE
-            - CAP_DAC_READ_SEARCH
-            drop:
-            - ALL
-          privileged: false
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
-        volumeMounts:
-        - mountPath: /opt/kubearmor/BPF
-          name: bpf
-        - mountPath: /usr/src
-          name: usr-src-path
-          readOnly: true
-        - mountPath: /lib/modules
-          name: lib-modules-path
-          readOnly: true
-        - mountPath: /sys/kernel/security
-          name: sys-kernel-security-path
-        - mountPath: /sys/kernel/debug
-          name: sys-kernel-debug-path
-        - mountPath: /media/root/etc/os-release
-          name: os-release-path
-          readOnly: true
-        - mountPath: /etc/apparmor.d
-          name: etc-apparmor-d-path
-        - mountPath: /var/run/containerd/containerd.sock
-          name: containerd-sock-path
-          readOnly: true
+        - args:
+            - -gRPC=32767
+            - -procfsMount=/host/procfs
+            - -tlsEnabled=false
+          env:
+            - name: KUBEARMOR_NODENAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: KUBEARMOR_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          image: docker.io/kubearmor/kubearmor:stable
+          imagePullPolicy: Always
+          livenessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -c
+                - pgrep -f kubearmor >/dev/null
+            failureThreshold: 5
+            initialDelaySeconds: 60
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 5
+          name: kubearmor
+          ports:
+            - containerPort: 32767
+          resources:
+            requests:
+              cpu: 10m
+              memory: 64Mi
+          securityContext:
+            capabilities:
+              add:
+                - SETUID
+                - SETGID
+                - SETPCAP
+                - SYS_ADMIN
+                - SYS_PTRACE
+                - MAC_ADMIN
+                - NET_ADMIN
+                - SYS_RESOURCE
+                - IPC_LOCK
+                - CAP_DAC_OVERRIDE
+                - CAP_DAC_READ_SEARCH
+              drop:
+                - ALL
+            privileged: false
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /opt/kubearmor/BPF
+              name: bpf
+            - mountPath: /usr/src
+              name: usr-src-path
+              readOnly: true
+            - mountPath: /lib/modules
+              name: lib-modules-path
+              readOnly: true
+            - mountPath: /sys/kernel/security
+              name: sys-kernel-security-path
+            - mountPath: /sys/kernel/debug
+              name: sys-kernel-debug-path
+            - mountPath: /media/root/etc/os-release
+              name: os-release-path
+              readOnly: true
+            - mountPath: /etc/apparmor.d
+              name: etc-apparmor-d-path
+            - mountPath: /var/run/containerd/containerd.sock
+              name: containerd-sock-path
+              readOnly: true
       dnsPolicy: ClusterFirstWithHostNet
       hostNetwork: true
       initContainers:
-      - image: docker.io/kubearmor/kubearmor-init:stable
-        imagePullPolicy: Always
-        name: init
-        securityContext:
-          capabilities:
-            add:
-            - SETUID
-            - SETGID
-            - SETPCAP
-            - SYS_ADMIN
-            - SYS_PTRACE
-            - MAC_ADMIN
-            - SYS_RESOURCE
-            - IPC_LOCK
-            - CAP_DAC_OVERRIDE
-            - CAP_DAC_READ_SEARCH
-            drop:
-            - ALL
-          privileged: false
-        volumeMounts:
-        - mountPath: /opt/kubearmor/BPF
-          name: bpf
-        - mountPath: /lib/modules
-          name: lib-modules-path
-          readOnly: true
-        - mountPath: /sys/kernel/security
-          name: sys-kernel-security-path
-        - mountPath: /sys/kernel/debug
-          name: sys-kernel-debug-path
-        - mountPath: /media/root/etc/os-release
-          name: os-release-path
-          readOnly: true
-        - mountPath: /usr/src
-          name: usr-src-path
-          readOnly: true
+        - image: docker.io/kubearmor/kubearmor-init:stable
+          imagePullPolicy: Always
+          name: init
+          securityContext:
+            capabilities:
+              add:
+                - SETUID
+                - SETGID
+                - SETPCAP
+                - SYS_ADMIN
+                - SYS_PTRACE
+                - MAC_ADMIN
+                - SYS_RESOURCE
+                - IPC_LOCK
+                - CAP_DAC_OVERRIDE
+                - CAP_DAC_READ_SEARCH
+              drop:
+                - ALL
+            privileged: false
+          volumeMounts:
+            - mountPath: /opt/kubearmor/BPF
+              name: bpf
+            - mountPath: /lib/modules
+              name: lib-modules-path
+              readOnly: true
+            - mountPath: /sys/kernel/security
+              name: sys-kernel-security-path
+            - mountPath: /sys/kernel/debug
+              name: sys-kernel-debug-path
+            - mountPath: /media/root/etc/os-release
+              name: os-release-path
+              readOnly: true
+            - mountPath: /usr/src
+              name: usr-src-path
+              readOnly: true
       nodeSelector:
         kubernetes.io/os: linux
       restartPolicy: Always
@@ -137,33 +137,33 @@ spec:
       serviceAccountName: kubearmor
       terminationGracePeriodSeconds: 30
       volumes:
-      - emptyDir: {}
-        name: bpf
-      - hostPath:
-          path: /usr/src
-          type: Directory
-        name: usr-src-path
-      - hostPath:
-          path: /lib/modules
-          type: DirectoryOrCreate
-        name: lib-modules-path
-      - hostPath:
-          path: /sys/kernel/security
-          type: Directory
-        name: sys-kernel-security-path
-      - hostPath:
-          path: /sys/kernel/debug
-          type: Directory
-        name: sys-kernel-debug-path
-      - hostPath:
-          path: /etc/os-release
-          type: File
-        name: os-release-path
-      - hostPath:
-          path: /etc/apparmor.d
-          type: DirectoryOrCreate
-        name: etc-apparmor-d-path
-      - hostPath:
-          path: /var/run/containerd/containerd.sock
-          type: Socket
-        name: containerd-sock-path
+        - emptyDir: {}
+          name: bpf
+        - hostPath:
+            path: /usr/src
+            type: Directory
+          name: usr-src-path
+        - hostPath:
+            path: /lib/modules
+            type: DirectoryOrCreate
+          name: lib-modules-path
+        - hostPath:
+            path: /sys/kernel/security
+            type: Directory
+          name: sys-kernel-security-path
+        - hostPath:
+            path: /sys/kernel/debug
+            type: Directory
+          name: sys-kernel-debug-path
+        - hostPath:
+            path: /etc/os-release
+            type: File
+          name: os-release-path
+        - hostPath:
+            path: /etc/apparmor.d
+            type: DirectoryOrCreate
+          name: etc-apparmor-d-path
+        - hostPath:
+            path: /var/run/containerd/containerd.sock
+            type: Socket
+          name: containerd-sock-path

@@ -6,60 +6,60 @@ metadata:
     app.tanka.grafana.com: kubearmor
   name: kubearmor-clusterrole
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - namespaces
-  verbs:
-  - get
-  - list
-  - watch
-  - update
-- apiGroups:
-  - ""
-  resources:
-  - pods
-  - nodes
-  - configmaps
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - apps
-  resources:
-  - deployments
-  - replicasets
-  - daemonsets
-  - statefulsets
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - batch
-  resources:
-  - jobs
-  - cronjobs
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - security.kubearmor.com
-  resources:
-  - kubearmorpolicies
-  - kubearmorclusterpolicies
-  - kubearmorhostpolicies
-  - kubearmornetworkpolicies
-  verbs:
-  - get
-  - list
-  - watch
-  - update
-  - delete
-- nonResourceURLs:
-  - /apis
-  - /apis/*
-  verbs:
-  - get
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - nodes
+      - configmaps
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+      - replicasets
+      - daemonsets
+      - statefulsets
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - batch
+    resources:
+      - jobs
+      - cronjobs
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - security.kubearmor.com
+    resources:
+      - kubearmorpolicies
+      - kubearmorclusterpolicies
+      - kubearmorhostpolicies
+      - kubearmornetworkpolicies
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+      - delete
+  - nonResourceURLs:
+      - /apis
+      - /apis/*
+    verbs:
+      - get

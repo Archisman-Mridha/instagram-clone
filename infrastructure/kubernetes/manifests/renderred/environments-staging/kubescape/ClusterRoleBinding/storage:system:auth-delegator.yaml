@@ -19,6 +19,6 @@ roleRef:
   kind: ClusterRole
   name: system:auth-delegator
 subjects:
-- kind: ServiceAccount
-  name: storage
-  namespace: kubescape
+  - kind: ServiceAccount
+    name: storage
+    namespace: kubescape

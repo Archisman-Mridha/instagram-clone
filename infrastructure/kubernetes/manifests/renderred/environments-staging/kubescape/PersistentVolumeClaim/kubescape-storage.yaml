@@ -17,7 +17,7 @@ metadata:
   namespace: kubescape
 spec:
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   resources:
     requests:
       storage: 5Gi

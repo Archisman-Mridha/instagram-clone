@@ -14,23 +14,23 @@ spec:
     singular: controlplaneinfo
   scope: Cluster
   versions:
-  - additionalPrinterColumns:
-    - jsonPath: .spec.nodeName
-      name: Node
-      type: string
-    - jsonPath: .status.lastSensed
-      name: Last Sensed
-      type: string
-    name: v1beta1
-    schema:
-      openAPIV3Schema:
-        properties:
-          spec:
-            type: object
-            x-kubernetes-preserve-unknown-fields: true
-          status:
-            type: object
-            x-kubernetes-preserve-unknown-fields: true
-        type: object
-    served: true
-    storage: true
+    - additionalPrinterColumns:
+        - jsonPath: .spec.nodeName
+          name: Node
+          type: string
+        - jsonPath: .status.lastSensed
+          name: Last Sensed
+          type: string
+      name: v1beta1
+      schema:
+        openAPIV3Schema:
+          properties:
+            spec:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+            status:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+          type: object
+      served: true
+      storage: true

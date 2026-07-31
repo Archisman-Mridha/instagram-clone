@@ -15,6 +15,6 @@ roleRef:
   kind: ClusterRole
   name: strimzi-kafka-client
 subjects:
-- kind: ServiceAccount
-  name: strimzi-cluster-operator
-  namespace: strimzi
+  - kind: ServiceAccount
+    name: strimzi-cluster-operator
+    namespace: strimzi

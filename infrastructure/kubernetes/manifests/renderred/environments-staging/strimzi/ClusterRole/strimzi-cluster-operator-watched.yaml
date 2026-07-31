@@ -11,48 +11,48 @@ metadata:
     release: strimzi
   name: strimzi-cluster-operator-watched
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - pods
-  verbs:
-  - watch
-  - list
-- apiGroups:
-  - kafka.strimzi.io
-  resources:
-  - kafkas
-  - kafkas/status
-  - kafkaconnects
-  - kafkaconnects/status
-  - kafkaconnectors
-  - kafkaconnectors/status
-  - kafkamirrormakers
-  - kafkamirrormakers/status
-  - kafkabridges
-  - kafkabridges/status
-  - kafkamirrormaker2s
-  - kafkamirrormaker2s/status
-  - kafkarebalances
-  - kafkarebalances/status
-  verbs:
-  - get
-  - list
-  - watch
-  - create
-  - delete
-  - patch
-  - update
-- apiGroups:
-  - core.strimzi.io
-  resources:
-  - strimzipodsets
-  - strimzipodsets/status
-  verbs:
-  - get
-  - list
-  - watch
-  - create
-  - delete
-  - patch
-  - update
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - watch
+      - list
+  - apiGroups:
+      - kafka.strimzi.io
+    resources:
+      - kafkas
+      - kafkas/status
+      - kafkaconnects
+      - kafkaconnects/status
+      - kafkaconnectors
+      - kafkaconnectors/status
+      - kafkamirrormakers
+      - kafkamirrormakers/status
+      - kafkabridges
+      - kafkabridges/status
+      - kafkamirrormaker2s
+      - kafkamirrormaker2s/status
+      - kafkarebalances
+      - kafkarebalances/status
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - delete
+      - patch
+      - update
+  - apiGroups:
+      - core.strimzi.io
+    resources:
+      - strimzipodsets
+      - strimzipodsets/status
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - delete
+      - patch
+      - update

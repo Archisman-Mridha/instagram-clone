@@ -8,7 +8,7 @@ metadata:
   namespace: kruise-system
 spec:
   ports:
-  - port: 443
-    targetPort: 9876
+    - port: 443
+      targetPort: 9876
   selector:
     control-plane: controller-manager

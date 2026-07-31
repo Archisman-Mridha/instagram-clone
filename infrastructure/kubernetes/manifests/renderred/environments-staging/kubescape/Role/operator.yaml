@@ -16,28 +16,28 @@ metadata:
   name: operator
   namespace: kubescape
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - configmaps
-  - secrets
-  verbs:
-  - create
-  - get
-  - update
-  - watch
-  - list
-  - patch
-  - delete
-- apiGroups:
-  - batch
-  resources:
-  - cronjobs
-  verbs:
-  - create
-  - get
-  - update
-  - watch
-  - list
-  - patch
-  - delete
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+      - secrets
+    verbs:
+      - create
+      - get
+      - update
+      - watch
+      - list
+      - patch
+      - delete
+  - apiGroups:
+      - batch
+    resources:
+      - cronjobs
+    verbs:
+      - create
+      - get
+      - update
+      - watch
+      - list
+      - patch
+      - delete

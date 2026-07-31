@@ -32,7 +32,7 @@ import { Profile, ProfilePreviews } from "./models"
     function( ) { return Profile }. And this regular function has the .prototype property. So,
     NestJS ends up treating it as a class reference, and wraps it, which leads to :
   */
-	() => Profile
+	Profile
 )
 export class ProfilesResolver {
 	constructor(

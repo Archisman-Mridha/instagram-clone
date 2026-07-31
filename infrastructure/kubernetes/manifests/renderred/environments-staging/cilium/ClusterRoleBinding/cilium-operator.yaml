@@ -11,6 +11,6 @@ roleRef:
   kind: ClusterRole
   name: cilium-operator
 subjects:
-- kind: ServiceAccount
-  name: cilium-operator
-  namespace: cilium
+  - kind: ServiceAccount
+    name: cilium-operator
+    namespace: cilium

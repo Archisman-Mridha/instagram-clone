@@ -12,10 +12,10 @@ metadata:
   namespace: external-dns
 spec:
   ports:
-  - name: http
-    port: 7979
-    protocol: TCP
-    targetPort: http
+    - name: http
+      port: 7979
+      protocol: TCP
+      targetPort: http
   selector:
     app.kubernetes.io/instance: external-dns
     app.kubernetes.io/name: external-dns

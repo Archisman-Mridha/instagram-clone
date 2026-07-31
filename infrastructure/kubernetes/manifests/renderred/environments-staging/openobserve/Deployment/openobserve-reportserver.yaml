@@ -28,29 +28,29 @@ spec:
         role: reportserver
     spec:
       containers:
-      - env:
-        - name: ZO_NODE_ROLE
-          value: reportserver
-        - name: XDG_CONFIG_HOME
-          value: /tmp/.chromium
-        - name: XDG_CACHE_HOME
-          value: /tmp/.chromium
-        envFrom:
-        - configMapRef:
-            name: openobserve
-        - configMapRef:
-            name: openobserve-reportserver
-        - secretRef:
-            name: openobserve-auth-credentials
-        image: o2cr.ai/openobserve/report-server:v0.11.2-88574bc
-        imagePullPolicy: IfNotPresent
-        name: openobserve-reportserver
-        ports:
-        - containerPort: 5080
-          name: http
-          protocol: TCP
-        resources: {}
-        securityContext: {}
+        - env:
+            - name: ZO_NODE_ROLE
+              value: reportserver
+            - name: XDG_CONFIG_HOME
+              value: /tmp/.chromium
+            - name: XDG_CACHE_HOME
+              value: /tmp/.chromium
+          envFrom:
+            - configMapRef:
+                name: openobserve
+            - configMapRef:
+                name: openobserve-reportserver
+            - secretRef:
+                name: openobserve-auth-credentials
+          image: o2cr.ai/openobserve/report-server:v0.11.2-88574bc
+          imagePullPolicy: IfNotPresent
+          name: openobserve-reportserver
+          ports:
+            - containerPort: 5080
+              name: http
+              protocol: TCP
+          resources: {}
+          securityContext: {}
       securityContext:
         fsGroup: 2000
         runAsGroup: 3000

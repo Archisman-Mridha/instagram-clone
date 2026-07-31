@@ -10,12 +10,12 @@ metadata:
     helm.sh/chart: grafana-12.4.1
   name: kube-prometheus-stack-grafana-clusterrole
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - configmaps
-  - secrets
-  verbs:
-  - get
-  - watch
-  - list
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+      - secrets
+    verbs:
+      - get
+      - watch
+      - list

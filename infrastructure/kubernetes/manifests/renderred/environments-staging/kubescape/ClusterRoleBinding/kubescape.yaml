@@ -19,6 +19,6 @@ roleRef:
   kind: ClusterRole
   name: kubescape
 subjects:
-- kind: ServiceAccount
-  name: kubescape
-  namespace: kubescape
+  - kind: ServiceAccount
+    name: kubescape
+    namespace: kubescape

@@ -13,6 +13,6 @@ roleRef:
   kind: ClusterRole
   name: ebs-csi-driver-test
 subjects:
-- kind: ServiceAccount
-  name: ebs-csi-driver-test
-  namespace: aws
+  - kind: ServiceAccount
+    name: ebs-csi-driver-test
+    namespace: aws

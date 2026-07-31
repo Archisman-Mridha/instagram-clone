@@ -16,54 +16,50 @@ spec:
     singular: osreleasefile
   scope: Cluster
   versions:
-  - additionalPrinterColumns:
-    - jsonPath: .spec.nodeName
-      name: Node
-      type: string
-    - jsonPath: .status.lastSensed
-      name: Last Sensed
-      type: string
-    - jsonPath: .metadata.creationTimestamp
-      name: Age
-      type: date
-    name: v1beta1
-    schema:
-      openAPIV3Schema:
-        description: OsReleaseFile contains the OS release information from a node
-        properties:
-          apiVersion:
-            description: APIVersion defines the versioned schema of this representation
-              of an object.
-            type: string
-          kind:
-            description: Kind is a string value representing the REST resource this
-              object represents.
-            type: string
-          metadata:
-            type: object
-          spec:
-            description: OsReleaseFileSpec contains the actual OS release file content
-            properties:
-              content:
-                description: Content is the raw content of the OS release file
-                type: string
-              nodeName:
-                description: NodeName is the name of the node this data came from
-                type: string
-            type: object
-          status:
-            description: OsReleaseFileStatus contains status information about the
-              sensing
-            properties:
-              error:
-                description: Error contains any error message from the last sensing
-                  attempt
-                type: string
-              lastSensed:
-                description: LastSensed is the timestamp when this data was last collected
-                format: date-time
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
+    - additionalPrinterColumns:
+        - jsonPath: .spec.nodeName
+          name: Node
+          type: string
+        - jsonPath: .status.lastSensed
+          name: Last Sensed
+          type: string
+        - jsonPath: .metadata.creationTimestamp
+          name: Age
+          type: date
+      name: v1beta1
+      schema:
+        openAPIV3Schema:
+          description: OsReleaseFile contains the OS release information from a node
+          properties:
+            apiVersion:
+              description: APIVersion defines the versioned schema of this representation of an object.
+              type: string
+            kind:
+              description: Kind is a string value representing the REST resource this object represents.
+              type: string
+            metadata:
+              type: object
+            spec:
+              description: OsReleaseFileSpec contains the actual OS release file content
+              properties:
+                content:
+                  description: Content is the raw content of the OS release file
+                  type: string
+                nodeName:
+                  description: NodeName is the name of the node this data came from
+                  type: string
+              type: object
+            status:
+              description: OsReleaseFileStatus contains status information about the sensing
+              properties:
+                error:
+                  description: Error contains any error message from the last sensing attempt
+                  type: string
+                lastSensed:
+                  description: LastSensed is the timestamp when this data was last collected
+                  format: date-time
+                  type: string
+              type: object
+          type: object
+      served: true
+      storage: true

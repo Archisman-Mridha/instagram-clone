@@ -7,24 +7,24 @@ metadata:
     rbac.authorization.k8s.io/aggregate-to-admin: "true"
   name: aggregate-kruise-admin
 rules:
-- apiGroups:
-  - apps.kruise.io
-  resources:
-  - resourcedistributions/status
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - apps.kruise.io
-  resources:
-  - resourcedistributions
-  verbs:
-  - get
-  - list
-  - watch
-  - create
-  - delete
-  - deletecollection
-  - patch
-  - update
+  - apiGroups:
+      - apps.kruise.io
+    resources:
+      - resourcedistributions/status
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - apps.kruise.io
+    resources:
+      - resourcedistributions
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - delete
+      - deletecollection
+      - patch
+      - update

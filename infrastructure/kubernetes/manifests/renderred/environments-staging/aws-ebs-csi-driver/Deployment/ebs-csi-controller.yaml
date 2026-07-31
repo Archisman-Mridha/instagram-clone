@@ -37,248 +37,248 @@ spec:
       affinity:
         nodeAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-          - preference:
-              matchExpressions:
-              - key: eks.amazonaws.com/compute-type
-                operator: NotIn
-                values:
-                - fargate
-                - auto
-                - hybrid
-            weight: 1
+            - preference:
+                matchExpressions:
+                  - key: eks.amazonaws.com/compute-type
+                    operator: NotIn
+                    values:
+                      - fargate
+                      - auto
+                      - hybrid
+              weight: 1
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-          - podAffinityTerm:
-              labelSelector:
-                matchExpressions:
-                - key: app
-                  operator: In
-                  values:
-                  - ebs-csi-controller
-              topologyKey: kubernetes.io/hostname
-            weight: 100
+            - podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - ebs-csi-controller
+                topologyKey: kubernetes.io/hostname
+              weight: 100
       containers:
-      - args:
-        - controller
-        - --endpoint=$(CSI_ENDPOINT)
-        - --http-endpoint=0.0.0.0:3301
-        - --batching=true
-        - --logging-format=text
-        - --user-agent-extra=helm
-        - --v=2
-        env:
-        - name: CSI_ENDPOINT
-          value: unix:///var/lib/csi/sockets/pluginproxy/csi.sock
-        - name: CSI_NODE_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: spec.nodeName
-        - name: AWS_ACCESS_KEY_ID
-          valueFrom:
-            secretKeyRef:
-              key: key_id
-              name: aws-secret
-              optional: true
-        - name: AWS_SECRET_ACCESS_KEY
-          valueFrom:
-            secretKeyRef:
-              key: access_key
-              name: aws-secret
-              optional: true
-        - name: AWS_EC2_ENDPOINT
-          valueFrom:
-            configMapKeyRef:
-              key: endpoint
-              name: aws-meta
-              optional: true
-        - name: AWS_SAGEMAKER_ENDPOINT
-          valueFrom:
-            configMapKeyRef:
-              key: sagemaker_endpoint
-              name: aws-meta
-              optional: true
-        image: public.ecr.aws/ebs-csi-driver/aws-ebs-csi-driver:v1.60.1
-        imagePullPolicy: IfNotPresent
-        livenessProbe:
-          failureThreshold: 10
-          httpGet:
-            path: /healthz
-            port: healthz
-          initialDelaySeconds: 10
-          periodSeconds: 10
-          timeoutSeconds: 60
-        name: ebs-plugin
-        ports:
-        - containerPort: 9808
-          name: healthz
-          protocol: TCP
-        - containerPort: 3301
-          name: metrics
-          protocol: TCP
-        readinessProbe:
-          failureThreshold: 5
-          httpGet:
-            path: /healthz
-            port: healthz
-          initialDelaySeconds: 10
-          periodSeconds: 10
-          timeoutSeconds: 60
-        resources:
-          limits:
-            memory: 256Mi
-          requests:
-            cpu: 10m
-            memory: 40Mi
-        securityContext:
-          allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
-          seccompProfile:
-            type: RuntimeDefault
-        terminationMessagePolicy: FallbackToLogsOnError
-        volumeMounts:
-        - mountPath: /var/lib/csi/sockets/pluginproxy/
-          name: socket-dir
-      - args:
-        - --timeout=60s
-        - --csi-address=$(ADDRESS)
-        - --v=2
-        - --feature-gates=Topology=true
-        - --extra-create-metadata
-        - --leader-election=true
-        - --default-fstype=ext4
-        - --kube-api-qps=20
-        - --kube-api-burst=100
-        - --worker-threads=100
-        - --retry-interval-max=30m
-        - --feature-gates=VolumeAttributesClass=false
-        - --http-endpoint=0.0.0.0:3302
-        env:
-        - name: ADDRESS
-          value: /var/lib/csi/sockets/pluginproxy/csi.sock
-        - name: ENABLE_VAC_FALLBACK
-          value: "true"
-        image: public.ecr.aws/csi-components/csi-provisioner:v6.2.0-eksbuild.5
-        imagePullPolicy: IfNotPresent
-        name: csi-provisioner
-        ports:
-        - containerPort: 3302
-          name: metrics-prov
-          protocol: TCP
-        resources:
-          limits:
-            memory: 256Mi
-          requests:
-            cpu: 10m
-            memory: 40Mi
-        securityContext:
-          allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
-          seccompProfile:
-            type: RuntimeDefault
-        terminationMessagePolicy: FallbackToLogsOnError
-        volumeMounts:
-        - mountPath: /var/lib/csi/sockets/pluginproxy/
-          name: socket-dir
-      - args:
-        - --timeout=6m
-        - --csi-address=$(ADDRESS)
-        - --v=2
-        - --leader-election=true
-        - --kube-api-qps=20
-        - --kube-api-burst=100
-        - --worker-threads=100
-        - --retry-interval-max=5m
-        - --feature-gates=MutableCSINodeAllocatableCount=true
-        - --http-endpoint=0.0.0.0:3303
-        env:
-        - name: ADDRESS
-          value: /var/lib/csi/sockets/pluginproxy/csi.sock
-        image: public.ecr.aws/csi-components/csi-attacher:v4.11.0-eksbuild.6
-        imagePullPolicy: IfNotPresent
-        name: csi-attacher
-        ports:
-        - containerPort: 3303
-          name: metrics-attach
-          protocol: TCP
-        resources:
-          limits:
-            memory: 256Mi
-          requests:
-            cpu: 10m
-            memory: 40Mi
-        securityContext:
-          allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
-          seccompProfile:
-            type: RuntimeDefault
-        terminationMessagePolicy: FallbackToLogsOnError
-        volumeMounts:
-        - mountPath: /var/lib/csi/sockets/pluginproxy/
-          name: socket-dir
-      - args:
-        - --timeout=60s
-        - --extra-modify-metadata
-        - --csi-address=$(ADDRESS)
-        - --v=2
-        - --handle-volume-inuse-error=false
-        - --leader-election=true
-        - --kube-api-qps=20
-        - --kube-api-burst=100
-        - --workers=100
-        - --retry-interval-max=30m
-        - --feature-gates=VolumeAttributesClass=false
-        - --http-endpoint=0.0.0.0:3304
-        env:
-        - name: ADDRESS
-          value: /var/lib/csi/sockets/pluginproxy/csi.sock
-        - name: ENABLE_VAC_FALLBACK
-          value: "true"
-        image: public.ecr.aws/csi-components/csi-resizer:v2.1.0-eksbuild.6
-        imagePullPolicy: IfNotPresent
-        name: csi-resizer
-        ports:
-        - containerPort: 3304
-          name: metrics-resizer
-          protocol: TCP
-        resources:
-          limits:
-            memory: 256Mi
-          requests:
-            cpu: 10m
-            memory: 40Mi
-        securityContext:
-          allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
-          seccompProfile:
-            type: RuntimeDefault
-        terminationMessagePolicy: FallbackToLogsOnError
-        volumeMounts:
-        - mountPath: /var/lib/csi/sockets/pluginproxy/
-          name: socket-dir
-      - args:
-        - --csi-address=/csi/csi.sock
-        - --probe-timeout=60s
-        - --metrics-address=0.0.0.0:3305
-        image: public.ecr.aws/csi-components/livenessprobe:v2.18.0-eksbuild.6
-        imagePullPolicy: IfNotPresent
-        name: liveness-probe
-        ports:
-        - containerPort: 3305
-          name: metrics-lp
-          protocol: TCP
-        resources:
-          limits:
-            memory: 32Mi
-          requests:
-            cpu: 10m
-            memory: 32Mi
-        securityContext:
-          allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
-        terminationMessagePolicy: FallbackToLogsOnError
-        volumeMounts:
-        - mountPath: /csi
-          name: socket-dir
+        - args:
+            - controller
+            - --endpoint=$(CSI_ENDPOINT)
+            - --http-endpoint=0.0.0.0:3301
+            - --batching=true
+            - --logging-format=text
+            - --user-agent-extra=helm
+            - --v=2
+          env:
+            - name: CSI_ENDPOINT
+              value: unix:///var/lib/csi/sockets/pluginproxy/csi.sock
+            - name: CSI_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  key: key_id
+                  name: aws-secret
+                  optional: true
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: access_key
+                  name: aws-secret
+                  optional: true
+            - name: AWS_EC2_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  key: endpoint
+                  name: aws-meta
+                  optional: true
+            - name: AWS_SAGEMAKER_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  key: sagemaker_endpoint
+                  name: aws-meta
+                  optional: true
+          image: public.ecr.aws/ebs-csi-driver/aws-ebs-csi-driver:v1.60.1
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 10
+            httpGet:
+              path: /healthz
+              port: healthz
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 60
+          name: ebs-plugin
+          ports:
+            - containerPort: 9808
+              name: healthz
+              protocol: TCP
+            - containerPort: 3301
+              name: metrics
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /healthz
+              port: healthz
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 60
+          resources:
+            limits:
+              memory: 256Mi
+            requests:
+              cpu: 10m
+              memory: 40Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePolicy: FallbackToLogsOnError
+          volumeMounts:
+            - mountPath: /var/lib/csi/sockets/pluginproxy/
+              name: socket-dir
+        - args:
+            - --timeout=60s
+            - --csi-address=$(ADDRESS)
+            - --v=2
+            - --feature-gates=Topology=true
+            - --extra-create-metadata
+            - --leader-election=true
+            - --default-fstype=ext4
+            - --kube-api-qps=20
+            - --kube-api-burst=100
+            - --worker-threads=100
+            - --retry-interval-max=30m
+            - --feature-gates=VolumeAttributesClass=false
+            - --http-endpoint=0.0.0.0:3302
+          env:
+            - name: ADDRESS
+              value: /var/lib/csi/sockets/pluginproxy/csi.sock
+            - name: ENABLE_VAC_FALLBACK
+              value: "true"
+          image: public.ecr.aws/csi-components/csi-provisioner:v6.2.0-eksbuild.5
+          imagePullPolicy: IfNotPresent
+          name: csi-provisioner
+          ports:
+            - containerPort: 3302
+              name: metrics-prov
+              protocol: TCP
+          resources:
+            limits:
+              memory: 256Mi
+            requests:
+              cpu: 10m
+              memory: 40Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePolicy: FallbackToLogsOnError
+          volumeMounts:
+            - mountPath: /var/lib/csi/sockets/pluginproxy/
+              name: socket-dir
+        - args:
+            - --timeout=6m
+            - --csi-address=$(ADDRESS)
+            - --v=2
+            - --leader-election=true
+            - --kube-api-qps=20
+            - --kube-api-burst=100
+            - --worker-threads=100
+            - --retry-interval-max=5m
+            - --feature-gates=MutableCSINodeAllocatableCount=true
+            - --http-endpoint=0.0.0.0:3303
+          env:
+            - name: ADDRESS
+              value: /var/lib/csi/sockets/pluginproxy/csi.sock
+          image: public.ecr.aws/csi-components/csi-attacher:v4.11.0-eksbuild.6
+          imagePullPolicy: IfNotPresent
+          name: csi-attacher
+          ports:
+            - containerPort: 3303
+              name: metrics-attach
+              protocol: TCP
+          resources:
+            limits:
+              memory: 256Mi
+            requests:
+              cpu: 10m
+              memory: 40Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePolicy: FallbackToLogsOnError
+          volumeMounts:
+            - mountPath: /var/lib/csi/sockets/pluginproxy/
+              name: socket-dir
+        - args:
+            - --timeout=60s
+            - --extra-modify-metadata
+            - --csi-address=$(ADDRESS)
+            - --v=2
+            - --handle-volume-inuse-error=false
+            - --leader-election=true
+            - --kube-api-qps=20
+            - --kube-api-burst=100
+            - --workers=100
+            - --retry-interval-max=30m
+            - --feature-gates=VolumeAttributesClass=false
+            - --http-endpoint=0.0.0.0:3304
+          env:
+            - name: ADDRESS
+              value: /var/lib/csi/sockets/pluginproxy/csi.sock
+            - name: ENABLE_VAC_FALLBACK
+              value: "true"
+          image: public.ecr.aws/csi-components/csi-resizer:v2.1.0-eksbuild.6
+          imagePullPolicy: IfNotPresent
+          name: csi-resizer
+          ports:
+            - containerPort: 3304
+              name: metrics-resizer
+              protocol: TCP
+          resources:
+            limits:
+              memory: 256Mi
+            requests:
+              cpu: 10m
+              memory: 40Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePolicy: FallbackToLogsOnError
+          volumeMounts:
+            - mountPath: /var/lib/csi/sockets/pluginproxy/
+              name: socket-dir
+        - args:
+            - --csi-address=/csi/csi.sock
+            - --probe-timeout=60s
+            - --metrics-address=0.0.0.0:3305
+          image: public.ecr.aws/csi-components/livenessprobe:v2.18.0-eksbuild.6
+          imagePullPolicy: IfNotPresent
+          name: liveness-probe
+          ports:
+            - containerPort: 3305
+              name: metrics-lp
+              protocol: TCP
+          resources:
+            limits:
+              memory: 32Mi
+            requests:
+              cpu: 10m
+              memory: 32Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+          terminationMessagePolicy: FallbackToLogsOnError
+          volumeMounts:
+            - mountPath: /csi
+              name: socket-dir
       nodeSelector:
         kubernetes.io/os: linux
       priorityClassName: system-cluster-critical
@@ -289,11 +289,11 @@ spec:
         runAsUser: 1000
       serviceAccountName: ebs-csi-controller-sa
       tolerations:
-      - key: CriticalAddonsOnly
-        operator: Exists
-      - effect: NoExecute
-        operator: Exists
-        tolerationSeconds: 300
+        - key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoExecute
+          operator: Exists
+          tolerationSeconds: 300
       volumes:
-      - emptyDir: {}
-        name: socket-dir
+        - emptyDir: {}
+          name: socket-dir

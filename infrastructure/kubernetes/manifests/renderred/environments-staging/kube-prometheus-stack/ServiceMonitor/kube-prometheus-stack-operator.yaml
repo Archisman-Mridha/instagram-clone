@@ -17,19 +17,19 @@ metadata:
   namespace: kube-prometheus-stack
 spec:
   endpoints:
-  - honorLabels: true
-    port: https
-    scheme: https
-    tlsConfig:
-      ca:
-        secret:
-          key: ca
-          name: kube-prometheus-stack-admission
-          optional: false
-      serverName: kube-prometheus-stack-operator
+    - honorLabels: true
+      port: https
+      scheme: https
+      tlsConfig:
+        ca:
+          secret:
+            key: ca
+            name: kube-prometheus-stack-admission
+            optional: false
+        serverName: kube-prometheus-stack-operator
   namespaceSelector:
     matchNames:
-    - kube-prometheus-stack
+      - kube-prometheus-stack
   selector:
     matchLabels:
       app: kube-prometheus-stack-operator

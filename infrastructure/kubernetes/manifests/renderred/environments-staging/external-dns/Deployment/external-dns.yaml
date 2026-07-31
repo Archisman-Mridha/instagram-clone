@@ -26,57 +26,57 @@ spec:
     spec:
       automountServiceAccountToken: true
       containers:
-      - args:
-        - --log-level=info
-        - --log-format=text
-        - --interval=1m
-        - --source=ingress
-        - --policy=upsert-only
-        - --registry=txt
-        - --provider=cloudflare
-        env:
-        - name: CF_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: cloudflare-credentials
-              namespace: external-dns
-        - name: CF_API_EMAIL
-          value: archismanmridha12345@gmail.com
-        image: registry.k8s.io/external-dns/external-dns:v0.21.0
-        imagePullPolicy: IfNotPresent
-        livenessProbe:
-          failureThreshold: 2
-          httpGet:
-            path: /healthz
-            port: http
-          initialDelaySeconds: 10
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 5
-        name: external-dns
-        ports:
-        - containerPort: 7979
-          name: http
-          protocol: TCP
-        readinessProbe:
-          failureThreshold: 6
-          httpGet:
-            path: /healthz
-            port: http
-          initialDelaySeconds: 5
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 5
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-            - ALL
-          privileged: false
-          readOnlyRootFilesystem: true
-          runAsGroup: 65532
-          runAsNonRoot: true
-          runAsUser: 65532
+        - args:
+            - --log-level=info
+            - --log-format=text
+            - --interval=1m
+            - --source=ingress
+            - --policy=upsert-only
+            - --registry=txt
+            - --provider=cloudflare
+          env:
+            - name: CF_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: cloudflare-credentials
+                  namespace: external-dns
+            - name: CF_API_EMAIL
+              value: archismanmridha12345@gmail.com
+          image: registry.k8s.io/external-dns/external-dns:v0.21.0
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 2
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          name: external-dns
+          ports:
+            - containerPort: 7979
+              name: http
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 6
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsGroup: 65532
+            runAsNonRoot: true
+            runAsUser: 65532
       securityContext:
         fsGroup: 65534
         runAsNonRoot: true

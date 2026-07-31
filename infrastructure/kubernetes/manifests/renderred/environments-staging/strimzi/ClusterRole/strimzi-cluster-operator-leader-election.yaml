@@ -11,22 +11,22 @@ metadata:
     release: strimzi
   name: strimzi-cluster-operator-leader-election
 rules:
-- apiGroups:
-  - coordination.k8s.io
-  resources:
-  - leases
-  verbs:
-  - create
-- apiGroups:
-  - coordination.k8s.io
-  resourceNames:
-  - strimzi-cluster-operator
-  resources:
-  - leases
-  verbs:
-  - get
-  - list
-  - watch
-  - delete
-  - patch
-  - update
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs:
+      - create
+  - apiGroups:
+      - coordination.k8s.io
+    resourceNames:
+      - strimzi-cluster-operator
+    resources:
+      - leases
+    verbs:
+      - get
+      - list
+      - watch
+      - delete
+      - patch
+      - update

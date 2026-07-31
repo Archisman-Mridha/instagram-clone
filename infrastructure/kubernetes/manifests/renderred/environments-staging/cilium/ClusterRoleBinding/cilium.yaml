@@ -11,6 +11,6 @@ roleRef:
   kind: ClusterRole
   name: cilium
 subjects:
-- kind: ServiceAccount
-  name: cilium
-  namespace: cilium
+  - kind: ServiceAccount
+    name: cilium
+    namespace: cilium
