@@ -6,6 +6,14 @@
 	"projectType": "application",
 
 	"targets": {
+		"validate": {
+			"executor": "nx:run-commands",
+			"options": {
+				"cwd": "{projectRoot}/stacks/environments",
+				"command": "terragrunt run --all validate"
+			},
+			"cache": true
+		},
 		"plan": {
 			"executor": "nx:run-commands",
 			"options": {
@@ -14,19 +22,18 @@
 			},
 			"cache": true
 		},
-		"verify": {
-			"executor": "nx:run-commands",
-			"options": {
-				"cwd": "{projectRoot}/stacks/environments",
-				"command": "terragrunt run --all verify"
-			},
-			"cache": true
-		},
 		"apply": {
 			"executor": "nx:run-commands",
 			"options": {
 				"cwd": "{projectRoot}/stacks/environments",
 				"command": "terragrunt run --all apply"
+			}
+		},
+    "destroy": {
+			"executor": "nx:run-commands",
+			"options": {
+				"cwd": "{projectRoot}/stacks/environments",
+				"command": "terragrunt run --all destroy"
 			}
 		}
 	}
