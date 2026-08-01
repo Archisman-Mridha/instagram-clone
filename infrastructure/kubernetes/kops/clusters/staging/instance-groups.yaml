@@ -14,6 +14,7 @@
 #   subnets:
 #     - public-a
 
+---
 apiVersion: kops.k8s.io/v1alpha2
 kind: InstanceGroup
 metadata:
@@ -83,7 +84,7 @@ spec:
   role: Node
   minSize: 1
   maxSize: 3
-  machineType: t4g.medium
+  machineType: t4g.large
   # The default volume size for Masters is 64 GB, while the default volume size for a node is
   # 128 GB.
   rootVolume:

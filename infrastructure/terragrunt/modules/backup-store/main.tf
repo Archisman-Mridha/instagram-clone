@@ -1,10 +1,6 @@
 resource "aws_s3_bucket" "backup_store" {
   bucket           = "backups.${var.environment}.openmedia"
   bucket_namespace = "account-regional"
-
-  tags = {
-    environment = var.environment
-  }
 }
 
 /*

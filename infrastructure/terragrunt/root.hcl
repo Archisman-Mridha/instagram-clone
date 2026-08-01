@@ -23,7 +23,8 @@ provider "aws" {
 
   default_tags {
     tags = {
-      project = "openmedia"
+      project     = "openmedia"
+      environment = var.environment
     }
   }
 }

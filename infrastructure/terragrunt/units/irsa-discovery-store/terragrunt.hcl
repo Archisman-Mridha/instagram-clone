@@ -3,7 +3,7 @@ include "root" {
 }
 
 terraform {
-  source = "${find_in_parent_folders("modules")}//openobserve-store"
+  source = "${find_in_parent_folders("modules")}//irsa-discovery-store"
 }
 
 inputs = {

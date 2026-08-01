@@ -7,3 +7,11 @@ resource "aws_s3_bucket" "kops_state_store" {
   bucket           = "kops-state-store.openmedia"
   bucket_namespace = "global"
 }
+
+resource "aws_s3_bucket_versioning" "kops_state_store" {
+  bucket = aws_s3_bucket.kops_state_store.id
+
+  versioning_configuration {
+    status = "Enabled"
+  }
+}

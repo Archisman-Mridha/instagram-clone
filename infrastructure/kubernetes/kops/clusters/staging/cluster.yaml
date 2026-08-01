@@ -204,6 +204,37 @@ spec:
     # kubeReservedCgroup or systemReservedCgroup needs to be specified respectively.
     enforceNodeAllocatable: pods,system-reserved,kube-reserved
 
+  # Applications in a Pod’s containers can use an AWS SDK or the AWS CLI to make API requests to
+  # AWS services using AWS Identity and Access Management (IAM) permissions. Applications must sign
+  # their AWS API requests with AWS credentials. IAM roles for service accounts (IRSA) provide the
+  # ability to manage credentials for your applications, similar to the way that Amazon EC2
+  # instance profiles provide credentials to Amazon EC2 instances. Instead of creating and
+  # distributing your AWS credentials to the containers or using the Amazon EC2 instance’s role,
+  # you associate an IAM role with a Kubernetes service account and configure your Pods to use the
+  # service account.
+  #
+  # IAM roles for service accounts provide the following benefits:
+  #
+  #   (1) Least privilege – You can scope IAM permissions to a service account, and only Pods that
+  #       use that service account have access to those permissions. This feature also eliminates
+  #       the need for third-party solutions such as kiam or kube2iam.
+  #
+  #   (2) Credential isolation – When access to the Amazon EC2 Instance Metadata Service (IMDS) is
+  #       restricted, a Pod’s containers can only retrieve credentials for the IAM role that’s
+  #       associated with the service account that the container uses. A container never has access
+  #       to credentials that are used by other containers in other Pods. If IMDS is not restricted,
+  #       the Pod’s containers also have access to the Amazon EKS node IAM role and the containers
+  #       may be able to gain access to credentials of IAM roles of other Pods on the same node.
+  #
+  #   (3) Auditability – Access and event logging is available through AWS CloudTrail to help
+  #       ensure retrospective auditing.
+  #
+  # kOps can publish the Kubernetes service account token issuer and configure AWS to trust it to
+  # authenticate Kubernetes service accounts.
+  serviceAccountIssuerDiscovery:
+    discoveryStore: s3://irsa-discovery-store-staging-openmedia
+    enableAWSOIDCProvider: true
+
   cloudControllerManager:
     # Should CIDRs allocated by allocate-node-cidrs (enabled by default) be configured on the cloud
     # provider.
