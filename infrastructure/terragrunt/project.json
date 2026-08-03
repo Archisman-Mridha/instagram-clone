@@ -29,7 +29,7 @@
 				"command": "terragrunt run --all apply"
 			}
 		},
-    "destroy": {
+		"destroy": {
 			"executor": "nx:run-commands",
 			"options": {
 				"cwd": "{projectRoot}/stacks/environments",

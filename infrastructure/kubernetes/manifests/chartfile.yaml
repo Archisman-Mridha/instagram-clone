@@ -1,86 +1,116 @@
 directory: charts
 repositories:
-  - name: stable
-    url: https://charts.helm.sh/stable
-  - name: cilium
-    url: https://helm.cilium.io/
-  - name: aws-cloud-controller-manager
-    url: https://kubernetes.github.io/cloud-provider-aws
-  - name: aws-ebs-csi-driver
-    url: https://kubernetes-sigs.github.io/aws-ebs-csi-driver/
-  - name: opencost-charts
-    url: https://opencost.github.io/opencost-helm-chart
-  - name: cert-manager
-    url: https://charts.jetstack.io
-  - name: external-dns
-    url: https://kubernetes-sigs.github.io/external-dns/
-  - name: prometheus-community
-    url: https://prometheus-community.github.io/helm-charts
-  - name: kubescape
-    url: https://kubescape.github.io/helm-charts/
-  - name: strimzi-helm
-    url: oci://quay.io/strimzi-helm
-  - name: cloudnative-pg
-    url: https://cloudnative-pg.io/charts/
-  - name: dragonfly-operator
-    url: oci://ghcr.io/dragonflydb/dragonfly-operator/helm
-  - name: bitnami-labs
-    url: https://bitnami.github.io/sealed-secrets
-  - name: argo
-    url: https://argoproj.github.io/argo-helm
-  - name: deliveryhero
-    url: oci://ghcr.io/deliveryhero/helm-charts
-  - name: aws-ec2
-    url: oci://public.ecr.aws/aws-ec2/helm
-  - name: kubearmor
-    url: https://kubearmor.github.io/charts
-  - name: kyverno
-    url: https://kyverno.github.io/kyverno/
-  - name: openobserve
-    url: https://charts.openobserve.ai
-  - name: openkruise
-    url: https://openkruise.github.io/charts/
-  - name: atlas-operator
-    url: oci://ghcr.io/ariga/charts
+- name: stable
+  url: https://charts.helm.sh/stable
+- name: cilium
+  url: https://helm.cilium.io/
+- name: aws-cloud-controller-manager
+  url: https://kubernetes.github.io/cloud-provider-aws
+- name: aws-ebs-csi-driver
+  url: https://kubernetes-sigs.github.io/aws-ebs-csi-driver/
+- name: opencost-charts
+  url: https://opencost.github.io/opencost-helm-chart
+- name: cert-manager
+  url: https://charts.jetstack.io
+- name: external-dns
+  url: https://kubernetes-sigs.github.io/external-dns/
+- name: prometheus-community
+  url: https://prometheus-community.github.io/helm-charts
+- name: kubescape
+  url: https://kubescape.github.io/helm-charts/
+- name: strimzi-helm
+  url: oci://quay.io/strimzi-helm
+- name: cloudnative-pg
+  url: https://cloudnative-pg.io/charts/
+- name: dragonfly-operator
+  url: oci://ghcr.io/dragonflydb/dragonfly-operator/helm
+- name: bitnami-labs
+  url: https://bitnami.github.io/sealed-secrets
+- name: argo
+  url: https://argoproj.github.io/argo-helm
+- name: deliveryhero
+  url: oci://ghcr.io/deliveryhero/helm-charts
+- name: aws-ec2
+  url: oci://public.ecr.aws/aws-ec2/helm
+- name: kubearmor
+  url: https://kubearmor.github.io/charts
+- name: kyverno
+  url: https://kyverno.github.io/kyverno/
+- name: openobserve
+  url: https://charts.openobserve.ai
+- name: openkruise
+  url: https://openkruise.github.io/charts/
+- name: atlas-operator
+  url: oci://ghcr.io/ariga/charts
+- name: redpanda
+  url: https://charts.redpanda.com
+- name: jkroepke
+  url: https://jkroepke.github.io/helm-charts/
+- name: autoscaler
+  url: https://kubernetes.github.io/autoscaler
+- name: harbor
+  url: https://helm.goharbor.io
+- name: meilisearch
+  url: https://meilisearch.github.io/meilisearch-kubernetes
+- name: kubevela
+  url: https://kubevela.github.io/charts
+- name: crossview
+  url: https://crossplane-contrib.github.io/crossview
+- name: crossplane
+  url: https://charts.crossplane.io/stable
 requires:
-  - chart: cilium/cilium
-    version: 1.19.4
-  - chart: aws-cloud-controller-manager/aws-cloud-controller-manager
-    version: 0.0.11
-  - chart: aws-ebs-csi-driver/aws-ebs-csi-driver
-    version: 2.60.1
-  - chart: opencost-charts/opencost
-    version: 2.5.22
-  - chart: cert-manager/cert-manager
-    version: 1.20.2
-  - chart: external-dns/external-dns
-    version: 1.21.1
-  - chart: prometheus-community/kube-prometheus-stack
-    version: 86.1.0
-  - chart: kubescape/kubescape-operator
-    version: 1.40.2
-  - chart: strimzi-helm/strimzi-kafka-operator
-    version: 0.35.0
-  - chart: cloudnative-pg/cloudnative-pg
-    version: 0.28.2
-  - chart: dragonfly-operator/dragonfly-operator
-    version: v1.5.0
-  - chart: bitnami-labs/sealed-secrets
-    version: 2.18.6
-  - chart: argo/argo-cd
-    version: 9.5.19
-  - chart: deliveryhero/node-problem-detector
-    version: 2.4.1
-  - chart: aws-ec2/aws-node-termination-handler
-    version: 0.27.6
-  - chart: kubearmor/kubearmor
-    version: 1.7.3
-  - chart: kyverno/kyverno
-    version: 3.8.1
-  - chart: openobserve/openobserve
-    version: 0.80.3
-  - chart: openkruise/kruise
-    version: 1.9.0-alpha3
-  - chart: atlas-operator/atlas-operator
-    version: 0.7.37
+- chart: cilium/cilium
+  version: 1.19.4
+- chart: aws-cloud-controller-manager/aws-cloud-controller-manager
+  version: 0.0.11
+- chart: aws-ebs-csi-driver/aws-ebs-csi-driver
+  version: 2.60.1
+- chart: opencost-charts/opencost
+  version: 2.5.22
+- chart: cert-manager/cert-manager
+  version: 1.20.2
+- chart: external-dns/external-dns
+  version: 1.21.1
+- chart: prometheus-community/kube-prometheus-stack
+  version: 86.1.0
+- chart: kubescape/kubescape-operator
+  version: 1.40.2
+- chart: strimzi-helm/strimzi-kafka-operator
+  version: 0.35.0
+- chart: cloudnative-pg/cloudnative-pg
+  version: 0.28.2
+- chart: dragonfly-operator/dragonfly-operator
+  version: v1.5.0
+- chart: bitnami-labs/sealed-secrets
+  version: 2.18.6
+- chart: argo/argo-cd
+  version: 9.5.19
+- chart: deliveryhero/node-problem-detector
+  version: 2.4.1
+- chart: aws-ec2/aws-node-termination-handler
+  version: 0.27.6
+- chart: kubearmor/kubearmor
+  version: 1.7.3
+- chart: kyverno/kyverno
+  version: 3.8.1
+- chart: openobserve/openobserve
+  version: 0.80.3
+- chart: openkruise/kruise
+  version: 1.9.0-alpha3
+- chart: atlas-operator/atlas-operator
+  version: 0.7.37
+- chart: jkroepke/amazon-eks-pod-identity-webhook
+  version: 2.6.5
+- chart: autoscaler/cluster-autoscaler
+  version: 9.59.0
+- chart: harbor/harbor
+  version: 1.19.1
+- chart: meilisearch/meilisearch
+  version: 0.35.0
+- chart: kubevela/vela-core
+  version: 1.11.0
+- chart: crossview/crossview
+  version: 3.9.0-rc.4
+- chart: crossplane/crossplane
+  version: 2.3.4
 version: 1

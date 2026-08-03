@@ -10,6 +10,10 @@ local app = 'aws-node-termination-handler';
 // interruptions, ASG Scale-In, ASG AZ Rebalance, and EC2 Instance Termination via the API or
 // Console. If not handled, your application code may not stop gracefully, take longer to recover
 // full availability, or accidentally schedule work to nodes that are going down.
+//
+// The aws-node-termination-handler Instance Metadata Service Monitor will run a small pod on each
+// host to perform monitoring of IMDS paths like /spot or /events and react accordingly to drain
+// and/or cordon the corresponding node.
 {
   awsNodeTerminationHandler: Utils.withAppLabel(app, {
     namespace: Kubernetes.core.v1.namespace.new(app),
@@ -29,11 +33,9 @@ local app = 'aws-node-termination-handler';
         // Start an http server exposing /metrics endpoint for Prometheus.
         enablePrometheusServer: true,
 
-        // The aws-node-termination-handler Instance Metadata Service Monitor will run a small pod
-        // on each host to perform monitoring of IMDS paths like /spot or /events and react
-        // accordingly to drain and/or cordon the corresponding node.
         podMonitor: {
           create: true,
+          namespace: app,
         },
       },
     }),

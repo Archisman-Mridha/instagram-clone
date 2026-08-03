@@ -5,9 +5,10 @@ local Utils = import './utils.libsonnet';
 
 local app = 'argo-cd';
 
-local serviceMonitorEnabled = {
-  metrics+: {
-    serviceMonitor+: {
+local metricsAndServiceMonitorEnabled = {
+  metrics: {
+    enabled: true,
+    serviceMonitor: {
       enabled: true,
     },
   },
@@ -19,7 +20,7 @@ function(sourceRepo) {
     namespace: Kubernetes.core.v1.namespace.new(app),
 
     installation: Helm.template(app, Utils.chartsDir(app, std.thisFile), {
-      version: '',
+      version: '9.5.19',
 
       namespace: app,
       createNamespace: false,
@@ -29,13 +30,20 @@ function(sourceRepo) {
           autoscaling: {
             enabled: true,
           },
-        } + serviceMonitorEnabled,
+        } + metricsAndServiceMonitorEnabled,
 
-        controller: serviceMonitorEnabled,
-        dex: serviceMonitorEnabled,
-        redis: serviceMonitorEnabled,
-        repoServer: serviceMonitorEnabled,
-        notifications: serviceMonitorEnabled,
+        controller: metricsAndServiceMonitorEnabled {
+          metrics+: {
+            rules: {
+              enabled: true,
+              namespace: app,
+            },
+          },
+        },
+        dex: metricsAndServiceMonitorEnabled,
+        redis: metricsAndServiceMonitorEnabled,
+        repoServer: metricsAndServiceMonitorEnabled,
+        notifications: metricsAndServiceMonitorEnabled,
       },
     }),
 

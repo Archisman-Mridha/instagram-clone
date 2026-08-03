@@ -15,7 +15,7 @@ local app = 'kubearmor';
   kubearmor: Utils.withAppLabel(app, {
     namespace: Kubernetes.core.v1.namespace.new(app),
 
-    operator: Helm.template(app, Utils.chartsDir(app, std.thisFile), {
+    installation: Helm.template(app, Utils.chartsDir(app, std.thisFile), {
       version: '1.7.3',
 
       namespace: app,

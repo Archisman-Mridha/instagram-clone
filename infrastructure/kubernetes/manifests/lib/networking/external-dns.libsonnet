@@ -43,6 +43,11 @@ function(email) {
             value: email,
           },
         ],
+
+        serviceMonitor: {
+          enabled: true,
+          namespace: app,
+        },
       },
     }),
   }),

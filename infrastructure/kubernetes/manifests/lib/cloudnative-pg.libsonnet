@@ -5,7 +5,7 @@ local Utils = import './utils.libsonnet';
 
 local app = 'cloudnative-pg';
 
-local newCluster = function(clusterName, namespace) {
+local newCluster = function(clusterName, namespace, connectionPoolingEnabled=false) {
   cluster: {
     apiVersion: 'postgresql.cnpg.io/v1',
     kind: 'Cluster',
@@ -21,10 +21,13 @@ local newCluster = function(clusterName, namespace) {
       // By reserving dedicated disk space to WAL files, you can be sure that exhausting space on
       // the PGDATA volume never interferes with WAL writing. This behavior ensures that your
       // PostgreSQL primary is correctly shut down.
-      walStorage: { size: '1Gi' },
+      // walStorage: { size: '1Gi' },
 
       postgresql: {
         parameters: {
+          // WAL level is set to logical by default. Which means : logical replication is turned
+          // on by default.
+
           // Required for logical replication slot synchronization to work.
           hot_standby_feedback: 'on',
           sync_replication_slots: 'on',
@@ -115,7 +118,7 @@ local newCluster = function(clusterName, namespace) {
               running in zone 2, connecting to PgBouncer running in zone 3, and pointing to the
               PostgreSQL primary in zone 1.
   */
-  poolers: {
+  [if connectionPoolingEnabled then 'poolers']: {
     default: {
       apiVersion: 'postgresql.cnpg.io/v1',
       kind: 'Pooler',

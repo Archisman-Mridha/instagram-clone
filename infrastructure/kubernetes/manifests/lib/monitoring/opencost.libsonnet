@@ -24,13 +24,6 @@ local app = 'opencost';
         // to pull the AWS on-demand pricing from the configured public API URL with no further
         // configuration required.
 
-        serviceAccount: {
-          create: true,
-          annotations: {
-            'eks.amazonaws.com/role-arn': 'arn:aws:iam::123456789012:role/S3Access',
-          },
-        },
-
         kubecostProductConfigs: { carbonEstimates: { enabled: true } },
 
         opencost: {

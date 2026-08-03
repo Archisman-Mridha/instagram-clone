@@ -27,16 +27,22 @@ local app = 'kube-prometheus-stack';
         // pairs called labels.
         prometheus: {
           prometheusSpec: {
-            // By default, Prometheus discovers PodMonitors and ServiceMonitors within its
-            // namespace, that are labeled with the same release tag as the prometheus-operator
-            // release.
+            // By default, Prometheus discovers PodMonitors, ServiceMonitors and PrometheusRules
+            // within its namespace, that are labeled with the same release tag as the
+            // prometheus-operator release.
             // We want Prometheus to discover PodMonitors and ServiceMonitors across all namespaces.
+
             podMonitorSelectorNilUsesHelmValues: false,
             podMonitorNamespaceSelector: {},
             podMonitorSelector: {},
+
             serviceMonitorSelectorNilUsesHelmValues: false,
             serviceMonitorNamespaceSelector: {},
             serviceMonitorSelector: {},
+
+            ruleSelectorNilUsesHelmValues: false,
+            ruleNamespaceSelector: {},
+            ruleSelector: {},
 
             // Enable High Availability (HA) mode.
             replicas: 2,

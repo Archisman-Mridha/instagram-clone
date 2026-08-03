@@ -1,3 +1,6 @@
+// We'll be shifting to Redpanda. So, I'm not wasting any time behind trying to enable any sort of
+// metrics.
+
 local Tanka = import 'github.com/grafana/jsonnet-libs/tanka-util/main.libsonnet',
       Helm = Tanka.helm.new(std.thisFile);
 local Kubernetes = import 'github.com/jsonnet-libs/k8s-libsonnet/1.32/main.libsonnet';

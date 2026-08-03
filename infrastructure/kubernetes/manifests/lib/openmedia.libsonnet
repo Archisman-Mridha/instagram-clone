@@ -1,25 +1,69 @@
 local CloudNativePG = import './cloudnative-pg.libsonnet';
 local Dragonfly = import './dragonfly.libsonnet';
+local Meilisearch = import './meilisearch.libsonnet';
 local Strimzi = import './strimzi.libsonnet';
 local Utils = import './utils.libsonnet';
 
 local app = 'openmedia';
 
-local postgresqlCluster = CloudNativePG.newCluster(app, app) + {
+local publishedTables = ['users', 'profiles', 'followships', 'posts'];
+
+local publicationForTable = function(tableName) {
+  apiVersion: 'postgresql.cnpg.io/v1',
+  kind: 'Publication',
+  metadata: {
+    name: std.format('%s-events', tableName),
+    namespace: app,
+  },
+  spec: {
+    cluster: {
+      name: app,
+    },
+    dbname: app,
+    name: std.format('%s_events', tableName),
+    target: {
+      objects: [{
+        table: {
+          schema: 'public',
+          name: tableName,
+        },
+      }],
+    },
+  },
+};
+
+local postgresCluster = CloudNativePG.newCluster(app, app) + {
   cluster+: {
     spec+: {
       bootstrap: {
         initdb: {
           database: app,
-          owner: 'openmedia-backend',
+          owner: app,
 
           // Thanks to the convention over configuration paradigm, you can let the operator choose
           // a default database name (app) and a default application user name (same as the
           // database name), as well as randomly generate a secure password for both the superuser
-          // and the application user in PostgreSQL.
+          // and the application user in Postgres.
         },
       },
     },
+  },
+
+  /*
+    In PostgreSQL's publish-and-subscribe replication model, a publication is the source of data
+    changes. It acts as a logical container for the change sets (also known as replication sets)
+    generated from one or more tables within a database.
+
+    According to the Postgres documentation :
+
+      A publication can be defined on any physical replication primary. The node where a
+      publication is defined is referred to as publisher. A publication is a set of changes
+      generated from a table or a group of tables, and might also be described as a change set or
+      replication set. Each publication exists in only one database.
+  */
+  publications: {
+    [std.format('%sEvents', tableName)]: publicationForTable(tableName)
+    for tableName in publishedTables
   },
 };
 
@@ -32,7 +76,7 @@ local databaseSchema = {
   },
   spec: {
     // CloudNativePG generates this Secret for the application user declared in the cluster's
-    // bootstrap.initdb block. Its 'uri' key holds the complete PostgreSQL connection string.
+    // bootstrap.initdb block. Its 'uri' key holds the complete Postgres connection string.
     urlFrom: {
       secretKeyRef: {
         key: 'uri',
@@ -74,18 +118,18 @@ local kafkaCluster =
         brokerVolumeSize = '5Gi';
 
   local topics = [
-    'events.users.created',
-    'events.profiles.created',
+    std.format('events.%s.created', tableName)
+    for tableName in publishedTables
   ];
 
   local consumerGroups = [
     {
-      local consumerGroupName = 'openmedia-backend',
+      local consumerGroupName = app,
 
       name: consumerGroupName,
       users: [
         {
-          name: 'openmedia-backend',
+          name: app,
           acls: [
             {
               resource: {
@@ -105,12 +149,14 @@ local kafkaCluster =
 
   Strimzi.newCluster(app, app, controllerVolumeSize, brokerVolumeSize, topics, consumerGroups);
 
+local meilisearchCluster = Meilisearch.newCluster(app, app);
+
 local dragonflyCluster = Dragonfly.newCluster(app, app);
 
 {
   openmedia: Utils.withAppLabel(app, {
     database: {
-      postgresqlCluster: postgresqlCluster,
+      postgresCluster: postgresCluster,
       schema: databaseSchema,
     },
 
@@ -118,7 +164,7 @@ local dragonflyCluster = Dragonfly.newCluster(app, app);
 
     dragonflyCluster: dragonflyCluster,
 
-    meilisearchCluster: {},
+    meilisearchCluster: meilisearchCluster,
 
     backend: {},
   }),

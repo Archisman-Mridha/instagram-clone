@@ -63,7 +63,7 @@ local app = 'atlas';
   atlas: Utils.withAppLabel(app, {
     namespace: Kubernetes.core.v1.namespace.new(app),
 
-    operator: Helm.template(app, Utils.chartsDir('atlas-operator', std.thisFile), {
+    operator: Helm.template('atlas-operator', Utils.chartsDir('atlas-operator', std.thisFile), {
       version: '0.7.37',
 
       namespace: app,

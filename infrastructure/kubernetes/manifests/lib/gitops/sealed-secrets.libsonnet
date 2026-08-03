@@ -56,6 +56,17 @@ local app = 'sealed-secrets';
           be moot, since the attacker could just decrypt the new secrets as well. Thus, you need
           to do both: periodically renew the sealing key and rotate your actual secrets!
         */
+
+        metrics: {
+          serviceMonitor: {
+            enabled: true,
+            namespace: app,
+          },
+          prometheusRule: {
+            enabled: true,
+            namespace: app,
+          },
+        },
       },
     }),
   }),

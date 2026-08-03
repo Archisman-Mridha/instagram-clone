@@ -5,6 +5,7 @@ local Utils = import './utils.libsonnet';
 
 local app = 'dragonfly';
 
+// TODO : Enable monitoring.
 local newCluster = function(clusterName, namespace) {
   apiVersion: 'dragonflydb.io/v1alpha1',
   kind: 'Dragonfly',
@@ -42,7 +43,7 @@ local newCluster = function(clusterName, namespace) {
   dragonfly: Utils.withAppLabel(app, {
     namespace: Kubernetes.core.v1.namespace.new(app),
 
-    operator: Helm.template(app, Utils.chartsDir('dragonfly-operator', std.thisFile), {
+    operator: Helm.template('dragonfly-operator', Utils.chartsDir('dragonfly-operator', std.thisFile), {
       version: 'v1.5.0',
 
       namespace: app,

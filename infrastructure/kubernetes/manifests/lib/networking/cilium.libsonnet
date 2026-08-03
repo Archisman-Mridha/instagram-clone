@@ -159,10 +159,18 @@ function(k8sServiceHost) {
         },
 
         // Enable metrics for Cilium Agent.
-        prometheus: { enabled: true },
+        prometheus: {
+          enabled: true,
+          serviceMonitor: { enabled: true },
+        },
 
         // Enable metrics for Cilium Operator.
-        operator: { prometheus: { enabled: true } },
+        operator: {
+          prometheus: {
+            enabled: true,
+            serviceMonitor: { enabled: true },
+          },
+        },
 
         // Hubble is a fully distributed networking and security observability platform, built on
         // top of Cilium and eBPF.

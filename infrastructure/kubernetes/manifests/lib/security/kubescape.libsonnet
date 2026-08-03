@@ -14,7 +14,7 @@ function(clusterName) {
   kubescape: Utils.withAppLabel(app, {
     namespace: Kubernetes.core.v1.namespace.new(app),
 
-    operator: Helm.template(app, Utils.chartsDir('kubescape-operator', std.thisFile), {
+    operator: Helm.template('kubescape-operator', Utils.chartsDir('kubescape-operator', std.thisFile), {
       version: '1.40.2',
 
       namespace: app,
